@@ -1,0 +1,103 @@
+{
+  "menu": {
+    "menu": "M E N U",
+    "viewProfile": "Ver Perfil",
+    "logOut": "Cerrar sesión",
+    "dashboard": "Tablero",
+    "students": "Estudiantes",
+    "tuition": "Matrícula",
+    "teachers": "Profesores",
+    "courses": "Cursos",
+    "attendance": "Asistencia",
+    "grades": "Calificaciones",
+    "rooms": "Salas",
+    "classes": "Clases",
+    "timetable": "Horario"
+  },
+  "dashboard": {
+    "students": "Estudiantes",
+    "desc_students": "Todos los estudiantes registrados",
+    "boys": "Niños",
+    "desc_boys": "Niños registrados",
+    "girls": "Niñas",
+    "desc_girls": "Niñas registradas",
+    "class": "Clases",
+    "desc_class": "Total de clases"
+  },
+  "info": {
+    "info": "Info:",
+    "lastRegistered": "10 Últimos registrados",
+    "schoolStats": "ESTADÍSTICAS DE MATRÍCULA",
+    "availableRooms": "SALAS DISPONIBLES"
+  },
+  "actions": {
+    "details": "Detalles",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "cancel": "Cancelar",
+    "add": "Agregar un {{NomTable}}",
+    "deleteSelected": "Eliminar seleccionados {{NomTable}}",
+    "download": "Descargar en",
+    "export": "Exportar",
+    "RefreshData": "Actualizar datos"
+  },
+  "export": {
+    "title": "Exportar",
+    "exportAllData": "Exportar todos los datos",
+    "exportAllRows": "Exportar todas las filas",
+    "exportPageRows": "Exportar filas de la página",
+    "exportSelectedRows": "Exportar filas seleccionadas",
+    "exportType": "Tipo de exportación",
+    "exportTo": "Exportar a"
+  },
+  "Languages": {
+    "fr": "Francés",
+    "en": "Inglés",
+    "de": "Alemán",
+    "es": "Español"
+  },
+  "validationTexts": {
+    "deleteBy1": "¿Está seguro de que desea eliminar a este estudiante?",
+    "deleteByN": "¿Está seguro de que desea eliminar a los {{length}} estudiantes?"
+  },
+  "TableDBName": {
+    "student": "Estudiantes",
+    "prof": "Profesores"
+  },
+  "etudiants": {
+    "list": "Lista de estudiantes"
+  },
+  "professeurs": {
+    "list": "Lista de profesores"
+  },
+  "Data": { 
+    "matricule": "Número de registro",
+    "image": "Imagen",
+    "civilite": "Civilidad",
+    "lienparenté": "Relación familiar",
+    "profession": "Profesión",
+    "nom": "Apellido",
+    "prenom": "Nombre",
+    "nationalite": "Nacionalidad",
+    "cin": "ID Nacional",
+    "datenaissance": "Fecha de nacimiento",
+    "adresse": "Dirección",
+    "ville": "Ciudad",
+    "codepostal": "Código postal",
+    "pays": "País",
+    "email": "Correo electrónico",
+    "telephone": "Número de teléfono",
+    "dateembauche": "Fecha de contratación",
+    "salaire": "Salario",
+    "nombanque": "Nombre del banco",
+    "rib": "IBAN",
+    "observation": "Observación",
+    "genre": "Género",
+    "lieunaissance": "Lugar de nacimiento"
+  },
+  "Inputs" : {
+    "nationalite" : {
+      
+    }
+  }   
+}

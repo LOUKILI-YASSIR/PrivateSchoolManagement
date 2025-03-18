@@ -1,0 +1,292 @@
+@import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap");
+* {
+  font-family: "Ubuntu", sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  
+}
+
+:root {
+  --blue: #2a2185;
+  --white: #fff;
+  --gray: #f5f5f5;
+  --black1: #222;
+  --black2: #999;
+  --blue-light: rgb(4, 0, 255);
+}
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+  background: #c7c7c76b;
+}
+.navigation {
+  top:0;
+  left: -10px;
+  position: fixed;
+  width: 300px;
+  height: 100%;
+  background: var(--blue);
+  border-left: 10px solid var(--blue);
+  transition: all ease-in-out .5s .5s;
+  overflow-y: scroll;
+  overflow: hidden;
+  direction: rtl; 
+  box-shadow:1px 5px 20px 5px #6d6d6d ;
+}
+::-webkit-scrollbar {
+  width: 15px; 
+}
+::-webkit-scrollbar-track {
+  background: var(--blue-light);
+  border-radius: 10px; 
+}
+::-webkit-scrollbar-thumb {
+  background: var(--gray);
+  border-radius: 10px; 
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background:var(--blue) ;
+}
+
+.navigation.active {
+  width: 80px;
+} 
+
+.navigation ul {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+.navigation ul li {
+  position: relative;
+  width: 97.5%;
+  list-style: none;
+  border-top-left-radius: 30px;
+  border-bottom-left-radius: 30px;
+  box-shadow: none;
+}
+
+.navigation ul li:nth-child(1)
+{
+  pointer-events: none;
+  margin-bottom: 0.5rem;
+}
+.navigation ul li:nth-child(1) a .icon,
+.navigation ul li:nth-child(1) i.icon{
+  pointer-events: painted;
+  cursor: pointer !important;
+}
+.navigation ul li a .title{
+  margin-left: -20px !important;
+  font-weight: 900;
+  z-index: 100;
+}
+.navigation ul li a {
+  position: relative;
+  display: block;
+  width: 100%;
+  display: flex;
+  text-decoration: none;
+  color: var(--white);
+  text-align: left;
+  direction: ltr;
+  
+}
+
+.navigation ul li a .icon {
+  position: relative;
+  display: block;
+  min-width: 60px;
+  height: 50px;
+  line-height: 67.5px;
+  text-align: center;
+  margin-left:8px;
+  z-index: 100;
+}
+.navigation.active ul li a .icon{
+  margin-right:8px;
+  margin-left: 0;
+} 
+.navigation ul li a .icon svg{
+  font-size: 1.5rem;
+}
+
+.navigation ul li a .title {
+  position: relative;
+  display: block;
+  padding: 0 20px;
+  height: 55px;
+  line-height: 60px;
+  text-align: start;
+  white-space: nowrap;
+}
+hr{
+  margin-right: 10px !important;
+  margin-bottom: 1.25rem !important;
+}
+.navigation ul :not(li:first-of-type):hover a,
+.navigation ul :not(li:first-of-type).shadow a,
+.navigation ul li:nth-child(1) a.shadow .icon,
+.navigation ul li:nth-child(1) a:hover .icon,
+.navigation ul li:nth-child(1) a.shadow .icon svg,
+.navigation ul li:nth-child(1) a:hover .icon svg,
+#navtype i:hover,
+#navtype i.active{
+  transition: all linear .1s;
+  color: var(--white);
+  text-shadow: 
+  0 0 10px  #ffffffc4 ,
+  0 0 15px  #ffffffc4 ;
+}
+.navigation ul :not(li:first-of-type) a.shadow .icon svg,
+.navigation ul :not(li:first-of-type) a:hover .icon svg{
+  filter: drop-shadow(0 0 10px #ffffffc4);
+}
+.toggle:hover{
+  color: white;
+  text-shadow: 
+  0 0 10px  #ffffffc4,
+  0 0 15px  #ffffffc4;
+}
+/**            hover style*/
+.navigation ul li.hoveredwhite{
+  background-color: var(--white);
+}
+.navigation ul li.hoveredwhite a{
+    color: var(--blue);
+}
+.navigation ul li.activePage.shadow a :is(.icon,.title){
+  color: var(--blue);
+  text-shadow:  
+  0 0 5px #fff, 
+  0 0 10px rgba(11, 0, 168, 0.5) ,
+  0 0 10px rgba(11, 0, 168, 0.5) ,
+  0 0 10px rgba(11, 0, 168, 0.5) !important ; 
+}
+.navigation ul li.activePage.shadow a .icon svg {
+  filter: drop-shadow(0 0 5px #fff)
+          drop-shadow(0 0 10px rgba(11, 0, 168, 0.5))
+          drop-shadow(0 0 10px rgba(11, 0, 168, 0.5));
+}
+.navigation ul li.hoveredwhite a::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: -50px;
+  width: 50px;
+  height: 50px;
+  background-color: transparent;
+  border-radius: 50%;
+  box-shadow: 35px 35px 0 10px var(--white);
+  pointer-events: none;
+}
+.navigation ul li.hoveredwhite a::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -50px;
+  width: 50px;
+  height: 50px;
+  background-color: transparent;
+  border-radius: 50%;
+  box-shadow: 35px -35px 0 10px var(--white);
+  pointer-events: none;
+}
+/**           menu 2*/
+.main{
+  transition: all ease-in-out .5s .5s  ;
+}
+.main.active {
+  width: calc(100% - 80px);
+  left: 80px;
+}
+hr.active{
+  margin-right: 20px;
+  width: 55px !important;
+  transition: .3s .3s;
+}
+.toggle.active:not(.desactive){
+  animation: colorwhite-dark .3s .3s  ;
+  transform: rotateY(180deg);
+  transition: all linear .5s;
+}
+.toggle.desactive:not(.active){
+  animation: colordark-white .3s .3s  ;
+  transform: rotateY(-180deg);
+  transition: all linear .5s;
+}
+@keyframes colorwhite-dark {
+  from {
+    color:var(--white) ;
+    text-shadow: 
+    0 0 10px  #ffffffc4,
+    0 0 15px  #ffffffc4;
+  }
+  to{
+    color: var(--black1);
+    shadow: none;
+  }
+}
+@keyframes colordark-white {
+  from {
+    color:var(--white) ;
+    text-shadow: 
+    0 0 10px  #ffffffc4,
+    0 0 15px  #ffffffc4;
+  }
+  to{
+    color: var(--black1);
+    shadow: none;
+  }
+}
+
+.is_focus{
+  transform: translate(2px,-50px) !important;
+}
+#icon{
+  transform: translateX(350px);
+}
+
+/*form*/
+#form label{
+  font-size:17px !important;
+}
+#blockimg{
+  transition: all linear .3s .3s;
+}
+.divcard{
+  transition: all linear .4s .1s;
+}
+#blockimg.leftActive{
+  left:73% !important;
+  
+}
+input[type="date"]::-webkit-calendar-picker-indicator {
+  background:rgb(30, 58, 138);
+}
+input.error{
+  border-color: red !important;
+}
+.Export:hover{
+  background-color: rgb(221, 221, 221) !important;
+  color: #1500ff !important;
+}
+
+/* Error state */
+.react-tel-input .special-label.special-label-focus {
+  color: #1976d2; /* Red text color for the label when there's an error */
+}
+
+/* Error state */
+.react-tel-input .special-label.special-label-error {
+  color: red; /* Red text color for the label when there's an error */
+}
+
+.react-tel-input .form-control.form-control-error {
+  border: none;
+  outline: 1px solid red; /* Red border for the input when there's an error */
+}

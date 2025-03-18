@@ -1,0 +1,96 @@
+
+.cartDashBoard-yellow:hover{
+    background-color: #f59e0b !important;
+    color: #ffffff !important;
+}
+.cartDashBoard-green:hover{
+    background-color: #10b981 !important;
+    color: #ffffff !important;
+}
+.cartDashBoard-red:hover{
+    background-color: #ef4444 !important;
+    color: #ffffff !important;
+}
+.cartDashBoard-blue:hover{
+    background-color: #3b82f6 !important;
+    color: #ffffff !important;
+}
+.cartDashBoard-yellow{
+    color: #f59e0b !important;
+}
+.cartDashBoard-green{
+    color: #10b981 !important;
+}
+.cartDashBoard-red{
+    color: #ef4444 !important;
+}
+.cartDashBoard-blue{
+    color: #3b82f6 !important;
+}
+
+:is(.cartDashBoard-text-Active,
+.cartDashBoard-DescriptionIcon-Active){
+    font-size:25px !important;
+}
+.cartDashBoard-Count-Active{
+    font-size:40px !important;
+}
+.cartDashBoard-Description-Active{
+    font-size:19.5px !important;
+}
+/* icon */
+.cartDashBoard-users-Active,
+.cartDashBoard-chalkboard-teacher-Active{
+    font-size:40px !important;
+}
+:is(.cartDashBoard-male-Active,
+.cartDashBoard-female-Active){
+    font-size:45px !important;
+}
+:is(.cartDashBoard-male-Active,
+    .cartDashBoard-female-Active,
+    .cartDashBoard-users-Active,
+    .cartDashBoard-chalkboard-teacher-Active,
+    .cartDashBoard-Description-Active,
+    .cartDashBoard-Count-Active,
+    .cartDashBoard-text-Active,
+    .cartDashBoard-DescriptionIcon-Active){
+        opacity:.9;
+}
+.xl4{
+    font-size: 35px !important;
+}
+
+#cardContainer{
+    row-gap: 0.75rem;
+    column-gap: 1.5rem;
+}
+#cardContainer.active{
+    column-gap: 1.25rem;
+}
+.cartDashBoard{
+    transition: all ease-in-out .5s 0s;
+    scale:1.05;
+}
+.cartDashBoard.active{
+    scale:1;
+}
+.cartDashBoard div{
+    opacity: 1;
+}
+.cartDashBoard.active:hover {
+    transform: scale(1.1);
+    box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.2);
+}
+.cartDashBoard:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.2);
+}
+.Btn{
+    border:none !important;
+}
+.Btn:hover{
+    color:#ffffff;
+    background-color: #2a2185 !important;
+    border:#2a2185;
+}

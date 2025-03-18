@@ -1,0 +1,97 @@
+{
+ "menu": {
+    "menu": "M E N U",
+    "viewProfile": "Voir Profil",
+    "logOut": "Se déconnecter",
+    "dashboard": "Tableau de Bord",
+    "students": "Élèves",
+    "tuition": "Scolarité",
+    "teachers": "Enseignants",
+    "courses": "Cours",
+    "attendance": "Emargements",
+    "grades": "Notes",
+    "rooms": "Salles",
+    "classes": "Classes",
+    "timetable": "Emplois du Temps"
+  },
+  "dashboard": {
+    "students": "Élèves",
+    "desc_students": "Tous les élèves enregistrés",
+    "boys": "Garçons",
+    "desc_boys": "Garçons inscrits",
+    "girls": "Filles",
+    "desc_girls": "Filles inscrites",
+    "class": "Classes",
+    "desc_class": "Classes totales"
+  },
+  "info": {
+    "info": "Info :",
+    "lastRegistered": "10 DERNIERS ENREGISTRÉS",
+    "schoolStats": "STATISTIQUES SCOLARITÉ",
+    "availableRooms": "SALLES DISPONIBLES"
+  },
+  "actions": {
+    "details": "Détails",
+    "edit": "Éditer",
+    "delete": "Supprimer",
+    "cancel": "Annuler",
+    "add": "Ajouter un {{NomTable}}",
+    "deleteSelected": "Supprimer la sélection de {{NomTable}}",
+    "download": "Télécharger en ",
+    "export": "Exporter",
+    "RefreshData": "Actualiser les données"
+  },
+  "export": {
+    "exportAllData": "Exporter toutes les données",
+    "exportAllRows": "Exporter toutes les lignes",
+    "exportPageRows": "Exporter les lignes de la page",
+    "exportSelectedRows": "Exporter les lignes sélectionnées",
+    "exportType": "Type de Exportation",
+    "exportTo": "Exporter en "
+  },
+  "Languages": {
+    "fr": "France",
+    "en": "Anglais",
+    "de": "Allemagne",
+    "es": "Espagne"
+  },
+  "validationTexts": {
+    "deleteBy1": "Êtes-vous sûr de vouloir supprimer cet élève ?",
+    "deleteByN": "Êtes-vous sûr de vouloir supprimer les {{length}} élèves ?"
+  },
+  "TableDBName": {
+    "student": "Étudiants",
+    "prof": "Enseignants"
+  },
+  "etudiants": {
+    "list": "Liste des étudiants"
+  },
+  "professeurs": {
+    "list": "Liste des professeurs"
+  },
+  "Data": { 
+    "matricule": "Matricule",
+    "image": "Image",
+    "civilite": "Civilité",
+    "lienParenté": "Lien de Parenté",
+    "profession": "Profession",
+    "nom": "Nom",
+    "prenom": "Prénom",
+    "nationalite": "Nationalité",
+    "cin": "CIN",
+    "datenaissance": "Date de Naissance",
+    "adresse": "Adresse",
+    "ville": "Ville",
+    "codepostal": "Code Postal",
+    "pays": "Pays",
+    "email": "Email",
+    "telephone": "Téléphone",
+    "dateembauche": "Date d'Embauche",
+    "salaire": "Salaire",
+    "nombanque": "Nom de la Banque",
+    "rib": "RIB",
+    "observation": "Observation",
+    "genre": "Genre",
+    "lieunaissance": "Lieu de naissance"
+  }
+}

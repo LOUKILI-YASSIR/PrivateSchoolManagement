@@ -1,0 +1,103 @@
+{
+  "menu": {
+    "menu": "M E N U",
+    "viewProfile": "View Profile",
+    "logOut": "Log Out",
+    "dashboard": "Dashboard",
+    "students": "Students",
+    "tuition": "Tuition",
+    "teachers": "Teachers",
+    "courses": "Courses",
+    "attendance": "Attendance",
+    "grades": "Grades",
+    "rooms": "Rooms",
+    "classes": "Classes",
+    "timetable": "Timetable"
+  },
+  "dashboard": {
+    "students": "Students",
+    "desc_students": "All registered students",
+    "boys": "Boys",
+    "desc_boys": "Registered boys",
+    "girls": "Girls",
+    "desc_girls": "Registered girls",
+    "class": "Classes",
+    "desc_class": "Total classes"
+  },
+  "info": {
+    "info": "Info:",
+    "lastRegistered": "10 LAST REGISTERED",
+    "schoolStats": "TUITION STATISTICS",
+    "availableRooms": "AVAILABLE ROOMS"
+  },
+  "actions": {
+    "details": "Details",
+    "edit": "Edit",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "add": "Add a {{NomTable}}",
+    "deleteSelected": "Delete selected {{NomTable}}",
+    "download": "Download in",
+    "export": "Export",
+    "RefreshData": "Refresh Data"
+  },
+  "export": {
+    "title": "Export",
+    "exportAllData": "Export all data",
+    "exportAllRows": "Export all rows",
+    "exportPageRows": "Export page rows",
+    "exportSelectedRows": "Export selected rows",
+    "exportType": "Export Type",
+    "exportTo": "Export to"
+  },
+  "Languages": {
+    "fr": "French",
+    "en": "English",
+    "de": "German",
+    "es": "Spanish"
+  },
+  "validationTexts": {
+    "deleteBy1": "Are you sure you want to delete this student?",
+    "deleteByN": "Are you sure you want to delete the {{length}} students?"
+  },
+  "TableDBName": {
+    "student": "Students",
+    "prof": "Teachers"
+  },
+  "etudiants": {
+    "list": "Student list"
+  },
+  "professeurs": {
+    "list": "Teacher list"
+  },
+  "Data": { 
+    "matricule": "Registration number",
+    "image": "Image",
+    "civilite": "Civility",
+    "lienparenté": "Family relationship",
+    "profession": "Profession",
+    "nom": "Last name",
+    "prenom": "First name",
+    "nationalite": "Nationality",
+    "cin": "National ID",
+    "datenaissance": "Date of birth",
+    "adresse": "Address",
+    "ville": "City",
+    "codepostal": "Postal code",
+    "pays": "Country",
+    "email": "Email",
+    "telephone": "Phone number",
+    "dateembauche": "Hiring date",
+    "salaire": "Salary",
+    "nombanque": "Bank name",
+    "rib": "IBAN",
+    "observation": "Observation",
+    "genre": "Gender",
+    "lieunaissance": "Place of birth"
+  },
+  "Inputs" : {
+    "nationalite" : {
+      
+    }
+  }   
+}

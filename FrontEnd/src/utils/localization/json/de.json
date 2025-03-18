@@ -1,0 +1,103 @@
+{
+  "menu": {
+    "menu": "M E N U",
+    "viewProfile": "Profil anzeigen",
+    "logOut": "Abmelden",
+    "dashboard": "Dashboard",
+    "students": "Schüler",
+    "tuition": "Schulgeld",
+    "teachers": "Lehrer",
+    "courses": "Kurse",
+    "attendance": "Anwesenheit",
+    "grades": "Noten",
+    "rooms": "Räume",
+    "classes": "Klassen",
+    "timetable": "Stundenplan"
+  },
+  "dashboard": {
+    "students": "Schüler",
+    "desc_students": "Alle registrierten Schüler",
+    "boys": "Jungen",
+    "desc_boys": "Registrierte Jungen",
+    "girls": "Mädchen",
+    "desc_girls": "Registrierte Mädchen",
+    "class": "Klassen",
+    "desc_class": "Gesamte Klassen"
+  },
+  "info": {
+    "info": "Info:",
+    "lastRegistered": "10 LETZTE REGISTRIERTE",
+    "schoolStats": "SCHULGELDSTATISTIKEN",
+    "availableRooms": "VERFÜGBARE RÄUME"
+  },
+  "actions": {
+    "details": "Details",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "cancel": "Abbrechen",
+    "add": "{{NomTable}} hinzufügen",
+    "deleteSelected": "Ausgewählte {{NomTable}} löschen",
+    "download": "Herunterladen in",
+    "export": "Exportieren",
+    "RefreshData": "Daten aktualisieren"
+  },
+  "export": {
+    "title": "Exportieren",
+    "exportAllData": "Alle Daten exportieren",
+    "exportAllRows": "Alle Zeilen exportieren",
+    "exportPageRows": "Seitenzeilen exportieren",
+    "exportSelectedRows": "Ausgewählte Zeilen exportieren",
+    "exportType": "Exporttyp",
+    "exportTo": "Exportieren nach"
+  },
+  "Languages": {
+    "fr": "Französisch",
+    "en": "Englisch",
+    "de": "Deutsch",
+    "es": "Spanisch"
+  },
+  "validationTexts": {
+    "deleteBy1": "Sind Sie sicher, dass Sie diesen Schüler löschen möchten?",
+    "deleteByN": "Sind Sie sicher, dass Sie die {{length}} Schüler löschen möchten?"
+  },
+  "TableDBName": {
+    "student": "Schüler",
+    "prof": "Lehrer"
+  },
+  "etudiants": {
+    "list": "Liste der Studenten"
+  },
+  "professeurs": {
+    "list": "Liste der Lehrer"
+  },
+  "Data": { 
+    "matricule": "Registrierungsnummer",
+    "image": "Bild",
+    "civilite": "Anrede",
+    "lienparenté": "Familienbeziehung",
+    "profession": "Beruf",
+    "nom": "Nachname",
+    "prenom": "Vorname",
+    "nationalite": "Nationalität",
+    "cin": "Personalausweis",
+    "datenaissance": "Geburtsdatum",
+    "adresse": "Adresse",
+    "ville": "Stadt",
+    "codepostal": "Postleitzahl",
+    "pays": "Land",
+    "email": "E-Mail",
+    "telephone": "Telefonnummer",
+    "dateembauche": "Einstellungsdatum",
+    "salaire": "Gehalt",
+    "nombanque": "Bankname",
+    "rib": "IBAN",
+    "observation": "Bemerkung",
+    "genre": "Geschlecht",
+    "lieunaissance": "Geburtsort"
+  },
+  "Inputs" : {
+    "nationalite" : {
+      
+    }
+  }   
+}
