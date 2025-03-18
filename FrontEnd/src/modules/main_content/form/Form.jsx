@@ -68,7 +68,7 @@ const MultiStepForm = ({ matricule = null, row = null, setButtons }) => {
     if (cityOptions.length > 0) {
       const currentVille = getValues('VILLE_1');
       const isValid = cityOptions.some(option => option.value === currentVille);
-      if (!isValid) {
+      if (!isValid && currentVille !== cityOptions[0].value) { // Only set if different
         setValue('VILLE_1', cityOptions[0].value, { shouldValidate: true });
       }
     }
@@ -148,7 +148,7 @@ const MultiStepForm = ({ matricule = null, row = null, setButtons }) => {
       }
       setValue(label, value, { shouldValidate: true });
     },
-    [setValue]
+    [setValue, setCityOptions] // Ensure all dependencies are listed
   );
 
   const handlePostData = usePostData(TableName);
@@ -164,10 +164,12 @@ const MultiStepForm = ({ matricule = null, row = null, setButtons }) => {
       const value = getValues(`${field.label}_${activeStep + 1}`);
       return isFieldValid(field, value);
     });
+  
     if (!triggeredValid || hasFieldErrors || !allFieldsValid.every(isValid => isValid)) {
+      message.error('Validation failed. Please correct the errors before proceeding.');
       return;
     }
-
+  
     try {
       await axios.get('http://127.0.0.1:8000/sanctum/csrf-cookie', { withCredentials: true });
       const mapping = {
@@ -175,18 +177,27 @@ const MultiStepForm = ({ matricule = null, row = null, setButtons }) => {
         professeurs: ['Pr'],
       };
       const processedData = { ...data };
-      steps.forEach((step) => {
-        step.Fields.forEach((field) => {
+  
+      // Process TEXT_SELECT fields
+      steps.forEach((step, stepIndex) => {
+        step.Fields.forEach(field => {
           if (field.type === 'TEXT_SELECT') {
-            const otherKey = `${field.label}_other`;
-            if (processedData[otherKey]) {
-              // Replace field.label with the custom value from field.label_other
-              processedData[field.label] = processedData[otherKey];
-              delete processedData[otherKey]; // Remove the _other key
+            const fieldKey = `${field.label}_${stepIndex + 1}`;
+            const otherKey = `${fieldKey}_other`;
+            const selectValue = processedData[fieldKey];
+            const otherValue = processedData[otherKey];
+  
+            // If "Autre" is selected, use the "other" value if provided; otherwise, keep the select value
+            if (selectValue === 'Autre' && otherValue) {
+              processedData[fieldKey] = otherValue;
             }
+            // Clean up the "_other" key regardless of whether it's used
+            delete processedData[otherKey];
           }
         });
       });
+  
+      // Transform keys with suffixes (e.g., _1, _2) into the final format
       const newData = Object.entries(processedData).reduce((acc, [key, value]) => {
         const match = key.match(/_(\d+)$/);
         const index = match ? parseInt(match[1], 10) - 1 : 0;
@@ -195,7 +206,7 @@ const MultiStepForm = ({ matricule = null, row = null, setButtons }) => {
         acc[`${cleanKey}${suffix}`] = String(value);
         return acc;
       }, {});
-
+  
       if (!matricule) {
         await handlePostData.mutate(newData);
       } else {
@@ -206,6 +217,7 @@ const MultiStepForm = ({ matricule = null, row = null, setButtons }) => {
       message.error('Submission failed: ' + error.message);
     }
   };
+  const submitForm = useCallback(handleSubmit(onSubmit), [handleSubmit, onSubmit]);
 
   useEffect(() => {
     if (setButtons) {
@@ -214,10 +226,10 @@ const MultiStepForm = ({ matricule = null, row = null, setButtons }) => {
         totalSteps: steps.length,
         nextStep: onNext,
         prevStep: onPrev,
-        submitForm: handleSubmit(onSubmit),
+        submitForm,
       });
     }
-  }, [activeStep, steps.length, onNext, onPrev, handleSubmit, onSubmit, setButtons]);
+  }, [activeStep, steps.length, onNext, onPrev, submitForm, setButtons]);
 
   return (
     <form className="p-4">
@@ -259,6 +271,8 @@ const MultiStepForm = ({ matricule = null, row = null, setButtons }) => {
                 tableName={TableName}
                 matricule={matricule}
                 setValue={setValue}
+                watch={watch}
+                getValues={getValues}
               />
               {errors[fieldName] && (
                 <p className="text-red-600 text-[13px] pl-3">
