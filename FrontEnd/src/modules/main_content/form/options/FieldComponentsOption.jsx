@@ -7,7 +7,6 @@ import 'react-phone-input-2/lib/material.css';
 import { Upload, Button, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import imageCompression from 'browser-image-compression';
-import { useFormContext } from 'react-hook-form';
 export const FieldComponents = {
   TEXT: ({ register, fieldItem, handleChange, errors }) => (
     <TextField
@@ -23,6 +22,8 @@ export const FieldComponents = {
 
   SELECT : ({ register, fieldItem, handleChange, errors }) => {
     const options = useMemo(() => fieldItem.props.options, [fieldItem.props.options]);
+    const isValidValue = options.some(option => option.value === fieldItem.value);
+    const currentValue = isValidValue ? fieldItem.value : '';
   
     return (
       <Fragment>
@@ -33,7 +34,7 @@ export const FieldComponents = {
           label={fieldItem.props.label}
           fullWidth
           error={!!errors[fieldItem.label]}
-          value={fieldItem.value ?? ''} // Ensuring value is never undefined
+          value={currentValue}
         >
           {options.map((option, index) => (
             <MenuItem key={`${option.value}-${index}`} value={option.value}>
@@ -44,113 +45,6 @@ export const FieldComponents = {
       </Fragment>
     );
   },  
-  TEXT_SELECT: ({ register, fieldItem, errors, setValue, watch }) => {
-    const options = fieldItem.props.options;
-    const otherOptionValue = 'Autre';
-    const otherFieldName = `${fieldItem.label}_other`;
-  
-    // Check if the current value exists in options
-    const isValueInOptions = options.some(option => option.value === fieldItem.value);
-    
-    // Initialize select value: use fieldItem.value if it's an option, otherwise "Autre"
-    const [selectValue, setSelectValue] = useState(
-      isValueInOptions ? fieldItem.value : otherOptionValue
-    );
-    
-    // Initialize text field value: use fieldItem.value if not in options, otherwise empty
-    const [otherValue, setOtherValue] = useState(
-      !isValueInOptions ? fieldItem.value : ''
-    );
-  
-    // Validation for the "other" text field
-    const textValidation = {
-      pattern: {
-        value: /^[A-Za-z]+(?:-[A-Za-z]+)?(?:\s[A-Za-z]+(?:-[A-Za-z]+)?)*$/,
-        message: "Format invalide. Utilisez le format: Abcd, Abcd Abcd, Abcd-Abcd, ou Abcd-Abcd Abcd"
-      },
-      required: {
-        value: selectValue === otherOptionValue,
-        message: "Ce champ est requis lorsque 'Autre' est sélectionné"
-      }
-    };
-  
-    // Handle select dropdown changes
-    const handleSelectChange = (e) => {
-      const value = e.target.value;
-      setSelectValue(value);
-      
-      if (value === otherOptionValue) {
-        // If selecting "Autre", keep the current otherValue if it exists
-        setValue(otherFieldName, otherValue, { shouldValidate: true });
-      } else {
-        // If selecting a predefined option, clear the otherValue
-        setOtherValue('');
-        setValue(otherFieldName, '', { shouldValidate: false });
-        setValue(fieldItem.label, value, { shouldValidate: true });
-      }
-    };
-  
-    // Handle text field changes
-    const handleTextChange = (e) => {
-      const value = e.target.value;
-      setOtherValue(value);
-      setValue(otherFieldName, value, { shouldValidate: true });
-    };
-
-    // Handle text field blur
-    const handleTextBlur = () => {
-      if (otherValue) {
-        setValue(otherFieldName, otherValue, { shouldValidate: true });
-      }
-    };
-  
-    return (
-      <Box sx={{ width: '100%' }}>
-        <InputLabel sx={{ mb: 1 }}>{fieldItem.props.label}</InputLabel>
-        <Select
-          {...register(fieldItem.label, fieldItem.validation)}
-          onChange={handleSelectChange}
-          label={fieldItem.props.label}
-          fullWidth
-          error={!!errors[fieldItem.label]}
-          value={selectValue}
-          sx={{
-            '& .MuiSelect-select': { padding: '12px 14px' },
-            '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'primary.main' },
-          }}
-        >
-          {options.map((option, index) => (
-            <MenuItem
-              key={`${option.value}-${index}`}
-              value={option.value}
-              sx={{ '&:hover': { backgroundColor: 'action.hover' } }}
-            >
-              {option.label}
-            </MenuItem>
-          ))}
-          <MenuItem value={otherOptionValue}>Autre</MenuItem>
-        </Select>
-        {(selectValue === otherOptionValue || !isValueInOptions) && (
-          <TextField
-            label="Précisez"
-            fullWidth
-            value={otherValue}
-            onChange={handleTextChange}
-            onBlur={handleTextBlur}
-            error={!!errors[otherFieldName]}
-            helperText={errors[otherFieldName]?.message}
-            sx={{
-              mt: 2,
-              '& .MuiOutlinedInput-root': {
-                '&:hover fieldset': { borderColor: 'primary.main' },
-              },
-            }}
-            {...register(otherFieldName, textValidation)}
-          />
-        )}
-      </Box>
-    );
-  },
 AUTO_COMPLETE_SELECT: ({
   register,
   fieldItem,

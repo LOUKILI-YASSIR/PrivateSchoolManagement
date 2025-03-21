@@ -6,7 +6,7 @@ export const getFormStepsEt = () => {
         ADRESSE, VILLE, CODE_POSTAL, DATE_NAISSANCE, GENRE, PAYS, NATIONALITE,
         LIEU_NAISSANCE, EMAIL, NOM, OBSERVATION, PRENOM, TELEPHONE1, TELEPHONE2,
         PROFILE, 
-        FORM_OPTION: { TYPE: { TEXT_SELECT , TEXT } }
+        FORM_OPTION: { TYPE: { SELECT , TEXT } }
     } = getFormSharedOptions();
 
     // Define options for Parent relationship dynamically
@@ -29,7 +29,7 @@ export const getFormStepsEt = () => {
             title: "Responsable d'Etudiant",
             Fields: [
                 generateField({
-                    type: TEXT_SELECT,
+                    type: SELECT,
                     label: "Lien de Parenté",
                     options: lienParenteOptions.map(value => ({
                         value,

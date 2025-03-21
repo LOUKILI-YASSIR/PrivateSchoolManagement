@@ -13,7 +13,6 @@ export const getFormOption = () => {
       PHONE: "PHONE",
       DATE: "DATE",
       IMAGE: "IMAGE",
-      TEXT_SELECT: "TEXT_SELECT",
       AUTO_COMPLETE_SELECT: "AUTO_COMPLETE_SELECT", 
       NUMBER: "NUMBER",
     },
