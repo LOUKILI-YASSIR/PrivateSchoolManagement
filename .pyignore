@@ -1,0 +1,73 @@
+# Node.js (for Express & Vite)
+node_modules
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+pnpm-debug.log
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+dist
+build
+.cache
+.vscode
+.idea
+.DS_Store
+nodemon-debug.json
+
+# Laravel
+vendor
+composer.lock
+public/storage
+storage
+bootstrap/cache
+Homestead.yaml
+Homestead.json
+nfs
+phpunit.result.cache
+
+# Vite
+.vite
+.vitepress/cache
+.vite/deps
+.vite/temp
+.vite-manifest.json
+local
+
+# Editor & OS files
+vscode
+idea
+swp
+swo
+swn
+sublime-workspace
+sublime-project
+Thumbs.db
+bak
+backup
+tmp
+lock
+log
+
+# Docker
+docker-compose.override.yml
+docker-compose.override.yaml
+.env.docker
+docker-entrypoint.sh
+pid
+
+# Miscellaneous
+iml
+proj
+sln
+sw?
+
+# Git-related files
+.git
+.gitignore
+.gitattributes
+.gitmodules
+.gitkeep
+.gitconfig
