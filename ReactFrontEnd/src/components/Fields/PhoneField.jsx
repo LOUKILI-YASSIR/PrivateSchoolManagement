@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/material.css';
 
-export default function PHONE ({ register, fieldItem, handleChange, errors }) {
-    const { ref } = register(fieldItem.label, fieldItem.validation);
-    const [isfocus,setisfocus]=useState(false)
+export default function PHONE ({ register, fieldItem, handleChange, errors, isFilter = false }) {
+    const [isfocus, setisfocus] = useState(false);
+    
     // Helper to compute the index from the label's last character
     const getIndex = () => {
       // Extract the number before the underscore
@@ -14,6 +14,8 @@ export default function PHONE ({ register, fieldItem, handleChange, errors }) {
   
     // Function to update the error class on the input and label elements
     const updateErrorClass = () => {
+      if (isFilter) return;
+      
       const index = getIndex();
       const inputElements = document.querySelectorAll(".react-tel-input .form-control");
       const labelElements = document.querySelectorAll(".react-tel-input .special-label");
@@ -28,7 +30,6 @@ export default function PHONE ({ register, fieldItem, handleChange, errors }) {
             inputElements[index].classList.remove("form-control-focus");
             labelElements[index].classList.remove("special-label-focus");
           }
-
         } else {
           // Remove error classes
           inputElements[index].classList.remove("form-control-error");
@@ -37,13 +38,14 @@ export default function PHONE ({ register, fieldItem, handleChange, errors }) {
       }
     };
   
-  
     // Update the error class whenever errors or the field value change
     useEffect(() => {
       updateErrorClass();
     }, [errors, fieldItem.value]);
-    useEffect(()=>handleupdateFocus(),[isfocus])
-    const handleupdateFocus = ()=>{
+    
+    useEffect(() => handleupdateFocus(), [isfocus]);
+    
+    const handleupdateFocus = () => {
       const index = getIndex();
       const labelElements = document.querySelectorAll(".react-tel-input .special-label");
   
@@ -54,15 +56,32 @@ export default function PHONE ({ register, fieldItem, handleChange, errors }) {
           labelElements[index].classList.remove("special-label-focus");
         }
     }
-    return (
-      <PhoneInput
-        {...register(fieldItem.label, fieldItem.validation)}
-        inputRef={ref}
-        value={fieldItem.value ?? ""}
-        onFocus={()=>setisfocus(true)}
-        onBlur={()=>setisfocus(false)}
-        country={fieldItem.value ?? "ma"}
-        onChange={(value) => {
+
+    const phoneInputProps = isFilter ? {
+        value: fieldItem.value ?? "",
+        onFocus: () => setisfocus(true),
+        onBlur: () => setisfocus(false),
+        country: fieldItem.value ?? "ma",
+        onChange: (value) => {
+          const event = {
+            target: {
+              value: value && !value.startsWith("+") ? "+" + value : value || "",
+            },
+          };
+          handleChange(event);
+        },
+        specialLabel: fieldItem.props.label,
+        placeholder: fieldItem.props.placeholder,
+        enableSearch: true,
+        autocompleteSearch: true,
+        inputStyle: { width: "100%" }
+    } : {
+        ...register(fieldItem.label, fieldItem.validation),
+        value: fieldItem.value ?? "",
+        onFocus: () => setisfocus(true),
+        onBlur: () => setisfocus(false),
+        country: fieldItem.value ?? "ma",
+        onChange: (value) => {
           const event = {
             target: {
               value: value && !value.startsWith("+") ? "+" + value : value || "",
@@ -70,12 +89,17 @@ export default function PHONE ({ register, fieldItem, handleChange, errors }) {
           };
           handleChange(event, fieldItem.label);
           updateErrorClass();
-        }}
-        specialLabel={fieldItem.props.label}
-        placeholder={fieldItem.props.placeholder}
-        enableSearch
-        autocompleteSearch
-        inputStyle={{ width: "100%" }}
+        },
+        specialLabel: fieldItem.props.label,
+        placeholder: fieldItem.props.placeholder,
+        enableSearch: true,
+        autocompleteSearch: true,
+        inputStyle: { width: "100%" }
+    };
+  
+    return (
+      <PhoneInput
+        {...phoneInputProps}
       />
     );
-  }
+}

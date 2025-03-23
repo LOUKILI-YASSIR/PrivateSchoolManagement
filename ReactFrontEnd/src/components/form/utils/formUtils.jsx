@@ -20,7 +20,7 @@ export const getDefaultState = () => {
 
   return {
     ETUDIANTS: {
-      GENRE_1: "H",
+      GENRE_1: "Homme",
       PROFILE_PICTURE_1: "/uploads/default.jpg",
       NOM_1: "",
       PRENOM_1: "",

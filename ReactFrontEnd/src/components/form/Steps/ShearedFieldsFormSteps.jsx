@@ -50,13 +50,13 @@ import { countryPhonePrefixes, generateCountryOptions, postalCodeValidators } fr
         type: SELECT,
         label: 'Genre',
         options: [
-          { value: 'H', label: 'Homme' },
-          { value: 'F', label: 'Femelle' }
+          { value: 'Homme', label: 'Homme' },
+          { value: 'Femelle', label: 'Femelle' }
         ],
         classes:" mt-5",
         validation: commonValidations.combine(
           commonValidations.required("Genre"),
-          commonValidations.inArray("Genre", ["H", "F"], "Genre doit être Homme ou Femme")
+          commonValidations.inArray("Genre", ["Homme", "Femelle"], "Genre doit être Homme ou Femme")
         )
       }),
   
@@ -145,7 +145,7 @@ import { countryPhonePrefixes, generateCountryOptions, postalCodeValidators } fr
 
       // City field based on country
       VILLE: generateField({
-        type: AUTO_COMPLETE_SELECT,
+        type: SELECT,
         label: 'Ville',
         validation: commonValidations.required('Ville')
       }),
@@ -196,7 +196,7 @@ import { countryPhonePrefixes, generateCountryOptions, postalCodeValidators } fr
       ...["NATIONALITE", "PAYS"].reduce((acc, field) => {
         const fieldLabel = formatLabel(field);
         acc[field] = generateField({
-          type: AUTO_COMPLETE_SELECT,
+          type: SELECT,
           label: fieldLabel,
           options: generateCountryOptions(),
           validation: commonValidations.combine(

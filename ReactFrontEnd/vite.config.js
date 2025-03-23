@@ -5,6 +5,6 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],  
   optimizeDeps: {
-    include: ['@progress/kendo-react-dateinputs',"dayjs"]
+    include: ['@progress/kendo-react-dateinputs',"dayjs","react-window", "react-select",]
   },
 })

@@ -14,8 +14,14 @@ import { generateCityOptions } from './utils/countryUtils';
 
 const MultiStepForm = ({ matricule = null, row = null, setButtons }) => {
   const { TableName } = useContext(MainContext);
-  const ImgPathUploads = `/uploads/${TableName}`;
+  const ImgPathUploads = `http://localhost:3000/uploads/${TableName}`;
   const { t: Traduction } = useTranslation();
+
+  // Add error handling for image loading
+  const handleImageError = (e) => {
+    e.target.onerror = null; // Prevent infinite loop
+    e.target.src = '/default.jpg'; // Set a default image
+  };
 
   const steps =
     TableName === 'etudiants'
@@ -239,6 +245,7 @@ const MultiStepForm = ({ matricule = null, row = null, setButtons }) => {
                       fieldItem.label === 'VILLE'
                         ? cityOptions
                         : fieldItem.props.options,
+                    onError: handleImageError, // Add error handler for images
                   },
                 }}
                 register={register}

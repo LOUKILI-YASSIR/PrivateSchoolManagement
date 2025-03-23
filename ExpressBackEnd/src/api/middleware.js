@@ -39,7 +39,7 @@ const setupMiddleware = (app) => {
   }));
 
   // Serve uploaded files from /uploads
-  app.use("/uploads", express.static(path.join(__dirname, "../../../public/uploads")));
+  app.use("/uploads", express.static(path.join(__dirname, "../../public/uploads")));
 };
 
 // Simple sanitize function (allows only alphanumerics)
@@ -48,11 +48,15 @@ const sanitize = (name) => name.replace(/[^a-zA-Z0-9_]/g, '');
 // Configure multer storage with dynamic destination folder
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const baseDir = path.join(__dirname, '../../../public/uploads');
+    const baseDir = path.join(__dirname, '../../public/uploads');
     const tableName = sanitize(req.params.tablename) || 'default';
     // Always use the table folder as the upload destination.
     const uploadDir = path.join(baseDir, tableName);
-    fs.mkdirSync(uploadDir, { recursive: true });
+    
+    // Ensure the upload directory exists
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
     
     // If matricule is provided in URL, use it; otherwise, generate it.
     if (req.params.matricule) {
@@ -80,9 +84,6 @@ const storage = multer.diskStorage({
     cb(null, `${matricule}${ext}`);
   }
 });
-
-
-
 
 const upload = multer({
   storage,

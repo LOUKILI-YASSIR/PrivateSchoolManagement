@@ -11,13 +11,16 @@ router.post("/upload/:tablename/:matricule?", upload.single("fileToUpload"), (re
     return res.status(400).json({ success: false, message: "File upload failed." });
   }
 
-  const publicDir = path.join(__dirname, "../../../public");
-  let relativePath = req.file.path.replace(publicDir, "");
-  relativePath = relativePath.split(path.sep).join('/');
+  // Extract just the filename without any system paths
+  const filename = path.basename(req.file.path);
+  const tableName = req.params.tablename;
+  
+  // Return the filename with the table name prefix
+  const responseFilename = `${tableName}/${filename}`;
 
   res.json({
     success: true,
-    filename: relativePath,
+    filename: responseFilename,
     matricule: req.matricule
   });
 });

@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Image } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
-import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { generateCityOptions, generateCountryOptions } from "../../form/utils/countryUtils";
+
 /**
  * This function defines and returns the column structure for tables,
  * with advanced filtering and configuration options.
@@ -64,7 +64,13 @@ export const useColumns = (data, TableName) => {
               const [imageSrc, setImageSrc] = useState(renderedCellValue || "/images/default.jpg");
           
               useEffect(() => {
-                setImageSrc(renderedCellValue || "/images/default.jpg");
+                if (renderedCellValue) {
+                  // Convert local path to URL path
+                  const imageUrl = renderedCellValue.replace(/^file:\/\/\/?/, '');
+                  setImageSrc(`/uploads/etudiants/${imageUrl.split('/').pop()}`);
+                } else {
+                  setImageSrc("/images/default.jpg");
+                }
               }, [renderedCellValue]);
           
               return (
@@ -83,9 +89,9 @@ export const useColumns = (data, TableName) => {
           header: Traduction("Data.genre"),
           accessorKey: "GENREEt",
           filterVariant: "select",
-          filterSelectOptions: ["H", "F"],
+          filterSelectOptions: ["Homme", "Femelle"],
           columnFilterModeOptions: [...FilterModeOptions["equality"]],
-          filterFn: "equals",
+          filterFn: "equals",  
         },
         {
           header: Traduction("Data.nom"),
@@ -145,90 +151,8 @@ export const useColumns = (data, TableName) => {
         {
           header: Traduction("Data.ville"),
           accessorKey: "VILLEEt",
-          filterFn: (row, columnId, filterValue) => {
-            if (!filterValue) return true;
-            return row.getValue(columnId) === filterValue.city;
-          },
+
           filterVariant: "text",
-          Filter: ({ column }) => {
-            const [countryOptions] = useState(generateCountryOptions());
-            const [cityOptions, setCityOptions] = useState([]);
-            const [countrySelected, setCountrySelected] = useState("MA");
-            const [citySelected, setCitySelected] = useState("");
-            const [isLoading, setIsLoading] = useState(false);
-
-            useEffect(() => {
-              const loadInitialCities = async () => {
-                setIsLoading(true);
-                try {
-                  const initialCities = await generateCityOptions("MA");
-                  setCityOptions(initialCities);
-                  setCitySelected(initialCities[0]?.value || "");
-                } finally {
-                  setIsLoading(false);
-                }
-              };
-              loadInitialCities();
-            }, []);
-
-            const handleCountryChange = async (e) => {
-              const selectedCountry = e.target.value;
-              setCountrySelected(selectedCountry);
-              setIsLoading(true);
-              
-              try {
-                const newCities = await generateCityOptions(selectedCountry);
-                setCityOptions(newCities);
-                const newCity = newCities[0]?.value || "";
-                setCitySelected(newCity);
-                column.setFilterValue({ country: selectedCountry, city: newCity });
-              } finally {
-                setIsLoading(false);
-              }
-            };
-
-            const handleCityChange = (e) => {
-              const selectedCity = e.target.value;
-              setCitySelected(selectedCity);
-              column.setFilterValue({ country: countrySelected, city: selectedCity });
-            };
-
-            return (
-              <div className="flex flex-col gap-2">
-                <FormControl fullWidth size="small">
-                  <InputLabel>Pays</InputLabel>
-                  <Select
-                    value={countrySelected}
-                    onChange={handleCountryChange}
-                    label="Pays"
-                    disabled={isLoading}
-                  >
-                    {countryOptions.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-
-                <FormControl fullWidth size="small">
-                  <InputLabel>Ville</InputLabel>
-                  <Select
-                    value={citySelected}
-                    onChange={handleCityChange}
-                    label="Ville"
-                    disabled={isLoading || cityOptions.length === 0}
-                  >
-                    {cityOptions.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </div>
-            );
-          },
           columnFilterModeOptions: [...FilterModeOptions.text, ...FilterModeOptions.equality]
         },
         {

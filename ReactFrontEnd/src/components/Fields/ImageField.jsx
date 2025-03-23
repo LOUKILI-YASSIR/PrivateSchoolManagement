@@ -23,9 +23,14 @@ export default function IMAGE ({
     useEffect(() => {
       if (fieldItem.value) {
         let imageUrl = fieldItem.value;
-        if (!imageUrl.startsWith('http') && !imageUrl.startsWith('/uploads')) {
-          imageUrl = `${ImgPathUploads}/${fieldItem.value}`;
+        
+        // If the value is just a filename, construct the full URL
+        if (!imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
+          // Extract just the filename if a full path is provided
+          const filename = imageUrl.split('/').pop();
+          imageUrl = `${ImgPathUploads}/${filename}`;
         }
+        
         const timestamp = Date.now();
         setFileList([
           {
@@ -45,7 +50,11 @@ export default function IMAGE ({
       newFileList = newFileList.map((file) => {
         if (file.response) {
           const timestamp = Date.now();
-          file.url = `${file.response.filename}?t=${timestamp}`;
+          // Extract just the filename from the response
+          const filename = file.response.filename.split('/').pop();
+          // Store the full URL for preview
+          const fullUrl = `${ImgPathUploads}/${filename}?t=${timestamp}`;
+          file.url = fullUrl;
         }
         return file;
       });
@@ -56,13 +65,13 @@ export default function IMAGE ({
       } else if (info.file.status === 'done') {
         setUploading(false);
         message.success(`${info.file.name} uploaded successfully`);
-        const uploadedPath = info.file.response.filename;
+        // Store just the filename in the form value
+        const uploadedPath = info.file.response.filename.split('/').pop();
         handleChange({ target: { value: uploadedPath } }, fieldItem.label);
         setValue(fieldItem.label, uploadedPath, { shouldValidate: true });
       } else if (info.file.status === 'error') {
         setUploading(false);
         message.error(`${info.file.name} upload failed`);
-        console.error('Upload error:', info.file.response);
       }
     };
   
@@ -141,7 +150,21 @@ export default function IMAGE ({
           >
             <div style={{ width: '100%', height: '100%', position: 'relative' }}>
               {fileList.length > 0 && fileList[0].url ? (
-                <img src={fileList[0].url} alt="Upload preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <img 
+                  src={fileList[0].url} 
+                  alt="Upload preview" 
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  onError={(e) => {
+                    // Try to load the image without the timestamp
+                    const baseUrl = e.target.src.split('?')[0];
+                    e.target.src = baseUrl;
+                    // If still fails, set default image
+                    e.target.onerror = () => {
+                      e.target.onerror = null;
+                      e.target.src = '/default.jpg';
+                    };
+                  }}
+                />
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
                   <UploadOutlined style={{ fontSize: 24, marginBottom: 8 }} />
