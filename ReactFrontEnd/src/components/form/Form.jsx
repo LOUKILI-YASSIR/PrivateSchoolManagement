@@ -11,12 +11,13 @@ import { MainContext } from '../../utils/contexts/MainContext';
 import { usePostData, useUpdateData } from '../../api/queryHooks';
 import { getDefaultState } from './utils/formUtils';
 import { generateCityOptions } from './utils/countryUtils';
+import { useSelector } from 'react-redux';
 
 const MultiStepForm = ({ matricule = null, row = null, setButtons }) => {
   const { TableName } = useContext(MainContext);
-  const ImgPathUploads = `http://localhost:3000/uploads/${TableName}`;
+  const ImgPathUploads = `/uploads/${TableName}`;
   const { t: Traduction } = useTranslation();
-
+  const isDarkMode = useSelector((state) => state?.theme?.darkMode || false);
   // Add error handling for image loading
   const handleImageError = (e) => {
     e.target.onerror = null; // Prevent infinite loop
@@ -194,7 +195,7 @@ const MultiStepForm = ({ matricule = null, row = null, setButtons }) => {
       if (!matricule) {
         await handlePostData.mutate(newData);
       } else {
-        await handleUpdateData.mutate({ id: matricule, data: newData });
+        await handleUpdateData.mutate({ matricule, data: newData });
       }
       message.success('Data submitted successfully!');
     } catch (error) {
@@ -215,7 +216,7 @@ const MultiStepForm = ({ matricule = null, row = null, setButtons }) => {
   }, [activeStep, steps.length, onNext, onPrev, handleSubmit, onSubmit, setButtons]);
 
   return (
-    <form className="p-4">
+    <form className="p-4 w-full">
       <Stepper activeStep={activeStep} alternativeLabel style={{ marginBottom: '20px' }}>
         {steps.map((step, index) => (
           <Step key={index}>
@@ -224,7 +225,7 @@ const MultiStepForm = ({ matricule = null, row = null, setButtons }) => {
         ))}
       </Stepper>
 
-      <div className="flex flex-wrap gap-4">
+      <div className="flex flex-wrap gap-4 pl-32">
         {steps[activeStep].Fields.map((fieldItem, index) => {
           const FieldComponent = FieldComponents[fieldItem.type];
           const fieldName = `${fieldItem.label}_${activeStep + 1}`;
@@ -232,7 +233,7 @@ const MultiStepForm = ({ matricule = null, row = null, setButtons }) => {
             <FormControl
               key={index}
               className="mb-4"
-              style={{ width: fieldItem.type !== 'TEXTAREA' ? '430px' : '100%' }}
+              style={{ width: fieldItem.type !== 'TEXTAREA' ? '430px' : '92%' }}
             >
               <FieldComponent
                 fieldItem={{
@@ -255,6 +256,7 @@ const MultiStepForm = ({ matricule = null, row = null, setButtons }) => {
                 tableName={TableName}
                 matricule={matricule}
                 setValue={setValue}
+                isDarkMode={isDarkMode}
               />
               {errors[fieldName] && (
                 <p className="text-red-600 text-[13px] pl-3">

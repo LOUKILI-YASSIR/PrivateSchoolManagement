@@ -5,14 +5,40 @@
     "logOut": "Se déconnecter",
     "dashboard": "Tableau de Bord",
     "students": "Élèves",
-    "tuition": "Scolarité",
     "teachers": "Enseignants",
-    "courses": "Cours",
-    "attendance": "Emargements",
-    "grades": "Notes",
+    "subjects": "Matières",
     "rooms": "Salles",
-    "classes": "Classes",
+    "groups": "Groupes",
+    "period": "périodes",
     "timetable": "Emplois du Temps"
+  },
+  "login": {
+    "selectLanguage": "Sélectionner la langue",
+    "title": "Bienvenue à YL School",
+    "subtitle": "Veuillez vous connecter pour continuer",
+    "username": "Nom d'utilisateur",
+    "email": "Email",
+    "phone": "Numéro de téléphone",
+    "tabUsername": "Utilisateur",
+    "tabEmail": "Email",
+    "tabPhone": "Téléphone",
+    "password": "Mot de passe",
+    "submit": "Se connecter",
+    "forgotPassword": "Mot de passe oublié ?",
+    "rememberMe": "Se souvenir de moi",
+    "rememberMeTooltip": "Lorsqu'activé, vos identifiants de connexion seront enregistrés en toute sécurité. Vous resterez connecté sur cet appareil même après redémarrage du navigateur.",
+    "loggingIn": "Connexion en cours...",
+    "error": {
+      "invalidCredentials": "Nom d'utilisateur ou mot de passe invalide",
+      "serverError": "Erreur serveur. Veuillez réessayer plus tard",
+      "usernameRequired": "Le nom d'utilisateur est requis",
+      "emailRequired": "L'email est requis",
+      "phoneRequired": "Le numéro de téléphone est requis",
+      "passwordRequired": "Le mot de passe est requis",
+      "invalidEmail": "Veuillez saisir une adresse email valide",
+      "invalidPhone": "Veuillez saisir un numéro de téléphone valide",
+      "tooManyAttempts": "Trop de tentatives de connexion. Veuillez réessayer plus tard"
+    }
   },
   "dashboard": {
     "students": "Élèves",
@@ -23,6 +49,31 @@
     "desc_girls": "Filles inscrites",
     "class": "Classes",
     "desc_class": "Classes totales"
+  },
+  "profile": {
+    "title": "Mon Profil",
+    "accountInfo": "Informations du Compte",
+    "personalInfo": "Informations Personnelles",
+    "fullName": "Nom Complet",
+    "email": "Email",
+    "phoneNumber": "Numéro de Téléphone",
+    "role": "Rôle",
+    "joinDate": "Date d'Inscription",
+    "preferences": "Préférences",
+    "darkMode": "Mode Sombre",
+    "security": "Sécurité",
+    "changePassword": "Changer le Mot de Passe",
+    "currentPassword": "Mot de Passe Actuel",
+    "newPassword": "Nouveau Mot de Passe",
+    "confirmPassword": "Confirmer le Mot de Passe",
+    "passwordHidden": "Les informations de mot de passe sont masquées pour des raisons de sécurité",
+    "passwordMismatch": "Les mots de passe ne correspondent pas",
+    "save": "Enregistrer les Modifications",
+    "loading": "Chargement du profil...",
+    "address": "Adresse",
+    "city": "Ville",
+    "postalCode": "Code Postal",
+    "country": "Pays"
   },
   "info": {
     "info": "Info :",
@@ -42,12 +93,21 @@
     "RefreshData": "Actualiser les données"
   },
   "export": {
+    "title": "Exporter",
     "exportAllData": "Exporter toutes les données",
     "exportAllRows": "Exporter toutes les lignes",
     "exportPageRows": "Exporter les lignes de la page",
     "exportSelectedRows": "Exporter les lignes sélectionnées",
-    "exportType": "Type de Exportation",
-    "exportTo": "Exporter en "
+    "exportType": "Type d'exportation",
+    "exportTo": "Exporter en",
+    "noDataToExport": "Aucune donnée disponible à exporter",
+    "successMessage": "Exporté avec succès en fichier {{format}}",
+    "fileTypes": {
+      "csv": "Fichier CSV",
+      "excel": "Feuille de calcul Excel",
+      "pdf": "Document PDF"
+    },
+    "unavailable": "indisponible"
   },
   "Languages": {
     "fr": "France",
@@ -93,5 +153,82 @@
     "observation": "Observation",
     "genre": "Genre",
     "lieunaissance": "Lieu de naissance"
+  },
+  "charts": {
+    "genderDistribution": "Distribution par Genre",
+    "studentGenderDistribution": "Distribution des Étudiants par Genre",
+    "attendance": "Présences & Retards",
+    "performance": "Performance",
+    "performanceBySubject": "Performance par Matière",
+    "successFailure": "Réussite & Échec",
+    "successFailureRate": "Taux de Réussite & Échec",
+    "topSubjects": "Meilleures Matières",
+    "topPerformingSubjects": "Matières avec les Meilleures Performances",
+    "monthlyTrend": "Tendance Mensuelle",
+    "monthlyPerformanceTrend": "Tendance de Performance Mensuelle",
+    "performancePercentage": "Performance %"
+  },
+  "common": {
+    "student": "Étudiant",
+    "teacher": "Professeur",
+    "class": "Classe",
+    "subject": "Matière",
+    "allClasses": "Toutes les Classes",
+    "allSubjects": "Toutes les Matières",
+    "allYears": "Toutes les Années",
+    "year": "Année",
+    "percentage": "Pourcentage",
+    "performance": "Performance",
+    "success": "Réussite",
+    "failure": "Échec",
+    "from": "De",
+    "to": "À"
+  },
+  "months": {
+    "jan": "Jan",
+    "feb": "Fév",
+    "mar": "Mar",
+    "apr": "Avr",
+    "may": "Mai",
+    "jun": "Juin",
+    "jul": "Juil",
+    "aug": "Août",
+    "sep": "Sep",
+    "oct": "Oct",
+    "nov": "Nov",
+    "dec": "Déc"
+  },
+  "days": {
+    "monday": "Lundi",
+    "tuesday": "Mardi",
+    "wednesday": "Mercredi",
+    "thursday": "Jeudi",
+    "friday": "Vendredi",
+    "saturday": "Samedi",
+    "sunday": "Dimanche"
+  },
+  "attendance": {
+    "present": "Présent",
+    "absent": "Absent",
+    "late": "Retard",
+    "urgent": "Urgent"
+  },
+  "performance": {
+    "excellent": "Excellent",
+    "veryGood": "Très Bien",
+    "good": "Bien",
+    "average": "Moyen",
+    "poor": "Faible"
+  },
+  "subjects": {
+    "mathematics": "Mathématiques",
+    "physics": "Physique",
+    "chemistry": "Chimie",
+    "biology": "Biologie",
+    "english": "Anglais",
+    "french": "Français",
+    "history": "Histoire",
+    "geography": "Géographie",
+    "computerScience": "Informatique"
   }
 }

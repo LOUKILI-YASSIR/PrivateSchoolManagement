@@ -1,32 +1,46 @@
-import Login from "../components/login/Login";
+import Profile from "../components/profile/Profile";
 import Menu from "../layouts/Menu";
 import Main from "../pages/Main";
 import DashBoard from "../pages/DashBoard";
 import ErrorPage from "../components/errors/Errors";
+import Login from "../components/Auth/Login";
+import { Navigate } from "react-router-dom";
 
 const routes = [
   {
-    path: "/YLSchool/Login",
-    element: <Login />,
+    path: "/YLSchool",
+    element: <Menu />,
+    children: [
+      {
+        path: "Login",
+        element: <Login />
+      },
+      {
+        path: "DashBoard",
+        element: <DashBoard />
+      },
+      {
+        path: "Profile",
+        element: <Profile />
+      },
+      {
+        path: "Etudiants",
+        element: <Main ApiName="etudiants" />
+      },
+      {
+        path: "Professeurs",
+        element: <Main ApiName="professeurs" />
+      }
+    ]
   },
   {
-    path: "/YLSchool/DashBoard",
-    element: <Menu />,
-    content: <DashBoard />,
-  },
-  {
-    path: "/YLSchool/Etudiants",
-    element: <Menu />,
-    content: <Main ApiName="etudiants" />,
-  },
-  {
-    path: "/YLSchool/Professeurs",
-    element: <Menu />,
-    content: <Main ApiName="professeurs" />, //props of element <element content={content}/>
+    path: "/YLSchool/error",
+    element: <ErrorPage />
   },
   {
     path: "*",
-    element: <ErrorPage />,
+    element: <Navigate to="/YLSchool/error" state={{ errorType: '404' }} replace />
   },
 ];
-export default routes
+
+export default routes;

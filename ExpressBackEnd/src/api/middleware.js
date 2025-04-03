@@ -13,11 +13,6 @@ const codeMapping = {
   professeurs: 'PR'
   // Add other mappings as needed
 };
-const MaxNbrLength = {
-  etudiants: 5,
-  professeurs: 3
-  // Add other mappings as needed
-};
 
 // Setup common middlewares
 const setupMiddleware = (app) => {
@@ -39,7 +34,7 @@ const setupMiddleware = (app) => {
   }));
 
   // Serve uploaded files from /uploads
-  app.use("/uploads", express.static(path.join(__dirname, "../../public/uploads")));
+  app.use("/uploads", express.static(path.join(__dirname, "../../../ReactFrontEnd/public/uploads")));
 };
 
 // Simple sanitize function (allows only alphanumerics)
@@ -48,7 +43,7 @@ const sanitize = (name) => name.replace(/[^a-zA-Z0-9_]/g, '');
 // Configure multer storage with dynamic destination folder
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const baseDir = path.join(__dirname, '../../public/uploads');
+    const baseDir = path.join(__dirname, '../../../ReactFrontEnd/public/uploads');
     const tableName = sanitize(req.params.tablename) || 'default';
     // Always use the table folder as the upload destination.
     const uploadDir = path.join(baseDir, tableName);
@@ -62,19 +57,14 @@ const storage = multer.diskStorage({
     if (req.params.matricule) {
       req.matricule = sanitize(req.params.matricule);
       cb(null, uploadDir);
-    } else {
-      axios.get(`http://localhost:8000/api/${tableName}/count`)
-        .then(response => {
-          const count = response.data.count || 0;
-          const currentYear = new Date().getFullYear();
-          const matricule = `YLSCHOOL_${codeMapping[tableName]}_${currentYear}_${String(count + 1).padStart(MaxNbrLength[tableName], '0')}`
-          
-          req.matricule = matricule;
-          cb(null, uploadDir);
-        })
-        .catch(err => {
-          cb(err);
-        });
+    } else {    
+        const count = req.params.count || 0;
+        const currentYear = new Date().getFullYear();
+        const matricule = `YLSCHOOL_${codeMapping[tableName]}_${currentYear}_${String(count + 1).padStart(5, '0')}`
+        
+        req.matricule = matricule;
+        cb(null, uploadDir);
+        
     }
   },
   filename: (req, file, cb) => {

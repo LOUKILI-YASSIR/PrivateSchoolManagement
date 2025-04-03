@@ -10,13 +10,13 @@ i18n.use(initReactI18next).init({
     en: { translation: en },
     fr: { translation: fr },
     es: { translation: es },
-    de: { translation: de },
+    de: { translation: de }
   },
   lng: 'fr', // default language
   fallbackLng: 'fr', // fallback language
   interpolation: {
-    escapeValue: false, // React already escapes values to prevent XSS
-  },
+    escapeValue: false // React already escapes values to prevent XSS
+  }
 });
 
 export default i18n;

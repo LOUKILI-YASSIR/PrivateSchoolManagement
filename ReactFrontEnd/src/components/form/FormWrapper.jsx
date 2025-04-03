@@ -29,6 +29,7 @@ const FormWrapper = ({ matricule = null, row = null, typeOpt = 'ADD' }) => {
       btns.push({
         value: 'Soumettre',
         handleClick: submitForm,
+        color: 'primary',
       });
     }
 
@@ -55,8 +56,9 @@ const FormWrapper = ({ matricule = null, row = null, typeOpt = 'ADD' }) => {
     <ActionMenu
       DialogContentComponent={<MultiStepForm matricule={matricule} row={row} setButtons={updateButtons} />}
       contentOptions={contentOptions}
-      isTitleH1={true}
-      isFormWidth={true}
+      fullWidth={true}
+      maxWidth="lg"
+      style={{ minHeight: '60vh' }}
     />
   );
 };

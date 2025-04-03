@@ -1,0 +1,149 @@
+/* Export component styling */
+.export-icon {
+  animation: pulse 1.5s infinite ease-in-out alternate;
+}
+
+@keyframes pulse {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.2);
+  }
+}
+
+/* Disabled button styling */
+button:disabled .export-icon {
+  animation: none !important;
+  opacity: 0.5;
+  color: rgba(255, 255, 255, 1);
+}
+
+button:disabled {
+  color: rgba(255, 255, 255, 1) !important;
+  padding: 10px 40px !important;
+  font-size: large; 
+  position: relative;
+}
+
+/* Subtle disabled pattern overlay for additional visual indication */
+button:disabled::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: 10px 10px;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: 0.1;
+  z-index: 1;
+}
+
+/* Success animation */
+.export-success {
+  animation: success-spin 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes success-spin {
+  0% {
+    transform: scale(1) rotate(0deg);
+    color: inherit;
+  }
+  50% {
+    transform: scale(1.5) rotate(180deg);
+    color: #4caf50;
+  }
+  100% {
+    transform: scale(1) rotate(360deg);
+    color: inherit;
+  }
+}
+
+.export-dialog .MuiPaper-root {
+  overflow: visible !important;
+}
+
+.export-dialog .MuiPaper-root::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  right: 20px;
+  width: 16px;
+  height: 16px;
+  transform: rotate(45deg);
+  background-color: inherit;
+  border-top: inherit;
+  border-left: inherit;
+  z-index: 0;
+}
+
+/* File type selection animation */
+.file-type-selector {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.file-type-selector:hover {
+  transform: translateY(-3px);
+  filter: brightness(1.05);
+}
+
+.file-type-selector.selected {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Export option list */
+.export-option-list .export-option-item {
+  transition: all 0.2s ease;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  padding: 12px 16px;
+}
+
+.export-option-list .export-option-item:hover {
+  background-color: rgba(106, 95, 201, 0.08);
+  transform: translateX(5px);
+}
+
+.export-option-list .export-option-item.selected {
+  background-color: rgba(106, 95, 201, 0.15);
+  border-left: 3px solid rgba(106, 95, 201, 0.8);
+}
+
+/* Dark mode specific styles */
+.dark-mode .export-option-list .export-option-item:hover {
+  background-color: rgba(255, 255, 255, 0.07);
+}
+
+.dark-mode .export-option-list .export-option-item.selected {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-left: 3px solid rgba(255, 255, 255, 0.5);
+}
+
+/* Export button in the dialog */
+.export-dialog-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.export-dialog-button::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: all 0.3s ease;
+}
+
+.export-dialog-button:hover::after {
+  left: 100%;
+} 

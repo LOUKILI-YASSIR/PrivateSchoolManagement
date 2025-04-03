@@ -1,7 +1,14 @@
  import { useTranslation } from "react-i18next"
 import { 
-    faSchool, faTableList, faGraduationCap,  faUserGroup, faCreditCard, faBookOpenReader,
-    faClipboardList, faClipboard, faBorderNone, faUserGraduate, faCircleInfo
+    faSchool, 
+    faUserGraduate,
+    faGauge,
+    faChalkboardTeacher,
+    faBookOpen,
+    faDoorOpen,
+    faUsers,
+    faCalendarDays,
+    faClock
  } from "@fortawesome/free-solid-svg-icons";
 
  export const getNavigationMenu = () => {
@@ -15,55 +22,45 @@ import {
             },
             { 
                 text: Traduction("menu.dashboard"), 
-                icon: faTableList, 
-                link: "/YLSchool",
+                icon: faGauge, 
+                link: "/YLSchool/DashBoard",
             },
             { 
                 text: Traduction("menu.students"), 
-                icon: faGraduationCap, 
+                icon: faUserGraduate, 
                 link: "/YLSchool/Etudiants",
             },
             { 
                 text: Traduction("menu.teachers"), 
-                icon: faUserGroup, 
+                icon: faChalkboardTeacher, 
                 link: "/YLSchool/Professeurs",
             },
             { 
-                text: Traduction("menu.tuition"), 
-                icon: faCreditCard, 
-                link: "#",
-            },
-            { 
-                text: Traduction("menu.courses"), 
-                icon: faBookOpenReader, 
-                link: "#",
-            },
-            { 
-                text: Traduction("menu.attendance"), 
-                icon: faClipboardList, 
-                link: "#",
-            },
-            { 
-                text: Traduction("menu.grades"), 
-                icon: faClipboard, 
-                link: "#",
-            },
+                text: Traduction("menu.subjects"), 
+                icon: faBookOpen, 
+                link: "/YLSchool/Matieres",
+            },      
             { 
                 text: Traduction("menu.rooms"), 
-                icon: faBorderNone, 
-                link: "#",
+                icon: faDoorOpen, 
+                link: "/YLSchool/Salles",
             },
             { 
-                text: Traduction("menu.classes"), 
-                icon: faUserGraduate, 
-                link: "#",
+                text: Traduction("menu.groups"), 
+                icon: faUsers, 
+                link: "/YLSchool/Groups",
+            },
+            { 
+                text: Traduction("menu.period"), 
+                icon: faCalendarDays, 
+                link: "/YLSchool/Periodes",
             },
             { 
                 text: Traduction("menu.timetable"), 
-                icon: faCircleInfo, 
-                link: "#",
+                icon: faClock, 
+                link: "/YLSchool/EmploisDuTemps",
             }
-        ],    
+        ],     
     }
 }
 

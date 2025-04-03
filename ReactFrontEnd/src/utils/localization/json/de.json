@@ -1,18 +1,33 @@
 {
   "menu": {
-    "menu": "M E N U",
+    "menu": "M E N Ü",
     "viewProfile": "Profil anzeigen",
     "logOut": "Abmelden",
     "dashboard": "Dashboard",
     "students": "Schüler",
-    "tuition": "Schulgeld",
     "teachers": "Lehrer",
-    "courses": "Kurse",
-    "attendance": "Anwesenheit",
-    "grades": "Noten",
+    "subjects": "Fächer",
     "rooms": "Räume",
-    "classes": "Klassen",
+    "groups": "Gruppen",
+    "period": "Periode",
     "timetable": "Stundenplan"
+  },
+  "login": {
+    "selectLanguage": "Sprache auswählen",
+    "title": "Willkommen bei YL School",
+    "subtitle": "Bitte melden Sie sich an, um fortzufahren",
+    "username": "Benutzername",
+    "password": "Passwort",
+    "submit": "Anmelden",
+    "forgotPassword": "Passwort vergessen?",
+    "rememberMe": "Angemeldet bleiben",
+    "rememberMeTooltip": "Wenn aktiviert, werden Ihre Anmeldedaten sicher gespeichert. Sie bleiben auf diesem Gerät angemeldet, auch nach einem Neustart des Browsers.",
+    "loggingIn": "Anmeldung läuft...",
+    "error": {
+      "invalidCredentials": "Ungültiger Benutzername oder Passwort",
+      "serverError": "Serverfehler. Bitte versuchen Sie es später erneut",
+      "tooManyAttempts": "Zu viele Anmeldeversuche. Bitte versuchen Sie es später erneut"
+    }
   },
   "dashboard": {
     "students": "Schüler",
@@ -22,12 +37,37 @@
     "girls": "Mädchen",
     "desc_girls": "Registrierte Mädchen",
     "class": "Klassen",
-    "desc_class": "Gesamte Klassen"
+    "desc_class": "Gesamtzahl der Klassen"
+  },
+  "profile": {
+    "title": "Mein Profil",
+    "accountInfo": "Kontoinformationen",
+    "personalInfo": "Persönliche Informationen",
+    "fullName": "Vollständiger Name",
+    "email": "E-Mail",
+    "phoneNumber": "Telefonnummer",
+    "role": "Rolle",
+    "joinDate": "Beitrittsdatum",
+    "preferences": "Einstellungen",
+    "darkMode": "Dunkelmodus",
+    "security": "Sicherheit",
+    "changePassword": "Passwort ändern",
+    "currentPassword": "Aktuelles Passwort",
+    "newPassword": "Neues Passwort",
+    "confirmPassword": "Passwort bestätigen",
+    "passwordHidden": "Passwortinformationen werden aus Sicherheitsgründen ausgeblendet",
+    "passwordMismatch": "Passwörter stimmen nicht überein",
+    "save": "Änderungen speichern",
+    "loading": "Profil wird geladen...",
+    "address": "Adresse",
+    "city": "Stadt",
+    "postalCode": "Postleitzahl",
+    "country": "Land"
   },
   "info": {
     "info": "Info:",
-    "lastRegistered": "10 LETZTE REGISTRIERTE",
-    "schoolStats": "SCHULGELDSTATISTIKEN",
+    "lastRegistered": "10 ZULETZT REGISTRIERTE",
+    "schoolStats": "SCHULGELDSTATISTIK",
     "availableRooms": "VERFÜGBARE RÄUME"
   },
   "actions": {
@@ -45,10 +85,18 @@
     "title": "Exportieren",
     "exportAllData": "Alle Daten exportieren",
     "exportAllRows": "Alle Zeilen exportieren",
-    "exportPageRows": "Seitenzeilen exportieren",
+    "exportPageRows": "Seiten Zeilen exportieren",
     "exportSelectedRows": "Ausgewählte Zeilen exportieren",
-    "exportType": "Exporttyp",
-    "exportTo": "Exportieren nach"
+    "exportType": "Export-Typ",
+    "exportTo": "Exportieren nach",
+    "noDataToExport": "Keine Daten zum Exportieren verfügbar",
+    "successMessage": "Erfolgreich als {{format}}-Datei exportiert",
+    "fileTypes": {
+      "csv": "CSV-Datei",
+      "excel": "Excel-Tabelle",
+      "pdf": "PDF-Dokument"
+    },
+    "unavailable": "nicht verfügbar"
   },
   "Languages": {
     "fr": "Französisch",
@@ -65,16 +113,16 @@
     "prof": "Lehrer"
   },
   "etudiants": {
-    "list": "Liste der Studenten"
+    "list": "Schülerliste"
   },
   "professeurs": {
-    "list": "Liste der Lehrer"
+    "list": "Lehrerliste"
   },
-  "Data": { 
-    "matricule": "Registrierungsnummer",
+  "Data": {
+    "matricule": "Matrikelnummer",
     "image": "Bild",
     "civilite": "Anrede",
-    "lienparenté": "Familienbeziehung",
+    "lienparenté": "Verwandtschaftsbeziehung",
     "profession": "Beruf",
     "nom": "Nachname",
     "prenom": "Vorname",
@@ -91,13 +139,11 @@
     "salaire": "Gehalt",
     "nombanque": "Bankname",
     "rib": "IBAN",
-    "observation": "Bemerkung",
+    "observation": "Anmerkung",
     "genre": "Geschlecht",
     "lieunaissance": "Geburtsort"
   },
-  "Inputs" : {
-    "nationalite" : {
-      
-    }
-  }   
+  "Inputs": {
+    "nationalite": {}
+  }
 }

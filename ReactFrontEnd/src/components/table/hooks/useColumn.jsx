@@ -60,31 +60,35 @@ export const useColumns = (data, TableName) => {
           enableColumnFilter: false,
           enableColumnFilterModes: false,
           enableFilterMatchHighlighting: false,
-          Cell: ({ renderedCellValue, row }) => {
-              const [imageSrc, setImageSrc] = useState(renderedCellValue || "/images/default.jpg");
-          
-              useEffect(() => {
-                if (renderedCellValue) {
-                  // Convert local path to URL path
-                  const imageUrl = renderedCellValue.replace(/^file:\/\/\/?/, '');
-                  setImageSrc(`/uploads/etudiants/${imageUrl.split('/').pop()}`);
-                } else {
-                  setImageSrc("/images/default.jpg");
-                }
-              }, [renderedCellValue]);
-          
-              return (
-                <Image
-                  className="rounded-circle"
-                  src={`${imageSrc}?t=${new Date().getTime()}`} // يكسر الكاش
-                  alt="etudiant"
-                  width="45px"
-                  height="45px"
-                  onError={(e) => (e.target.src = "/images/default.jpg")}
-                />
-              );
-            },
+          Cell: ({ renderedCellValue }) => {
+            // Utilisez useMemo pour éviter de recalculer imageUrl à chaque render
+            const imageUrl = useMemo(() => {
+              if (renderedCellValue) {
+                // Supprimez "/uploads/" si nécessaire et ajoutez un timestamp pour éviter le cache
+                return `/uploads/etudiants/${renderedCellValue.replace("/uploads/", "")}?v=${Date.now()}`;
+              }
+              return "/uploads/default.jpg";
+            }, [renderedCellValue]);
+        
+            // État pour suivre si l'image a déjà échoué
+            const [hasFailed, setHasFailed] = useState(false);
+        
+            return (
+              <img
+                src={hasFailed ? "/uploads/default.jpg" : imageUrl}
+                alt="etudiant"
+                width="45px"
+                height="45px"
+                style={{ borderRadius: "50%" }}
+                onError={(e) => {
+                  e.target.onerror = null; // Empêche les boucles infinies
+                  setHasFailed(true); // Marque l'image comme échouée
+                }}
+                // Supprime onLoad pour éviter de réinitialiser hasFailed
+              />
+            );
           },
+        },
         {
           header: Traduction("Data.genre"),
           accessorKey: "GENREEt",
@@ -138,6 +142,33 @@ export const useColumns = (data, TableName) => {
           filterSelectOptions: generateCountryOptions(),
           filterVariant: "select",
           columnFilterModeOptions: [...FilterModeOptions["equality"]],
+          Cell: ({ renderedCellValue }) => {
+            const flagSrc = useMemo(() => {
+              if (!renderedCellValue) return null;
+        
+              const countryCode = renderedCellValue;
+        
+              return `/country-flag-icons-3x2/${countryCode}.svg`;
+            }, [renderedCellValue]);
+        
+            if (!flagSrc) {
+              return <span className="placeholder">-</span>;
+            }
+        
+            return (
+              <img
+                src={flagSrc}
+                alt={`${renderedCellValue} flag`}
+                width="32"
+                height="21"
+                onError={(e) => {
+                  e.target.src = "/country-flag-icons-3x2/MA.svg"; 
+                  e.target.alt = "Default flag";
+                }}
+                style={{ verticalAlign: "middle" }}
+              />
+            );
+          },
         },
         {
           header: Traduction("Data.adresse"),
@@ -162,6 +193,33 @@ export const useColumns = (data, TableName) => {
           filterFn: "equals",
           filterVariant: "select",
           columnFilterModeOptions: [...FilterModeOptions["equality"]],
+          Cell: ({ renderedCellValue }) => {
+            const flagSrc = useMemo(() => {
+              if (!renderedCellValue) return null;
+        
+              const countryCode = renderedCellValue;
+        
+              return `/country-flag-icons-3x2/${countryCode}.svg`;
+            }, [renderedCellValue]);
+        
+            if (!flagSrc) {
+              return <span className="placeholder">-</span>;
+            }
+        
+            return (
+              <img
+                src={flagSrc}
+                alt={`${renderedCellValue} flag`}
+                width="32"
+                height="21"
+                onError={(e) => {
+                  e.target.src = "/country-flag-icons-3x2/MA.svg"; 
+                  e.target.alt = "Default flag";
+                }}
+                style={{ verticalAlign: "middle" }}
+              />
+            );
+          },
         },
       ],
 

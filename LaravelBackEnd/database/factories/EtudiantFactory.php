@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Etudiant;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 /**
@@ -11,31 +12,56 @@ use Illuminate\Support\Str;
 class EtudiantFactory extends Factory
 {
     protected $model = Etudiant::class;
+    private static $counter = 1;
 
     public function definition()
     {
-        // Generate a new matriculeEt based on Professeur logic
-        $generatedMatriculeEt = "YLSCHOOL_Et_" . date("Y") . "_" . str_pad(mt_rand(1, 100), 5, "0", STR_PAD_LEFT);
+        // Generate a unique matriculeEt using a counter
+        $matricule = "YLSCHOOL_ET_" . date("Y") . "_" . str_pad(self::$counter++, 6, "0", STR_PAD_LEFT);
+        $nom = $this->faker->lastName;
+        $prenom = $this->faker->firstName;
+        $email = strtolower(sprintf("%s.%s.%06d@ylschool.ma", 
+            $this->sanitizeString($prenom),
+            $this->sanitizeString($nom),
+            self::$counter
+        ));
 
-        $country = $this->faker->countryCode; // Random 2-letter country code
-        $admin1 = strtoupper($this->faker->lexify('??')); // Random 2-character code
-        $admin2 = $this->faker->numerify('###'); // Random 3-digit code
+        // Create the corresponding user
+        $user = User::create([
+            'matricule' => $matricule,
+            'nomUsers' => $nom,
+            'prenom' => $prenom,
+            'email' => $email,
+            'role' => 'etudiant',
+            'password' => bcrypt('password'),
+            'date_naissance' => $this->faker->dateTimeBetween('-20 years', '-15 years')->format('Y-m-d'),
+            'sexe' => $this->faker->randomElement(['M', 'F']),
+            'nationalite' => $this->faker->country,
+            'lieu_naissance' => $this->faker->city,
+            'adresse' => $this->faker->address,
+            'code_postal' => $this->faker->postcode,
+            'ville' => $this->faker->city,
+            'pays' => $this->faker->country,
+            'telephone_mobile' => $this->faker->phoneNumber,
+            'actif' => true,
+        ]);
+
         return [
-            // Student Information
-            'matriculeEt' => $generatedMatriculeEt,
-            'GENREEt' => $this->faker->randomElement(['H', 'F']),
-            'NOMEt' => $this->faker->lastName,
-            'PRENOMEt' => $this->faker->firstName,
-            'LIEU_NAISSANCEEt' => $this->faker->city,
-            'DATE_NAISSANCEEt' => $this->faker->date('Y-m-d', '2010-01-01'),
-            'NATIONALITEEt' => $this->faker->country(),
-            'ADRESSEEt' => $this->faker->address,
-            'VILLEEt' => $this->faker->city,
-            'PAYSEt' => $this->faker->country(),
-            'CODE_POSTALEt' => $this->faker->numberBetween(1000, 99999),
-            'EMAILEt' => $this->faker->unique()->safeEmail,
+            'matriculeEt' => $matricule,
+            'GENREEt' => $user->sexe === 'M' ? 'Homme' : 'Femme',
+            'NOMEt' => $nom,
+            'PRENOMEt' => $prenom,
+            'LIEU_NAISSANCEEt' => $user->lieu_naissance,
+            'DATE_NAISSANCEEt' => $user->date_naissance,
+            'NATIONALITEEt' => $user->nationalite,
+            'ADRESSEEt' => $user->adresse,
+            'VILLEEt' => $user->ville,
+            'PAYSEt' => $user->pays,
+            'CODE_POSTALEt' => $this->faker->numberBetween(10000, 99999),
+            'EMAILEt' => $user->email,
             'PROFILE_PICTUREEt' => "/uploads/default.jpg",
             'OBSERVATIONEt' => $this->faker->paragraph,
+            'user_id' => $user->id,
 
             // Parent Information
             'LIEN_PARENTETr' => $this->faker->randomElement([
@@ -54,5 +80,13 @@ class EtudiantFactory extends Factory
             'created_at' => now(),
             'updated_at' => now(),
         ];
+    }
+
+    private function sanitizeString($string): string
+    {
+        $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
+        $string = strtolower($string);
+        $string = preg_replace('/[^a-z0-9.]/', '', $string);
+        return $string;
     }
 }

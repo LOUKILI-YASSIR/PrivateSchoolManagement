@@ -12,14 +12,19 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Créer 10 étudiants
-        User::factory()->count(400)->etudiant()->create();
+        // Create admin user
+        User::factory()->admin()->create([
+            'email' => 'admin@ylschool.ma',
+            'nomUsers' => 'Admin',
+            'prenom' => 'System',
+            'role' => 'admin'
+        ]);
 
-        // Créer 5 professeurs
-        User::factory()->count(40)->professeur()->create();
+        // Create professor users
+        User::factory()->count(5)->professeur()->create();
 
-        // Créer 1 admin
-        User::factory()->admin()->create();
+        // Create student users
+        User::factory()->count(10)->etudiant()->create();
     }
 }
 ?>

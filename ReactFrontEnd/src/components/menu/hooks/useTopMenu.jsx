@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { changeViewMenu } from "../../../store/slices/MenuSlice.jsx";
+import { changeViewMenu } from "../../../store/Slices/MenuSlice.jsx";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 // Toggle Menu Active/NotActive

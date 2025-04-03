@@ -1,10 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
-import ReducerMenu from "./slices/MenuSlice";
-import ReducerExport from "./slices/ExportSlice";
+import MenuReducer from "./Slices/MenuSlice";
+import ExportReducer from "./Slices/ExportSlice";
+import ThemeReducer from "./Slices/ThemeSlice";
+
 const Store = configureStore({
     reducer:{
-        Menu:ReducerMenu,
-        Export:ReducerExport,
+        Menu: MenuReducer,
+        Export: ExportReducer,
+        theme: ThemeReducer,
     }
 })
 export default Store

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Upload, Button, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import imageCompression from 'browser-image-compression';
+import { useFetchCountData } from '../../api/queryHooks';
 
 export default function IMAGE ({
     register,
@@ -12,13 +13,15 @@ export default function IMAGE ({
     matricule,
     setValue,
     ImgPathUploads,
+    isSubmit
   }) {
     const [fileList, setFileList] = useState([]);
     const [uploading, setUploading] = useState(false);
-  
+    const handleCountData = useFetchCountData(tableName);
+    const { data: countData } = handleCountData;
     const actionUrl = matricule
       ? `http://localhost:3000/upload/${tableName}/${matricule}`
-      : `http://localhost:3000/upload/${tableName}`;
+      : `http://localhost:3000/upload/${tableName}?count=${countData}`;
   
     useEffect(() => {
       if (fieldItem.value) {
@@ -27,7 +30,7 @@ export default function IMAGE ({
         // If the value is just a filename, construct the full URL
         if (!imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
           // Extract just the filename if a full path is provided
-          const filename = imageUrl.split('/').pop();
+          const filename = imageUrl.split('/').pop();console.log(ImgPathUploads,1)
           imageUrl = `${ImgPathUploads}/${filename}`;
         }
         
@@ -171,7 +174,7 @@ export default function IMAGE ({
                   <div style={{ fontSize: 12, color: '#666' }}>Click to upload</div>
                 </div>
               )}
-              <Button icon={<UploadOutlined />} style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', background: 'rgba(255, 255, 255, 0.8)', borderTop: '1px solid #d9d9d9', borderRadius: 0, height: 32 }}>
+              <Button htmlType={isSubmit ? "submit" : "button"} icon={<UploadOutlined />} style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', background: 'rgba(255, 255, 255, 0.8)', borderTop: '1px solid #d9d9d9', borderRadius: 0, height: 32 }}>
                 {uploading ? 'Uploading...' : 'Change Image'}
               </Button>
             </div>

@@ -2,41 +2,81 @@
   "menu": {
     "menu": "M E N U",
     "viewProfile": "Ver Perfil",
-    "logOut": "Cerrar sesión",
-    "dashboard": "Tablero",
+    "logOut": "Cerrar Sesión",
+    "dashboard": "Panel de Control",
     "students": "Estudiantes",
-    "tuition": "Matrícula",
     "teachers": "Profesores",
-    "courses": "Cursos",
-    "attendance": "Asistencia",
-    "grades": "Calificaciones",
-    "rooms": "Salas",
-    "classes": "Clases",
-    "timetable": "Horario"
+    "subjects": "Materias",
+    "rooms": "Aulas",
+    "groups": "Groupes",
+    "period": "períodos",
+    "timetable": "Horarios"
+  },
+  "login": {
+    "selectLanguage": "Seleccionar idioma",
+    "title": "Bienvenido a YL School",
+    "subtitle": "Por favor, inicia sesión para continuar",
+    "username": "Nombre de usuario",
+    "password": "Contraseña",
+    "submit": "Iniciar sesión",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "rememberMe": "Recordarme",
+    "rememberMeTooltip": "Cuando está activado, tus credenciales de inicio de sesión se guardarán de forma segura. Permanecerás conectado en este dispositivo incluso después de reiniciar el navegador.",
+    "loggingIn": "Iniciando sesión...",
+    "error": {
+      "invalidCredentials": "Nombre de usuario o contraseña inválidos",
+      "serverError": "Error del servidor. Por favor, inténtalo más tarde",
+      "tooManyAttempts": "Demasiados intentos de inicio de sesión. Por favor, inténtalo más tarde"
+    }
   },
   "dashboard": {
     "students": "Estudiantes",
     "desc_students": "Todos los estudiantes registrados",
-    "boys": "Niños",
-    "desc_boys": "Niños registrados",
-    "girls": "Niñas",
-    "desc_girls": "Niñas registradas",
+    "boys": "Chicos",
+    "desc_boys": "Chicos registrados",
+    "girls": "Chicas",
+    "desc_girls": "Chicas registradas",
     "class": "Clases",
     "desc_class": "Total de clases"
   },
+  "profile": {
+    "title": "Mi Perfil",
+    "accountInfo": "Información de la Cuenta",
+    "personalInfo": "Información Personal",
+    "fullName": "Nombre Completo",
+    "email": "Correo Electrónico",
+    "phoneNumber": "Número de Teléfono",
+    "role": "Rol",
+    "joinDate": "Fecha de Registro",
+    "preferences": "Preferencias",
+    "darkMode": "Modo Oscuro",
+    "security": "Seguridad",
+    "changePassword": "Cambiar Contraseña",
+    "currentPassword": "Contraseña Actual",
+    "newPassword": "Nueva Contraseña",
+    "confirmPassword": "Confirmar Contraseña",
+    "passwordHidden": "La información de la contraseña está oculta por razones de seguridad",
+    "passwordMismatch": "Las contraseñas no coinciden",
+    "save": "Guardar Cambios",
+    "loading": "Cargando perfil...",
+    "address": "Dirección",
+    "city": "Ciudad",
+    "postalCode": "Código Postal",
+    "country": "País"
+  },
   "info": {
     "info": "Info:",
-    "lastRegistered": "10 Últimos registrados",
+    "lastRegistered": "10 ÚLTIMOS REGISTRADOS",
     "schoolStats": "ESTADÍSTICAS DE MATRÍCULA",
-    "availableRooms": "SALAS DISPONIBLES"
+    "availableRooms": "AULAS DISPONIBLES"
   },
   "actions": {
     "details": "Detalles",
     "edit": "Editar",
     "delete": "Eliminar",
     "cancel": "Cancelar",
-    "add": "Agregar un {{NomTable}}",
-    "deleteSelected": "Eliminar seleccionados {{NomTable}}",
+    "add": "Añadir {{NomTable}}",
+    "deleteSelected": "Eliminar {{NomTable}} seleccionados",
     "download": "Descargar en",
     "export": "Exportar",
     "RefreshData": "Actualizar datos"
@@ -48,7 +88,15 @@
     "exportPageRows": "Exportar filas de la página",
     "exportSelectedRows": "Exportar filas seleccionadas",
     "exportType": "Tipo de exportación",
-    "exportTo": "Exportar a"
+    "exportTo": "Exportar a",
+    "noDataToExport": "No hay datos disponibles para exportar",
+    "successMessage": "Exportado con éxito como archivo {{format}}",
+    "fileTypes": {
+      "csv": "Archivo CSV",
+      "excel": "Hoja de cálculo Excel",
+      "pdf": "Documento PDF"
+    },
+    "unavailable": "no disponible"
   },
   "Languages": {
     "fr": "Francés",
@@ -57,8 +105,8 @@
     "es": "Español"
   },
   "validationTexts": {
-    "deleteBy1": "¿Está seguro de que desea eliminar a este estudiante?",
-    "deleteByN": "¿Está seguro de que desea eliminar a los {{length}} estudiantes?"
+    "deleteBy1": "¿Estás seguro de que quieres eliminar este estudiante?",
+    "deleteByN": "¿Estás seguro de que quieres eliminar los {{length}} estudiantes?"
   },
   "TableDBName": {
     "student": "Estudiantes",
@@ -70,23 +118,23 @@
   "professeurs": {
     "list": "Lista de profesores"
   },
-  "Data": { 
+  "Data": {
     "matricule": "Número de registro",
     "image": "Imagen",
-    "civilite": "Civilidad",
-    "lienparenté": "Relación familiar",
+    "civilite": "Tratamiento",
+    "lienparenté": "Parentesco",
     "profession": "Profesión",
     "nom": "Apellido",
     "prenom": "Nombre",
     "nationalite": "Nacionalidad",
-    "cin": "ID Nacional",
+    "cin": "DNI",
     "datenaissance": "Fecha de nacimiento",
     "adresse": "Dirección",
     "ville": "Ciudad",
     "codepostal": "Código postal",
     "pays": "País",
     "email": "Correo electrónico",
-    "telephone": "Número de teléfono",
+    "telephone": "Teléfono",
     "dateembauche": "Fecha de contratación",
     "salaire": "Salario",
     "nombanque": "Nombre del banco",
@@ -95,9 +143,7 @@
     "genre": "Género",
     "lieunaissance": "Lugar de nacimiento"
   },
-  "Inputs" : {
-    "nationalite" : {
-      
-    }
-  }   
+  "Inputs": {
+    "nationalite": {}
+  }
 }

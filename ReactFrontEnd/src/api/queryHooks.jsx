@@ -1,64 +1,85 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchData, postData, updateData, deleteData, postImage } from "./apiServices";
+import apiServices from "./apiServices";
+const { fetchData, postData, updateData, deleteData, postImage,getPaginatedData } = apiServices;
+
+// Data Hooks with optimized caching
 
 // Hook for GET requests
-export const useFetchData = (apiName, start = null, length = null) => {
-  if(!apiName) return { data:[], isLoading:false, error:false, isRefetching:false };
-  
+export const useFetchData = (apiName, start = 0, length = 10) => {
   return useQuery({
-    queryKey: [apiName, start, length], // Include pagination in cache key
-    queryFn: () => fetchData(apiName, start, length),
+    queryKey: [apiName, start, length],
+    queryFn: () => {
+      if (!apiName || start < 0 || length <= 0) {
+        return Promise.reject(new Error("Invalid API parameters"));
+      }
+      return getPaginatedData(apiName, start, length);
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    cacheTime: 10 * 60 * 1000, // 10 minutes
+    refetchOnWindowFocus: false,
+    retry: 3,
   });
 };
-
 // Hook for POST requests
 export const usePostData = (apiName) => {
-  if(!apiName) return;
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (data) => postData(apiName, data),
     onSuccess: () => {
-      queryClient.invalidateQueries([apiName]); // Refetch data after success
-    },
+      queryClient.invalidateQueries([apiName]);
+    }
   });
 };
 
-// Hook for PUT requests (update)
+// Hook for PUT requests
 export const useUpdateData = (apiName) => {
-  if(!apiName) return;
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }) => updateData(apiName, id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries([apiName]); // Refetch data after success
-    },
+    mutationFn: ({ matricule, data }) => updateData(apiName, matricule, data),
+    onSuccess: (_, { matricule }) => {
+      queryClient.invalidateQueries([apiName, matricule]); // Ensure only updated data is refreshed
+    }
   });
 };
 
 // Hook for DELETE requests
 export const useDeleteData = (apiName) => {
-  if(!apiName) return;
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id) => deleteData(apiName, id),
+    mutationFn: (matricule) => deleteData(apiName, matricule),
     onSuccess: () => {
-      queryClient.invalidateQueries([apiName]); // Refetch data after success
+      queryClient.invalidateQueries([apiName]); 
+    },
+    onError: (error) => {
+      console.error("Mutation error:", error);
     },
   });
 };
 
-// Hook for POST requests
+// Hook for image upload
 export const usePostImage = (apiName) => {
-  if(!apiName) return;
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data) => postImage(apiName, data),
+    mutationFn: (formData) => postImage(apiName, formData),
     onSuccess: () => {
-      queryClient.invalidateQueries([apiName]); // Refetch data after success
-    },
+      queryClient.invalidateQueries([apiName]);
+    }
+  });
+};
+
+export const useFetchCountData = (apiName) => {
+  if (!apiName) return { data: [], isLoading: false, error: false, isRefetching: false };
+
+  return useQuery({
+    queryKey: [apiName ],
+    queryFn: () => fetchData(apiName),
+    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
+    cacheTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
+    refetchOnWindowFocus: false, // Don't refetch when window regains focus
+    retry: 1,
   });
 };

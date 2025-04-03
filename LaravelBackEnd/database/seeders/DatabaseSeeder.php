@@ -13,10 +13,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // Call individual seeders
         $this->call([
-            ProfesseurSeeder::class, // Seed Professeur table first
-            EtudiantSeeder::class,  // Seed Etudiant table
             UserSeeder::class
         ]);
     }

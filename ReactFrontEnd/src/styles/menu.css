@@ -4,54 +4,86 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  
 }
 
 :root {
+  /* Light mode variables */
   --blue: #2a2185;
   --white: #fff;
   --gray: #f5f5f5;
   --black1: #222;
   --black2: #999;
   --blue-light: rgb(4, 0, 255);
+  
+  /* Dark mode variables */
+  --dark-bg: #1a1a2e;
+  --dark-surface: #16213e;
+  --dark-text: #e0e0e0;
+  --dark-accent: #4361ee;
+  --dark-border: #0f3460;
+  --dark-hover: #1f4287;
 }
+
 body {
   min-height: 100vh;
   overflow-x: hidden;
   background: #c7c7c76b;
 }
+
 .navigation {
-  top:0;
-  left: -10px;
   position: fixed;
-  width: 300px;
+  width: 309px;
   height: 100%;
+  transition: all 0.5s ease;
+  overflow: hidden;
+  transition: all 0.5s ease-in-out;
+}
+
+.navigation.light-mode {
   background: var(--blue);
   border-left: 10px solid var(--blue);
-  transition: all ease-in-out .5s .5s;
-  overflow-y: scroll;
-  overflow: hidden;
-  direction: rtl; 
-  box-shadow:1px 5px 20px 5px #6d6d6d ;
+  color: var(--white);
 }
+
+.navigation.dark-mode {
+  background: var(--dark-bg);
+  border-left: 10px solid var(--dark-border);
+  color: var(--dark-text);
+}
+
 ::-webkit-scrollbar {
   width: 15px; 
 }
+
 ::-webkit-scrollbar-track {
   background: var(--blue-light);
   border-radius: 10px; 
 }
+
+.dark-mode ::-webkit-scrollbar-track {
+  background: var(--dark-border);
+}
+
 ::-webkit-scrollbar-thumb {
   background: var(--gray);
   border-radius: 10px; 
 }
 
+.dark-mode ::-webkit-scrollbar-thumb {
+  background: var(--dark-hover);
+}
+
 ::-webkit-scrollbar-thumb:hover {
-  background:var(--blue) ;
+  background: var(--blue);
+}
+
+.dark-mode ::-webkit-scrollbar-thumb:hover {
+  background: var(--dark-accent);
 }
 
 .navigation.active {
-  width: 80px;
+  width: 89px;
+  transition: width 0.5s ease;
 } 
 
 .navigation ul {
@@ -68,33 +100,51 @@ body {
   border-top-left-radius: 30px;
   border-bottom-left-radius: 30px;
   box-shadow: none;
+  transition: all 0.2s ease;
+}
+/* Focus styles for light mode */
+.navigation ul li a:focus {
+  outline: none; /* Remove default outline */
+  box-shadow: 0 0 0 2px var(--blue); /* Glow effect */
 }
 
-.navigation ul li:nth-child(1)
-{
+/* Focus styles for dark mode */
+.dark-mode .navigation ul li a:focus {
+  box-shadow: 0 0 0 2px var(--dark-accent); /* Matches dark theme */
+}
+.navigation ul li:nth-child(1) {
   pointer-events: none;
   margin-bottom: 0.5rem;
 }
+
 .navigation ul li:nth-child(1) a .icon,
-.navigation ul li:nth-child(1) i.icon{
+.navigation ul li:nth-child(1) i.icon {
   pointer-events: painted;
   cursor: pointer !important;
 }
-.navigation ul li a .title{
+
+.navigation ul li a .title {
   margin-left: -20px !important;
   font-weight: 900;
   z-index: 100;
 }
+
 .navigation ul li a {
   position: relative;
   display: block;
   width: 100%;
   display: flex;
   text-decoration: none;
-  color: var(--white);
   text-align: left;
   direction: ltr;
+}
+
+.light-mode ul li a {
+  color: var(--white);
+}
   
+.dark-mode ul li a {
+  color: var(--dark-text);
 }
 
 .navigation ul li a .icon {
@@ -104,17 +154,26 @@ body {
   height: 50px;
   line-height: 67.5px;
   text-align: center;
-  margin-left:8px;
+  margin-left: 8px;
   z-index: 100;
 }
-.navigation.active ul li a .icon{
-  margin-right:8px;
+
+.navigation.active ul li a .icon {
+  margin-right: 8px;
   margin-left: 0;
 } 
-.navigation ul li a .icon svg{
-  font-size: 1.5rem;
-}
 
+.navigation ul li a .icon svg {
+  font-size: 1.5rem;
+  transition: transform 0.2s ease, filter 0.3s ease;
+}
+.navigation ul li a:hover .icon svg {
+  transform: scale(1.1); /* Slight enlargement */
+}
+/* Enhance toggle icon hover (first item) */
+.navigation ul li:nth-child(1) a .icon:hover svg {
+  transform: scale(1.1); /* Consistent hover effect for toggle */
+}
 .navigation ul li a .title {
   position: relative;
   display: block;
@@ -123,56 +182,116 @@ body {
   line-height: 60px;
   text-align: start;
   white-space: nowrap;
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
-hr{
+
+.navigation.active ul li a .title {
+  opacity: 0;
+  transform: translateX(20px);
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+hr {
   margin-right: 10px !important;
   margin-bottom: 1.25rem !important;
+  transition: width 0.5s ease, opacity 0.5s ease;
 }
-.navigation ul :not(li:first-of-type):hover a,
-.navigation ul :not(li:first-of-type).shadow a,
-.navigation ul li:nth-child(1) a.shadow .icon,
-.navigation ul li:nth-child(1) a:hover .icon,
-.navigation ul li:nth-child(1) a.shadow .icon svg,
-.navigation ul li:nth-child(1) a:hover .icon svg,
-#navtype i:hover,
-#navtype i.active{
-  transition: all linear .1s;
+
+hr.active {
+  margin-right: 20px;
+  width: 55px !important;
+  opacity: 0.7;
+  transition: width 0.5s ease, opacity 0.5s ease, margin 0.5s ease;
+}
+
+/* Hover and active states - Light mode */
+.light-mode ul li:hover a,
+.light-mode ul li.shadow a {
+  transition: all 0.2s;
   color: var(--white);
-  text-shadow: 
-  0 0 10px  #ffffffc4 ,
-  0 0 15px  #ffffffc4 ;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.7), 0 0 15px rgba(255, 255, 255, 0.7);
 }
-.navigation ul :not(li:first-of-type) a.shadow .icon svg,
-.navigation ul :not(li:first-of-type) a:hover .icon svg{
-  filter: drop-shadow(0 0 10px #ffffffc4);
+
+.light-mode ul li:hover,
+.light-mode ul li.shadow {
+  background: rgba(255, 255, 255, 0.1);
 }
-.toggle:hover{
+
+.light-mode ul li a:hover .icon svg,
+.light-mode ul li.shadow a .icon svg {
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
+}
+
+/* Hover and active states - Dark mode */
+.dark-mode ul li:hover a,
+.dark-mode ul li.shadow a {
+  transition: all 0.2s;
+  color: var(--dark-accent);
+}
+
+.dark-mode ul li:hover,
+.dark-mode ul li.shadow {
+  background: var(--dark-hover);
+}
+
+.dark-mode ul li a:hover .icon svg,
+.dark-mode ul li.shadow a .icon svg {
+  filter: drop-shadow(0 0 8px rgba(67, 97, 238, 0.6));
+}
+
+.toggle {
+  transition: transform 0.5s ease, color 0.3s ease;
+}
+
+/* .toggle:hover {
   color: white;
-  text-shadow: 
-  0 0 10px  #ffffffc4,
-  0 0 15px  #ffffffc4;
-}
-/**            hover style*/
-.navigation ul li.hoveredwhite{
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.7), 0 0 15px rgba(255, 255, 255, 0.7);
+} */
+
+/* Active page styles - Light mode */
+.light-mode ul li.activePage {
   background-color: var(--white);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Adds depth */
 }
-.navigation ul li.hoveredwhite a{
+
+.light-mode ul li.activePage a {
     color: var(--blue);
 }
-.navigation ul li.activePage.shadow a :is(.icon,.title){
+
+.light-mode ul li.activePage a .icon,
+.light-mode ul li.activePage a .title {
   color: var(--blue);
-  text-shadow:  
-  0 0 5px #fff, 
-  0 0 10px rgba(11, 0, 168, 0.5) ,
-  0 0 10px rgba(11, 0, 168, 0.5) ,
-  0 0 10px rgba(11, 0, 168, 0.5) !important ; 
+  text-shadow: 0 0 5px #fff, 0 0 10px rgba(11, 0, 168, 0.5), 0 0 10px rgba(11, 0, 168, 0.5), 0 0 10px rgba(11, 0, 168, 0.5) !important;
 }
-.navigation ul li.activePage.shadow a .icon svg {
+
+.light-mode ul li.activePage a .icon svg {
   filter: drop-shadow(0 0 5px #fff)
           drop-shadow(0 0 10px rgba(11, 0, 168, 0.5))
           drop-shadow(0 0 10px rgba(11, 0, 168, 0.5));
 }
-.navigation ul li.hoveredwhite a::before {
+
+/* Active page styles - Dark mode */
+.dark-mode ul li.activePage {
+  background-color: var(--dark-surface);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Stronger shadow for dark mode */
+}
+
+.dark-mode ul li.activePage a {
+  color: var(--dark-accent);
+}
+
+.dark-mode ul li.activePage a .icon,
+.dark-mode ul li.activePage a .title {
+  color: var(--dark-accent);
+  text-shadow: 0 0 8px rgba(67, 97, 238, 0.6);
+}
+
+.dark-mode ul li.activePage a .icon svg {
+  filter: drop-shadow(0 0 8px rgba(67, 97, 238, 0.6));
+}
+
+/* Curved edges for active/hover items - Light mode */
+.light-mode ul li.hoveredwhite a::before {
   content: "";
   position: absolute;
   right: 0;
@@ -184,7 +303,8 @@ hr{
   box-shadow: 35px 35px 0 10px var(--white);
   pointer-events: none;
 }
-.navigation ul li.hoveredwhite a::after {
+
+.light-mode ul li.hoveredwhite a::after {
   content: "";
   position: absolute;
   right: 0;
@@ -196,97 +316,126 @@ hr{
   box-shadow: 35px -35px 0 10px var(--white);
   pointer-events: none;
 }
-/**           menu 2*/
-.main{
-  transition: all ease-in-out .5s .5s  ;
+
+/* Curved edges for active/hover items - Dark mode */
+.dark-mode ul li.hoveredwhite a::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: -50px;
+  width: 50px;
+  height: 50px;
+  background-color: transparent;
+  border-radius: 50%;
+  box-shadow: 35px 35px 0 10px var(--dark-surface);
+  pointer-events: none;
 }
+
+.dark-mode ul li.hoveredwhite a::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -50px;
+  width: 50px;
+  height: 50px;
+  background-color: transparent;
+  border-radius: 50%;
+  box-shadow: 35px -35px 0 10px var(--dark-surface);
+  pointer-events: none;
+}
+
+/* Main content area responsive to menu toggle */
+.main {
+  transition: all 0.5s ease;
+}
+
 .main.active {
   width: calc(100% - 80px);
-  left: 80px;
+  left: 68px;
+  transition: all 0.5s ease;
 }
-hr.active{
-  margin-right: 20px;
-  width: 55px !important;
-  transition: .3s .3s;
+
+/* Toggle button animations */
+.toggle.active:not(.desactive) {
+  animation: colorwhite-dark 0.3s 0.1s;
+  transform: rotate(180deg);
+  transition: transform 0.5s ease, color 0.3s ease;
 }
-.toggle.active:not(.desactive){
-  animation: colorwhite-dark .3s .3s  ;
-  transform: rotateY(180deg);
-  transition: all linear .5s;
+
+.toggle.desactive:not(.active) {
+  animation: colordark-white 0.3s 0.1s;
+  transform: rotate(0deg);
+  transition: transform 0.5s ease, color 0.3s ease;
 }
-.toggle.desactive:not(.active){
-  animation: colordark-white .3s .3s  ;
-  transform: rotateY(-180deg);
-  transition: all linear .5s;
-}
+
 @keyframes colorwhite-dark {
   from {
-    color:var(--white) ;
-    text-shadow: 
-    0 0 10px  #ffffffc4,
-    0 0 15px  #ffffffc4;
+    color: var(--white);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.7), 0 0 15px rgba(255, 255, 255, 0.7);
   }
-  to{
-    color: var(--black1);
-    shadow: none;
-  }
-}
-@keyframes colordark-white {
-  from {
-    color:var(--white) ;
-    text-shadow: 
-    0 0 10px  #ffffffc4,
-    0 0 15px  #ffffffc4;
-  }
-  to{
+  to {
     color: var(--black1);
     shadow: none;
   }
 }
 
-.is_focus{
+@keyframes colordark-white {
+  from {
+    color: var(--white);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.7), 0 0 15px rgba(255, 255, 255, 0.7);
+  }
+  to {
+    color: var(--black1);
+    shadow: none;
+  }
+}
+
+/* Additional utility classes */
+.is_focus {
   transform: translate(2px,-50px) !important;
 }
-#icon{
+
+#icon {
   transform: translateX(350px);
 }
 
-/*form*/
-#form label{
-  font-size:17px !important;
+/* Form styles */
+#form label {
+  font-size: 17px !important;
 }
-#blockimg{
+
+#blockimg {
   transition: all linear .3s .3s;
 }
-.divcard{
+
+.divcard {
   transition: all linear .4s .1s;
 }
-#blockimg.leftActive{
-  left:73% !important;
   
+#blockimg.leftActive {
+  left: 73% !important;
 }
+
 input[type="date"]::-webkit-calendar-picker-indicator {
-  background:rgb(30, 58, 138);
+  background: rgb(30, 58, 138);
 }
-input.error{
+
+input.error {
   border-color: red !important;
 }
-.Export:hover{
+
+.Export:hover {
   background-color: rgb(221, 221, 221) !important;
   color: #1500ff !important;
 }
 
-/* Error state */
-.react-tel-input .special-label.special-label-focus {
-  color: #1976d2; /* Red text color for the label when there's an error */
+.navigation ul li:nth-child(1):hover {
+  background: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
 }
 
-/* Error state */
-.react-tel-input .special-label.special-label-error {
-  color: red; /* Red text color for the label when there's an error */
-}
-
-.react-tel-input .form-control.form-control-error {
-  border: none;
-  outline: 1px solid red; /* Red border for the input when there's an error */
+.navigation ul li:nth-child(1) a:hover {
+  color: inherit !important;
+  text-shadow: none !important;
 }

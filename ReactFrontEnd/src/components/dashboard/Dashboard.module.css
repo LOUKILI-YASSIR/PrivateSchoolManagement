@@ -1,4 +1,3 @@
-
 .cartDashBoard-yellow:hover{
     background-color: #f59e0b !important;
     color: #ffffff !important;
@@ -17,31 +16,38 @@
 }
 .cartDashBoard-yellow{
     color: #f59e0b !important;
+    border-left: 4px solid #f59e0b;
 }
 .cartDashBoard-green{
     color: #10b981 !important;
+    border-left: 4px solid #10b981;
 }
 .cartDashBoard-red{
     color: #ef4444 !important;
+    border-left: 4px solid #ef4444;
 }
 .cartDashBoard-blue{
     color: #3b82f6 !important;
+    border-left: 4px solid #3b82f6;
 }
 
 :is(.cartDashBoard-text-Active,
 .cartDashBoard-DescriptionIcon-Active){
-    font-size:25px !important;
+    font-size: 1.2rem !important;
+    font-weight: 500;
 }
 .cartDashBoard-Count-Active{
-    font-size:40px !important;
+    font-size: 3rem !important;
+    font-weight: bold;
+    margin: 0.5rem 0;
 }
 .cartDashBoard-Description-Active{
-    font-size:19.5px !important;
+    font-size: 1rem !important;
 }
 /* icon */
 .cartDashBoard-users-Active,
 .cartDashBoard-chalkboard-teacher-Active{
-    font-size:40px !important;
+    font-size: 2.5rem !important;
 }
 :is(.cartDashBoard-male-Active,
 .cartDashBoard-female-Active){
@@ -68,18 +74,26 @@
 #cardContainer.active{
     column-gap: 1.25rem;
 }
-.cartDashBoard{
-    transition: all ease-in-out .5s 0s;
-    scale:1.05;
+.cartDashBoard {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    height: 100%;
+    border-left-width: 4px;
+    border-left-style: solid;
+    margin-bottom: 10px;
 }
 .cartDashBoard.active{
-    scale:1;
+    scale: 1;
 }
 .cartDashBoard div{
     opacity: 1;
 }
-.cartDashBoard.active:hover {
-    transform: scale(1.1);
+.cartDashBoard:hover {
+    transform: translateY(-5px);
     box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.2);
 }
 .cartDashBoard:hover {
@@ -93,4 +107,1351 @@
     color:#ffffff;
     background-color: #2a2185 !important;
     border:#2a2185;
+}
+
+.dashboardContainer {
+  padding: 2rem;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  border-radius: 25px;
+  margin: 10px 25px 30px 25px !important;
+  max-width: 100% !important;
+  width: calc(100% - 50px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dashboardRow {
+  margin-bottom: 2rem;
+}
+
+.statsRow {
+  margin-bottom: 2rem;
+}
+
+.welcomeSection {
+  margin-bottom: 2rem;
+}
+
+.statsRow {
+  margin-bottom: 2rem;
+  border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.chartsRow {
+  margin-bottom: 2rem;
+    height: 100%;
+  border: 1px solid #e9ecef;
+}
+
+.timeTableRow {
+  margin-bottom: 2rem;
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.infoTableRow {
+  margin-bottom: 2rem;
+}
+
+.cartDashBoard-yellow {
+  border-left: 4px solid #f59e0b;
+}
+
+.cartDashBoard-green {
+  border-left: 4px solid #10b981;
+}
+
+.cartDashBoard-blue {
+  border-left: 4px solid #3b82f6;
+}
+
+.cartDashBoard-red {
+  border-left: 4px solid #ef4444;
+}
+
+/* Stats Card Content */
+.cartDashBoard-text-Active {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #4b5563;
+  margin-bottom: 0.5rem;
+}
+
+.cartDashBoard-Count-Active {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0.5rem 0;
+}
+
+.cartDashBoard-Description-Active {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+/* Icons */
+.cartDashBoard-users-Active,
+.cartDashBoard-chalkboard-teacher-Active {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+/* Chart Container */
+.chartContainer {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1.5rem;
+}
+
+.chartTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 1.5rem;
+}
+
+/* Time Table */
+.timeTableContainer {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.timeTable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.timeTableDay {
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.dayHeader {
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.75rem;
+}
+
+.timeSlot {
+  padding: 0.75rem;
+  border-radius: 6px;
+  background: #f3f4f6;
+  margin-bottom: 0.5rem;
+}
+
+/* Info Table */
+.infoTableSection {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.table th {
+  font-weight: 600;
+  color: #1f2937;
+  background: #f9fafb;
+}
+
+.table td {
+  vertical-align: middle;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .dashboardContainer {
+    padding: 1rem;
+  }
+
+  .cartDashBoard {
+    margin-bottom: 1rem;
+}
+
+.cartDashBoard-Count-Active {
+  font-size: 2rem;
+  }
+
+  .chartContainer,
+  .timeTableContainer,
+  .infoTableSection {
+    padding: 1rem;
+  }
+}
+
+/* Navigation Tabs */
+.nav-tabs {
+  border-bottom: 2px solid #e5e7eb;
+  margin-bottom: 1.5rem;
+}
+
+.nav-tabs .nav-link {
+  border: none;
+  color: #6b7280;
+  font-weight: 500;
+  padding: 0.75rem 1.5rem;
+  margin-right: 1rem;
+  position: relative;
+}
+
+.nav-tabs .nav-link:hover {
+  color: #1f2937;
+  border: none;
+}
+
+.nav-tabs .nav-link.active {
+  color: #3b82f6;
+  border: none;
+}
+
+.nav-tabs .nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #3b82f6;
+}
+
+/* Welcome Section */
+.welcomeContainer {
+  background-image: url("/images/dashboardWelcomBG.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 12px;
+  padding: 2rem;
+  color: white;
+  position: relative;
+  overflow: hidden;
+  margin: 0;
+}
+
+.welcomeContent {
+  position: relative;
+  z-index: 1;
+}
+
+.welcomeTitle {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.welcomeSubtitle {
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+.addButton {
+  background: white;
+  color: #3b82f6;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.addButton:hover {
+  background: #f8fafc;
+  transform: translateY(-2px);
+}
+
+/* Event Cards styles to remove */
+.eventCard,
+.eventDate,
+.eventTime,
+.eventParticipants,
+.participantAvatar {
+    display: none;
+}
+
+/* Quick Links */
+.quickLink {
+  width: 100%;
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8f9fa !important;
+  border: none !important;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.quickLink:hover {
+  background-color: #2a2185 !important;
+  color: white !important;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(42, 33, 133, 0.15);
+}
+
+.quickLink svg {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.quickLink span {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .dashboardContainer {
+    padding: 16px;
+  }
+
+  .cartDashBoard {
+    margin-bottom: 16px;
+  }
+
+  .cartDashBoard-Count-Active {
+    font-size: 20px !important;
+  }
+
+  .cartDashBoard-users-Active {
+    font-size: 24px !important;
+  }
+
+  .attendanceStats {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .quickLink {
+    height: 80px;
+  }
+}
+
+.classSelect {
+  min-width: 120px;
+  padding: 0.375rem 1.75rem 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  border-radius: 0.25rem;
+  border: 1px solid #e5e7eb;
+  background-color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.classSelect:hover {
+  border-color: #2a2185;
+}
+
+.classSelect:focus {
+  border-color: #2a2185;
+  box-shadow: 0 0 0 0.2rem rgba(42, 33, 133, 0.25);
+  outline: none;
+}
+
+/* Top Subjects styles */
+.topSubjectsChart {
+  margin-top: 1rem;
+}
+
+.topSubjectsChart text {
+  font-size: 12px;
+}
+
+.topSubjectsChart .recharts-cartesian-grid-horizontal line,
+.topSubjectsChart .recharts-cartesian-grid-vertical line {
+  stroke: #e5e7eb;
+}
+
+/* Attendance Tabs */
+.attendanceTabs {
+  border-bottom: none;
+  margin-top: 10px;
+}
+
+.attendanceTabs a {
+  color: #666;
+  border: none;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.attendanceTabs a:hover {
+  color: #2a2185;
+  border: none;
+  background: transparent;
+}
+
+.attendanceTabs a.activeTab {
+  color: #2a2185;
+  border: none;
+  border-bottom: 2px solid #2a2185;
+  background: transparent;
+}
+
+.attendanceTabs a.activeTab:hover {
+  color: #2a2185;
+  background: transparent;
+}
+
+/* Time Table styles */
+.timeTableContainer {
+  overflow-x: auto;
+}
+
+.timeTable {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  min-width: 800px;
+}
+
+.timeTableDay {
+  background: #f8f9fa;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.dayHeader {
+  background: #2a2185;
+  color: white;
+  padding: 12px;
+  text-align: center;
+}
+
+.dayHeader h6 {
+  margin: 0;
+  font-weight: 500;
+}
+
+.daySchedule {
+  padding: 12px;
+}
+
+.timeSlot {
+  background: white;
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.timeSlot:last-child {
+  margin-bottom: 0;
+}
+
+.timeSlot:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.timeInfo {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.subjectInfo {
+  margin-bottom: 8px;
+}
+
+.subject {
+  font-weight: 500;
+  color: #2a2185;
+  margin-bottom: 4px;
+}
+
+.teacher {
+  font-size: 12px;
+  color: #666;
+}
+
+.roomInfo {
+  font-size: 12px;
+  color: #666;
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .timeTable {
+    grid-template-columns: 1fr;
+    min-width: unset;
+  }
+
+  .timeTableDay {
+    margin-bottom: 16px;
+  }
+
+  .timeTableDay:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.cartDashBoard {
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.cartDashBoard:hover {
+  transform: translateY(-5px);
+}
+
+.cartDashBoard:hover .cartDashBoard-users-Active {
+  color: white !important;
+}
+
+.cartDashBoard-yellow:hover {
+  background: linear-gradient(45deg, #ffd700, #ffa500);
+}
+
+.cartDashBoard-green:hover {
+  background: linear-gradient(45deg, #4CAF50, #45a049);
+}
+
+.cartDashBoard-red:hover {
+  background: linear-gradient(45deg, #ff4444, #cc0000);
+}
+
+.cartDashBoard-blue:hover {
+  background: linear-gradient(45deg, #2196F3, #1976D2);
+}
+
+.cartDashBoard-users-Active {
+  font-size: 2.5rem;
+  transition: all 0.3s ease;
+}
+
+.cartDashBoard-yellow .cartDashBoard-users-Active {
+  color: #ffd700;
+}
+
+.cartDashBoard-green .cartDashBoard-users-Active {
+  color: #4CAF50;
+}
+
+.cartDashBoard-red .cartDashBoard-users-Active {
+  color: #ff4444;
+}
+
+.cartDashBoard-blue .cartDashBoard-users-Active {
+  color: #2196F3;
+}
+
+/* Info Section Tabs */
+.nav-tabs {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.nav-tabs .nav-link {
+  border: none;
+  color: #6b7280;
+  padding: 0.75rem 1rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.nav-tabs .nav-link:hover {
+  color: #2a2185;
+  background: transparent;
+  border: none;
+}
+
+.nav-tabs .nav-link.active {
+  color: #2a2185;
+  background: transparent;
+  border: none;
+}
+
+.nav-tabs .nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #2a2185;
+}
+
+.nav-tabs .nav-link svg {
+  font-size: 1rem;
+  margin-right: 0.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .nav-tabs {
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .nav-tabs .nav-link {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* Info Section Styles */
+.infoTabs {
+  border-bottom: none;
+  margin-top: 10px;
+}
+
+.infoTabs .nav-link {
+  color: #666;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  border-bottom: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.infoTabs .nav-link:hover {
+  color: #2a2185;
+  background: transparent;
+  border-bottom-color: #2a2185;
+}
+
+.infoTabs .nav-link.active {
+  color: #2a2185;
+  background: transparent;
+  border-bottom-color: #2a2185;
+}
+
+.table-responsive {
+  margin-top: 20px;
+}
+
+.table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #2a2185;
+}
+
+.table td {
+  vertical-align: middle;
+}
+
+@media (max-width: 768px) {
+  .infoTabs .nav-link {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+  
+  .table-responsive {
+    margin-top: 15px;
+  }
+}
+
+.dashboard {
+  padding: 20px;
+}
+
+/* Stats Cards Styles */
+.cartDashBoard {
+  position: relative;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  background: var(--white);
+  min-height: 200px;
+  border-radius: 10px;
+  box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
+}
+
+.cartDashBoard-yellow {
+  background: rgba(255, 193, 7, 0.1);
+}
+
+.cartDashBoard-green {
+  background: rgba(40, 167, 69, 0.1);
+}
+
+.cartDashBoard-blue {
+  background: rgba(0, 123, 255, 0.1);
+}
+
+.cartDashBoard-red {
+  background: rgba(220, 53, 69, 0.1);
+}
+
+.cartDashBoard-text-Active {
+  color: #2a2185;
+  font-size: 1.1em;
+  margin-bottom: 10px;
+}
+
+.cartDashBoard-Count-Active {
+  position: relative;
+  font-weight: 500;
+  font-size: 2.5em;
+  color: #2a2185;
+}
+
+.cartDashBoard-users-Active {
+  font-size: 3.5em;
+  color: #2a2185;
+}
+
+/* Attendance Tabs Styles */
+.attendanceTabs {
+  border-bottom: none;
+}
+
+.attendanceStats {
+  display: flex;
+  gap: 20px;
+}
+
+.attendanceStat {
+  display: flex;
+  align-items: center;
+  font-size: 0.9em;
+}
+
+/* Info Table Styles */
+.infoTabs {
+  border-bottom: none;
+  gap: 5px;
+}
+
+.activeTab {
+  color: #2a2185 !important;
+  border-color: #2a2185 !important;
+  background-color: rgba(42, 33, 133, 0.1) !important;
+}
+
+.tableResponsive {
+  overflow-x: auto;
+}
+
+/* Timetable Styles */
+.timeTableWrapper {
+  overflow-x: auto;
+}
+
+.timeTable {
+  min-width: 800px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+}
+
+.timeTableHeader {
+  display: grid;
+  grid-template-columns: 80px repeat(6, 1fr);
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.dayHeader {
+  padding: 12px;
+  text-align: center;
+  font-weight: bold;
+  border-left: 1px solid #dee2e6;
+}
+
+.timeTableBody {
+  display: flex;
+  flex-direction: column;
+}
+
+.timeTableRow {
+  display: grid;
+  grid-template-columns: 80px repeat(6, 1fr);
+  border-bottom: 1px solid #dee2e6;
+}
+
+.timeSlot {
+  padding: 12px;
+  background-color: #f8f9fa;
+  border-right: 1px solid #dee2e6;
+  text-align: center;
+  font-weight: 500;
+}
+
+.timeTableCell {
+  padding: 8px;
+  border-left: 1px solid #dee2e6;
+  min-height: 80px;
+}
+
+.hasLesson {
+  background-color: rgba(42, 33, 133, 0.1);
+}
+
+.lessonSubject {
+  font-weight: bold;
+  color: #2a2185;
+  margin-bottom: 4px;
+}
+
+.lessonTeacher {
+  font-size: 0.6em;
+  color: #6c757d;
+  margin-bottom: 2px;
+}
+
+.lessonRoom {
+  font-size: 0.8em;
+  color: #6c757d;
+}
+
+/* Common Styles */
+.classSelect {
+  min-width: 150px;
+  max-width: 200px;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 10px;
+  }
+
+  .cartDashBoard {
+    min-height: 150px;
+  }
+
+  .cartDashBoard-Count-Active {
+    font-size: 2em;
+  }
+
+  .cartDashBoard-users-Active {
+    font-size: 2.5em;
+  }
+
+  .attendanceStats {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+/* Modern Timetable Styles */
+.timeTableModern {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-x: auto;
+}
+
+.timeTableHeader {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 15px;
+  min-width: 1200px;
+}
+
+.timeTableContent {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 15px;
+  min-width: 1200px;
+}
+
+.dayColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.dayHeader {
+  text-align: center;
+  font-weight: 600;
+  color: #2a2185;
+  margin: 0;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.timeSlotCard {
+  padding: 8px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  height: 85px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  cursor: grab;
+  user-select: none;
+  border: 1px solid #e5e7eb;
+}
+
+.timeSlotCard:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.timeSlotCard.dragging {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  transform: scale(1.02);
+  opacity: 0.9;
+  cursor: grabbing;
+}
+
+/* Dark mode styles */
+.darkmode .timeSlotCard {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+.darkmode .timeSlotCard:hover {
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.darkmode .timeSlotCard.dragging {
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.darkmode .dayHeader {
+  background: rgba(59, 130, 246, 0.8);
+  color: #ffffff;
+}
+
+.darkmode .timeInfo {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.darkmode .subjectInfo {
+  color: #ffffff;
+}
+
+.darkmode .teacherInfo {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.darkmode .dragOver {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .timeTableModern {
+    padding: 10px;
+  }
+
+  .timeSlotCard {
+    height: 75px;
+    padding: 6px;
+  }
+  
+  .timeInfo {
+    font-size: 0.65rem;
+  }
+  
+  .subjectInfo {
+    font-size: 0.75rem;
+  }
+  
+  .teacherInfo {
+    font-size: 0.7rem;
+  }
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 4px;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.cardIcon {
+  font-size: 1.8rem;
+  margin-right: 0.75rem;
+}
+
+.cardTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+  color: #2a2185;
+  transition: color 0.3s ease;
+}
+
+.cardCount {
+  margin: 1rem 0;
+}
+
+.countValue {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0;
+  color: #2a2185;
+  transition: color 0.3s ease;
+}
+
+.divider {
+  border: 0;
+  height: 1px;
+  background-color: rgba(0, 0, 0, 0.1);
+  margin: 0.5rem 0 1rem 0;
+  transition: background-color 0.3s ease;
+}
+
+.cardDescription {
+  display: flex;
+  align-items: center;
+  margin-top: auto;
+}
+
+.descriptionIcon {
+  font-size: 1rem;
+  margin-right: 0.5rem;
+  opacity: 0.7;
+  transition: color 0.3s ease;
+}
+
+.descriptionText {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  transition: color 0.3s ease;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+/* Atlaskit Calendar styles */
+.calendarContainer {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  height: 400px;
+}
+
+/* Override Atlaskit Calendar default styles */
+:global(.atlaskit-calendar) {
+  width: 100% !important;
+  font-family: inherit !important;
+}
+
+:global(.atlaskit-calendar-grid) {
+  width: 100% !important;
+}
+
+:global(.atlaskit-calendar-header) {
+  padding: 0.5rem !important;
+  margin-bottom: 1rem !important;
+}
+
+:global(.atlaskit-calendar-navigation) {
+  margin: 0 !important;
+  padding: 0.5rem !important;
+}
+
+:global(.atlaskit-calendar-title) {
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+  color: #1f2937 !important;
+}
+
+:global(.atlaskit-calendar-previous-month),
+:global(.atlaskit-calendar-next-month) {
+  color: #6b7280 !important;
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer !important;
+  padding: 0.5rem !important;
+  border-radius: 0.375rem !important;
+  transition: all 0.2s ease !important;
+}
+
+:global(.atlaskit-calendar-previous-month:hover),
+:global(.atlaskit-calendar-next-month:hover) {
+  background: #f3f4f6 !important;
+  color: #2a2185 !important;
+}
+
+:global(.atlaskit-calendar-week-day) {
+  color: #6b7280 !important;
+  font-weight: 500 !important;
+  font-size: 0.875rem !important;
+  padding: 0.5rem !important;
+  text-align: center !important;
+}
+
+:global(.atlaskit-calendar-day) {
+  aspect-ratio: 1 !important;
+  border-radius: 0.375rem !important;
+  color: #1f2937 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  font-size: 0.875rem !important;
+}
+
+:global(.atlaskit-calendar-day:hover) {
+  background: #f3f4f6 !important;
+}
+
+:global(.atlaskit-calendar-day.today) {
+  background: #2a2185 !important;
+  color: white !important;
+  font-weight: 600 !important;
+}
+
+:global(.atlaskit-calendar-day.selected) {
+  background: rgba(42, 33, 133, 0.1) !important;
+  color: #2a2185 !important;
+  font-weight: 600 !important;
+}
+
+:global(.atlaskit-calendar-day.disabled) {
+  color: #d1d5db !important;
+  cursor: not-allowed !important;
+}
+
+:global(.atlaskit-calendar-day.with-event::after) {
+  content: '' !important;
+  position: absolute !important;
+  bottom: 0.25rem !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 0.25rem !important;
+  height: 0.25rem !important;
+  background: #2a2185 !important;
+  border-radius: 50% !important;
+}
+
+@media (max-width: 768px) {
+  .calendarContainer {
+    padding: 1rem;
+  }
+
+  :global(.atlaskit-calendar-title) {
+    font-size: 1rem !important;
+  }
+
+  :global(.atlaskit-calendar-week-day) {
+    font-size: 0.75rem !important;
+  }
+
+  :global(.atlaskit-calendar-day) {
+    font-size: 0.75rem !important;
+  }
+}
+
+/* Remove old calendar styles */
+.calendar,
+.calendarHeader,
+.calendarTitle,
+.calendarNavigation,
+.calendarNavButton,
+.calendarGrid,
+.calendarWeekdays,
+.weekday,
+.calendarDays,
+.calendarDay,
+.eventIndicator {
+  display: none;
+}
+
+/* Dark Mode Styles */
+.darkmode {
+  background: #16213e !important;
+  transition: all 0.3s ease;
+}
+
+.darkmode .darkText {
+  color: #ffffff !important;
+}
+
+.darkmode .darkDivider {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.darkmode .darkIcon {
+  color: #ffffff !important;
+  opacity: 0.7 !important;
+}
+
+.darkmode .cartDashBoard {
+  background: #2d2d2d !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2) !important;
+}
+
+.darkmode .cartDashBoard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Update existing card styles */
+.cartDashBoard {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  height: 100%;
+  width: 315px;
+  border-left-width: 4px;
+  border-left-style: solid;
+  margin-bottom: 10px;
+}
+
+.cardTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+  color: #2a2185;
+  transition: color 0.3s ease;
+}
+
+.countValue {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0;
+  color: #2a2185;
+  transition: color 0.3s ease;
+}
+
+.descriptionText {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  transition: color 0.3s ease;
+}
+
+.descriptionIcon {
+  font-size: 1rem;
+  margin-right: 0.5rem;
+  opacity: 0.7;
+  transition: color 0.3s ease;
+}
+
+.divider {
+  border: 0;
+  height: 1px;
+  background-color: rgba(0, 0, 0, 0.1);
+  margin: 0.5rem 0 1rem 0;
+  transition: background-color 0.3s ease;
+}
+
+/* Update hover effects for dark mode */
+.darkmode .cartDashBoard-yellow:hover {
+  background: linear-gradient(45deg, #d97706, #b45309) !important;
+}
+
+.darkmode .cartDashBoard-green:hover {
+  background: linear-gradient(45deg, #059669, #047857) !important;
+}
+
+.darkmode .cartDashBoard-red:hover {
+  background: linear-gradient(45deg, #dc2626, #b91c1c) !important;
+}
+
+.darkmode .cartDashBoard-blue:hover {
+  background: linear-gradient(45deg, #2563eb, #1d4ed8) !important;
+}
+
+/* Dark mode specific colors */
+.darkmode .cartDashBoard-yellow {
+    color: #fbbf24 !important;
+    border-left: 4px solid #fbbf24;
+    background: rgba(251, 191, 36, 0.1) !important;
+}
+.darkmode .cartDashBoard-green {
+    color: #34d399 !important;
+    border-left: 4px solid #34d399;
+    background: rgba(52, 211, 153, 0.1) !important;
+}
+.darkmode .cartDashBoard-red {
+    color: #f87171 !important;
+    border-left: 4px solid #f87171;
+    background: rgba(248, 113, 113, 0.1) !important;
+}
+.darkmode .cartDashBoard-blue {
+    color: #60a5fa !important;
+    border-left: 4px solid #60a5fa;
+    background: rgba(96, 165, 250, 0.1) !important;
+}
+
+/* Dark mode hover effects */
+.darkmode .cartDashBoard-yellow:hover {
+    background: linear-gradient(45deg, #fbbf24, #f59e0b) !important;
+    color: #ffffff !important;
+}
+.darkmode .cartDashBoard-green:hover {
+    background: linear-gradient(45deg, #34d399, #10b981) !important;
+    color: #ffffff !important;
+}
+.darkmode .cartDashBoard-red:hover {
+    background: linear-gradient(45deg, #f87171, #ef4444) !important;
+    color: #ffffff !important;
+}
+.darkmode .cartDashBoard-blue:hover {
+    background: linear-gradient(45deg, #60a5fa, #3b82f6) !important;
+    color: #ffffff !important;
+}
+
+/* Dark mode icon colors */
+.darkmode .cartDashBoard-yellow .cardIcon {
+    color: #fbbf24 !important;
+}
+.darkmode .cartDashBoard-green .cardIcon {
+    color: #34d399 !important;
+}
+.darkmode .cartDashBoard-red .cardIcon {
+    color: #f87171 !important;
+}
+.darkmode .cartDashBoard-blue .cardIcon {
+    color: #60a5fa !important;
+}
+
+/* Dark mode hover icon colors */
+.darkmode .cartDashBoard-yellow:hover .cardIcon,
+.darkmode .cartDashBoard-green:hover .cardIcon,
+.darkmode .cartDashBoard-red:hover .cardIcon,
+.darkmode .cartDashBoard-blue:hover .cardIcon {
+    color: #ffffff !important;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .cartDashBoard {
+        padding: 1rem;
+    }
+    
+    .cardTitle {
+        font-size: 1rem;
+    }
+    
+    .countValue {
+        font-size: 2rem;
+    }
+    
+    .cardIcon {
+        font-size: 1.5rem;
+    }
+    
+    .descriptionText {
+        font-size: 0.75rem;
+    }
 }

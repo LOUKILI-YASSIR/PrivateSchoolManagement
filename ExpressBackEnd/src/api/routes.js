@@ -1,7 +1,6 @@
 const express = require("express");
 const path = require("path");
 const { upload } = require("./middleware.js");
-const cities = require("cities.json");
 
 const router = express.Router();
 
@@ -27,6 +26,7 @@ router.post("/upload/:tablename/:matricule?", upload.single("fileToUpload"), (re
 
 // Existing route for cities
 router.get("/ville/:pays", (req, res) => {
+  const cities = require("cities.json");
   const countryCode = req.params.pays.toUpperCase();
   const filteredCities = cities.filter(city => 
     city.country.toUpperCase() === countryCode

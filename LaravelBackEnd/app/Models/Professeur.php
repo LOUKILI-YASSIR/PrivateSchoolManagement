@@ -3,28 +3,77 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
+use App\Traits\GeneratesMatricule;
 
 class Professeur extends Model
 {
-    use HasFactory;
-    public $incrementing=false;
-    protected $primaryKey="matriculePr";
+    use HasFactory, Notifiable, GeneratesMatricule;
+
+    public $incrementing = false;
+    protected $primaryKey = "matriculePr";
     protected $keyType = 'string';
+
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
+
     protected $fillable = [
-        'image_urlPr','civilitePr','nomPr','prenomPr','nationalitePr','CINPr','DateNaissancePr',
-        'adressePr','villePr','CodePostalPr','paysPr','emailPr','Telephone1Pr','matriculePr',
-        'Telephone2Pr','dateEmbauchePr','salairePr','NomBanquePr','RIBPr','observationPr',
+        'matriculePr', 'GENREPr', 'NOMPr', 'PRENOMPr', 'LIEU_NAISSANCEPr', 'DATE_NAISSANCEPr',
+        'NATIONALITEPr', 'ADRESSEPr', 'VILLEPr', 'PAYSPr', 'CODE_POSTALPr', 'EMAILPr',
+        'TELEPHONE1Pr', 'TELEPHONE2Pr', 'PROFILE_PICTUREPr', 'OBSERVATIONPr', 'SPECIALITEPr',
+        'DIPLOME_SUPPr', 'ANNEE_EXPPr', 'STATUT_EMPLOIPr'
     ];
-    protected static function boot(){
-        parent::boot();
-        static::creating(
-            function($professeur){
-                $dernieProfesseur=$professeur::latest("matriculePr")->first();
-                $nouvelId=$dernieProfesseur ? (int) substr($dernieProfesseur->matriculePr,-3)+1:1;
-                $professeur->matriculePr="YLSCHOOL_PR_".date("Y")."_".str_pad($nouvelId,3,"0",STR_PAD_LEFT);
-            }
-        );
+
+    protected $casts = [
+        'DATE_NAISSANCEPr' => 'date',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'ANNEE_EXPPr' => 'integer'
+    ];
+
+    /**
+     * Get the user associated with the teacher.
+     */
+    public function user()
+    {
+        return $this->hasOne(User::class, 'matricule', 'matriculePr');
+    }
+
+    /**
+     * تحديد بادئة الرقم التسلسلي للأساتذة
+     *
+     * @return string
+     */
+    protected static function getMatriculePrefix()
+    {
+        return 'PR';
+    }
+
+    public function groupes()
+    {
+        return $this->belongsToMany(Groupe::class, 'professeur_groupes', 'matriculePr', 'matriculeGrp');
+    }
+
+    public function matieres()
+    {
+        return $this->belongsToMany(Matiere::class, 'affectation_professeurs', 'matriculePr', 'matriculeMat');
+    }
+
+    public function absences()
+    {
+        return $this->hasMany(AbsenceProfesseur::class, 'matriculePr');
+    }
+
+    public function emploisDuTemps()
+    {
+        return $this->hasMany(EmploiDuTemps::class, 'matriculePr');
+    }
+
+    /**
+     * Alias for emploisDuTemps to maintain consistent naming in the code
+     */
+    public function schedule()
+    {
+        return $this->emploisDuTemps();
     }
 }

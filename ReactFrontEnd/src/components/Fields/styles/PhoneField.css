@@ -1,0 +1,34 @@
+/* Phone input styling */
+.react-tel-input .special-label.special-label-focus {
+    color: #1976d2;
+}
+  
+.react-tel-input .special-label.special-label-error {
+    color: red;
+}
+
+/* Dark mode styles */
+.react-tel-input.dark-mode,
+.react-tel-input.dark-mode .form-control,
+.react-tel-input.dark-mode .special-label {
+    color: #fff !important;
+    background-color: transparent !important;
+}
+.react-tel-input.dark-mode .special-label,
+.react-tel-input.dark-mode .country-list,
+.react-tel-input.dark-mode .country-list .search,
+.react-tel-input.dark-mode .country-list .search-box {
+    background: rgba(30, 41, 59, 0.98) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.react-tel-input.dark-mode .country-list .country:hover,
+.react-tel-input.dark-mode .country-list .country.highlight {
+    background: var(--dark-bg) !important;
+}
+
+/* Error state */
+.react-tel-input .form-control.form-control-error {
+    border: none !important;
+    outline: 1px solid red !important;
+}

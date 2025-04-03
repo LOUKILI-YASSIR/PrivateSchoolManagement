@@ -9,10 +9,12 @@ import { MainContext } from "../../../utils/contexts/MainContext";
 import FormWrapper from "../../form/FormWrapper"; // Adjust import path as needed
 import { useTranslation } from "react-i18next";
 import ActionMenu from "../../Menu/ActionMenu";
+import { useSelector } from "react-redux";
 
 export const GetInfoTable = () => {
   const { t: Traduction, i18n } = useTranslation();
   const Language = i18n.language;
+  const isDarkMode = useSelector((state) => state?.theme?.darkMode || false);
   const ValueMainContext = useContext(MainContext);
   if (!ValueMainContext) return {}; // Handle undefined context gracefully
   const { TableName } = ValueMainContext;
@@ -58,6 +60,11 @@ export const GetInfoTable = () => {
           <ActionMenu
             key="DeleteBox"
             contentOptions={BoxOptionDeleteBy1({ handleDelete, closeMenu, itemId, Traduction })}
+            maxWidth="xs"
+            disableBackdropClick={false}
+            style={{ 
+              borderLeft: isDarkMode ? '3px solid rgba(220, 38, 38, 0.8)' : '3px solid rgba(220, 38, 38, 0.7)' 
+            }}
           />
         ),
       ];

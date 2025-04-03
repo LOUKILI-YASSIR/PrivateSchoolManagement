@@ -1,39 +1,98 @@
-import Axios from './apiClient';
+import apiClient from './apiClient';
 
+const apiServices = {
+  // GET request
+  getData: async (endpoint, params = {}) => {
+    try {
+      const response = await apiClient.get(endpoint, { params });
+  return response.data;
+    } catch (error) {
+      console.error(`Error fetching data from ${endpoint}:`, error);
+      return handleApiError(error);
+    }
+  },
 
-// Generic GET request function
-const fetchData = async (apiName, start = null, length = null) => {
-  const url = start !== null && length !== null 
-    ? `/${apiName}/${start}/${length}`
-    : `/${apiName}`;
+  // POST request
+  postData: async (endpoint, data) => {
+    try {
+      console.log(`Making POST request to ${endpoint}:`, data);
+      const response = await apiClient.post(endpoint, data);
+      return response.data;
+    } catch (error) {
+      console.error(`Error posting data to ${endpoint}:`, error);
+      return handleApiError(error);
+    }
+  },
+
+  // PUT request
+  updateData: async (apiName, matricule, data) => {
+    try {
+      const response = await apiClient.put(`/${apiName}/${matricule}`, data);
+      return response.data;
+    } catch (error) {
+      console.error(`Error updating data in ${apiName} with ID ${matricule}:`, error);
+      return handleApiError(error);
+    }
+  },
+
+  // DELETE request
+  deleteData: async (endpoint, matricule) => {
+    try {
+      const response = await apiClient.delete(`${endpoint}/${matricule}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error deleting data at ${endpoint}/${matricule}:`, error);
+      return handleApiError(error);
+    }
+  },
+  // GET request for paginated data
+  getPaginatedData: async (endpoint, start, length) => {
+    try {
+      if (start < 0 || length <= 0) {
+        throw new Error("Invalid pagination parameters");
+      }
   
-  const response = await Axios.get(url);
-  return response.data;
+      const response = await apiClient.get(endpoint, {
+        params: { start, length },
+      });
+  
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching paginated data from ${endpoint}:`, error);
+      return handleApiError(error);
+    }
+  }
 };
 
-// Example POST request function
-const postData = async (apiName, data) => {
-  const response = await Axios.post(`/${apiName}`, data);
-  return response.data;
+// Helper function to handle API errors
+const handleApiError = (error) => {
+  if (error.response) {
+    // The request was made and the server responded with a status code
+    // that falls out of the range of 2xx
+    console.error('Response error:', error.response.data);
+    
+    // Return the error data for handling in the component
+    return {
+      error: true,
+      status: error.response.status,
+      message: error.response.data.message || 'An error occurred',
+      errors: error.response.data.errors || {}
+    };
+  } else if (error.request) {
+    // The request was made but no response was received
+    console.error('Request error:', error.request);
+    return {
+      error: true,
+      message: 'No response from server. Please try again later.',
+    };
+  } else {
+    // Something happened in setting up the request that triggered an Error
+    console.error('Error setting up request:', error.message);
+    return {
+      error: true,
+      message: 'Error in making request. Please try again.',
+    };
+  }
 };
 
-// Example PUT request function
-const updateData = async (apiName, id, data) => {console.log(1111111,data)
-  const response = await Axios.put(`/${apiName}/${id}`, data);
-  return response.data;
-};
-
-// Example DELETE request function
-const deleteData = async (apiName, id) => {
-  const response = await Axios.delete(`/${apiName}/${id}`);
-  return response.data;
-};
-
-const postImage = async (apiName,image)=>{
-  const response = await fetch('http://localhost:3000/process-image', {
-    method: 'POST',
-    body: formData,
-  });
-  return response.data;
-}
-export {deleteData,updateData,postData,fetchData,postImage}
+export default apiServices;

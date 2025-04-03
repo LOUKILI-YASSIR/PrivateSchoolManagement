@@ -1,46 +1,249 @@
 import { 
-    Select,Box,InputLabel,OutlinedInput,FormControl,
+    Select, Box, InputLabel, OutlinedInput, FormControl,
+    Typography, MenuItem, Chip, Divider, RadioGroup,
+    FormControlLabel, Radio, Paper, Stack, Card, CardContent, Snackbar, Alert
 } from "@mui/material";
-import { SetExportInfo } from "./hooks/useExport";
+import { SetExportInfo, UseExport } from "./hooks/useExport";
 import { ExportOptions } from "./options/ExportOption";
+import { useSelector } from "react-redux";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { 
+    faFilePdf, 
+    faFileExcel, 
+    faFileAlt
+} from '@fortawesome/free-solid-svg-icons';
+import { useEffect, useState } from "react";
+import './Export.module.css';
+
 export default function Export() {
-    const { tableData, IndexExportType, fileExtension, SelectFileExtention, SelectIndexExportType } = SetExportInfo()
-    const { ExportSelectText, AllFilesExtantions, ExportTypeText, OptionsExportFile } = ExportOptions()
+    const { tableData, IndexExportType, fileExtension, SelectFileExtention, SelectIndexExportType } = SetExportInfo();
+    const { showSuccess, setShowSuccess } = UseExport();
+    const { ExportSelectText, AllFilesExtantions, ExportTypeText, OptionsExportFile } = ExportOptions();
+    const isDarkMode = useSelector((state) => state?.theme?.darkMode || false);
+    const [selectedFormat, setSelectedFormat] = useState(fileExtension);
+    const [selectedType, setSelectedType] = useState(IndexExportType);
+    
+    // Apply selected values when component mounts
+    useEffect(() => {
+        setSelectedFormat(fileExtension);
+        setSelectedType(IndexExportType);
+    }, [fileExtension, IndexExportType]);
+    
+    // Handle format change
+    const handleFormatChange = (format) => {
+        setSelectedFormat(format);
+        SelectFileExtention({ target: { value: format }});
+    };
+    
+    // Handle export type change
+    const handleTypeChange = (index) => {
+        setSelectedType(index);
+        SelectIndexExportType({ target: { value: index }});
+    };
+    
+    // Get file format icon
+    const getFormatIcon = (format) => {
+        switch(format.toLowerCase()) {
+            case 'pdf':
+                return <FontAwesomeIcon icon={faFilePdf} style={{ color: '#f44336', fontSize: '2rem' }} />;
+            case 'excel':
+                return <FontAwesomeIcon icon={faFileExcel} style={{ color: '#4caf50', fontSize: '2rem' }} />;
+            default:
+                return <FontAwesomeIcon icon={faFileAlt} style={{ color: '#2196f3', fontSize: '2rem' }} />;
+        }
+    };
+    
     return (
-        <Box component="form" sx={{ display: 'flex', flexWrap: 'wrap' }}>
-          <FormControl sx={{ m: 1, minWidth: 120 }}>
-            <InputLabel htmlFor="FileExtention">{ExportSelectText}</InputLabel>
-            <Select
-              native
-              value={fileExtension}
-              onChange={SelectFileExtention}
-              input={<OutlinedInput label="FileExtentionSelect" id="FileExtention" />}
+        <Box 
+            sx={{ 
+                width: '100%',
+                backgroundColor: isDarkMode ? 'rgba(30, 41, 59, 0.95)' : 'inherit',
+                color: isDarkMode ? '#e0e0e0' : 'inherit',
+                transition: 'all 0.3s ease',
+                p: 1
+            }}
+            className={isDarkMode ? 'dark-mode' : ''}
+        >
+            {/* Success notification */}
+            <Snackbar
+                open={showSuccess}
+                autoHideDuration={3000}
+                onClose={() => setShowSuccess(false)}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
             >
-              {
-                AllFilesExtantions.map((Extentions,index)=>{
-                  return(
-                    <option key={index} value={Extentions}>{Extentions}</option>
-                )})
-              }
-            </Select>
-          </FormControl>
-          <FormControl sx={{ m: 1, minWidth: 120 }}>
-            <InputLabel htmlFor="OptionExportFile">{ExportTypeText}</InputLabel>
-            <Select
-              native
-              value={IndexExportType}
-              onChange={SelectIndexExportType}
-              input={<OutlinedInput label="OptionExportFileSelect" id="OptionExportFile" />}
-            > 
-             {
-                OptionsExportFile.map((ExportType,index)=>(
-                  ( !!ExportType.disabled && !ExportType.disabled(tableData) ) && (
-                    <option key={index} value={index} >{ExportType.text}</option>
-                  )
-                ))
-             }
-            </Select>
-          </FormControl>
+                <Alert 
+                    onClose={() => setShowSuccess(false)} 
+                    severity="success" 
+                    variant="filled"
+                    sx={{ 
+                        width: '100%',
+                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                    }}
+                >
+                    {`Successfully exported as ${fileExtension} file`}
+                </Alert>
+            </Snackbar>
+
+            {/* File Type Selection */}
+            <Typography 
+                variant="subtitle1" 
+                gutterBottom
+                sx={{ 
+                    fontWeight: 600, 
+                    mb: 2,
+                    color: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : 'inherit'
+                }}
+            >
+                {ExportSelectText}
+            </Typography>
+            
+            <Stack 
+                direction="row" 
+                spacing={2} 
+                sx={{ 
+                    mb: 3, 
+                    flexWrap: 'wrap',
+                    justifyContent: 'center',
+                    '& > *': { m: 1 }
+                }}
+            >
+                {AllFilesExtantions.map((format, index) => (
+                    <Card 
+                        key={index}
+                        className={`file-type-selector ${selectedFormat === format ? 'selected' : ''}`}
+                        sx={{
+                            cursor: 'pointer',
+                            width: 100,
+                            height: 110,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            backgroundColor: isDarkMode 
+                                ? (selectedFormat === format ? 'rgba(106, 95, 201, 0.2)' : 'rgba(30, 41, 59, 0.8)') 
+                                : (selectedFormat === format ? 'rgba(106, 95, 201, 0.1)' : 'white'),
+                            border: `1px solid ${selectedFormat === format 
+                                ? (isDarkMode ? 'rgba(106, 95, 201, 0.6)' : 'rgba(106, 95, 201, 0.5)') 
+                                : (isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)')}`,
+                            boxShadow: selectedFormat === format 
+                                ? (isDarkMode ? '0 4px 12px rgba(106, 95, 201, 0.3)' : '0 4px 12px rgba(106, 95, 201, 0.2)') 
+                                : 'none',
+                        }}
+                        onClick={() => handleFormatChange(format)}
+                    >
+                        <CardContent sx={{ p: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                            {getFormatIcon(format)}
+                            <Typography 
+                                variant="body2" 
+                                sx={{ 
+                                    mt: 1, 
+                                    fontWeight: selectedFormat === format ? 'bold' : 'normal',
+                                    color: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : 'inherit'
+                                }}
+                            >
+                                {format}
+                            </Typography>
+                        </CardContent>
+                    </Card>
+                ))}
+            </Stack>
+            
+            <Divider 
+                sx={{ 
+                    my: 2,
+                    borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+                }}
+            />
+            
+            {/* Export Type Selection */}
+            <Typography 
+                variant="subtitle1" 
+                gutterBottom
+              sx={{
+                    fontWeight: 600, 
+                    mb: 2,
+                    color: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : 'inherit' 
+                }}
+            >
+                {ExportTypeText}
+            </Typography>
+            
+            <RadioGroup 
+                value={selectedType.toString()} 
+                onChange={(e) => handleTypeChange(parseInt(e.target.value))}
+                className="export-option-list"
+            >
+                {OptionsExportFile.map((exportType, index) => (
+                    (!exportType.disabled || !exportType.disabled(tableData)) && (
+                        <Paper
+                            key={index}
+                            elevation={0}
+                            className={`export-option-item ${selectedType === index ? 'selected' : ''}`}
+                            sx={{
+                                backgroundColor: isDarkMode 
+                                    ? (selectedType === index ? 'rgba(255, 255, 255, 0.05)' : 'transparent')
+                                    : (selectedType === index ? 'rgba(106, 95, 201, 0.05)' : 'transparent'),
+                                opacity: exportType.disabled && exportType.disabled(tableData) ? 0.5 : 1,
+                                pointerEvents: exportType.disabled && exportType.disabled(tableData) ? 'none' : 'auto',
+                            }}
+                        >
+                            <FormControlLabel
+                                value={index.toString()}
+                                control={
+                                    <Radio 
+                                        disabled={exportType.disabled && exportType.disabled(tableData)}
+                                        sx={{
+                                            color: isDarkMode ? 'rgba(255, 255, 255, 0.7)' : 'inherit',
+                                            '&.Mui-checked': {
+                                                color: isDarkMode ? 'rgba(106, 95, 201, 0.9)' : 'rgba(106, 95, 201, 1)',
+                                            },
+                                            '&.Mui-disabled': {
+                                                color: isDarkMode ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.26)',
+                                                opacity: 0.6,
+                                            }
+                                        }}
+                                    />
+                                }
+                                label={
+                                    <Typography 
+                                        variant="body2"
+                                        sx={{ 
+                                            color: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : 'inherit',
+                                            fontWeight: selectedType === index ? 600 : 400,
+                                            ...(exportType.disabled && exportType.disabled(tableData) ? {
+                                                opacity: 0.5,
+                                                textDecoration: 'line-through',
+                                                color: isDarkMode ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.4)',
+                                                fontStyle: 'italic'
+                                            } : {})
+                                        }}
+                                    >
+                                        {exportType.text}
+                                        {exportType.disabled && exportType.disabled(tableData) && (
+                                            <Typography
+                                                component="span"
+                                                variant="caption"
+              sx={{
+                                                    ml: 1, 
+                                                    opacity: 0.8,
+                                                    fontStyle: 'italic',
+                                                    fontSize: '0.7rem'
+                                                }}
+                                            >
+                                                (unavailable)
+                                            </Typography>
+                                        )}
+                                    </Typography>
+                                }
+                                sx={{ 
+                                    width: '100%',
+                                    opacity: exportType.disabled && exportType.disabled(tableData) ? 0.7 : 1
+                                }}
+                            />
+                        </Paper>
+                    )
+                ))}
+            </RadioGroup>
         </Box> 
-  )
+    );
 }

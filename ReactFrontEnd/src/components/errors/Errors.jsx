@@ -1,26 +1,122 @@
 import React from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Box, Typography, Button, Container, Paper } from '@mui/material';
+import { useTranslation } from 'react-i18next';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import HomeIcon from '@mui/icons-material/Home';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import SecurityIcon from '@mui/icons-material/Security';
+import SearchOffIcon from '@mui/icons-material/SearchOff';
+import ServerErrorIcon from '@mui/icons-material/CloudOff';
+
 const ErrorPage = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { t } = useTranslation();
+  
+  // Get error type from location state or default to 404
+  const errorType = location.state?.errorType || '404';
+  
+  const errorConfig = {
+    '404': {
+      icon: <SearchOffIcon sx={{ fontSize: 100, color: '#f44336' }} />,
+      title: t('errors.404.title', 'Page Not Found'),
+      message: t('errors.404.message', 'The page you are looking for does not exist or has been moved.'),
+      action: {
+        label: t('errors.404.action', 'Go to Home'),
+        icon: <HomeIcon />,
+        onClick: () => navigate('/YLSchool/Dashboard')
+      }
+    },
+    '403': {
+      icon: <SecurityIcon sx={{ fontSize: 100, color: '#ff9800' }} />,
+      title: t('errors.403.title', 'Access Denied'),
+      message: t('errors.403.message', 'You do not have permission to access this page.'),
+      action: {
+        label: t('errors.403.action', 'Go Back'),
+        icon: <HomeIcon />,
+        onClick: () => navigate(-1)
+      }
+    },
+    '500': {
+      icon: <ServerErrorIcon sx={{ fontSize: 100, color: '#d32f2f' }} />,
+      title: t('errors.500.title', 'Server Error'),
+      message: t('errors.500.message', 'Something went wrong on our end. Please try again later.'),
+      action: {
+        label: t('errors.500.action', 'Refresh Page'),
+        icon: <RefreshIcon />,
+        onClick: () => window.location.reload()
+      }
+    },
+    'network': {
+      icon: <ErrorOutlineIcon sx={{ fontSize: 100, color: '#2196f3' }} />,
+      title: t('errors.network.title', 'Network Error'),
+      message: t('errors.network.message', 'Please check your internet connection and try again.'),
+      action: {
+        label: t('errors.network.action', 'Retry'),
+        icon: <RefreshIcon />,
+        onClick: () => window.location.reload()
+      }
+    },
+    'default': {
+      icon: <ErrorOutlineIcon sx={{ fontSize: 100, color: '#9e9e9e' }} />,
+      title: t('errors.default.title', 'Oops! Something went wrong'),
+      message: t('errors.default.message', 'An unexpected error occurred. Please try again.'),
+      action: {
+        label: t('errors.default.action', 'Go to Home'),
+        icon: <HomeIcon />,
+        onClick: () => navigate('/YLSchool/Dashboard')
+      }
+    }
+  };
+
+  const config = errorConfig[errorType] || errorConfig.default;
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-white text-center">
-      <p className="text-gray-500 text-xl mb-4">The page you are looking for can’t be found.</p>
-      <div className="relative">
-        <h1
-          className="text-9xl font-extrabold text-black select-none"
-          style={{ fontFamily: 'Arial, sans-serif', position: 'relative', zIndex: 10 }}
+    <Container maxWidth="sm">
+      <Box
+        sx={{
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          py: 4
+        }}
+      >
+        <Paper
+          elevation={3}
+          sx={{
+            p: 4,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            textAlign: 'center',
+            width: '100%'
+          }}
         >
-          404
-        </h1>
-        <svg
-          className="absolute top-0 left-0 w-full h-full"
-          style={{ zIndex: 0 }}
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 100 40"
-        >
-          <line x1="20" y1="10" x2="60" y2="30" stroke="black" strokeWidth="1" />
-          <line x1="30" y1="20" x2="90" y2="40" stroke="black" strokeWidth="1" />
-        </svg>
-      </div>
-    </div>
+          {config.icon}
+          
+          <Typography variant="h4" component="h1" gutterBottom sx={{ mt: 2 }}>
+            {config.title}
+          </Typography>
+          
+          <Typography variant="body1" color="text.secondary" paragraph>
+            {config.message}
+          </Typography>
+          
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={config.action.icon}
+            onClick={config.action.onClick}
+            sx={{ mt: 2 }}
+          >
+            {config.action.label}
+          </Button>
+        </Paper>
+      </Box>
+    </Container>
   );
 };
 

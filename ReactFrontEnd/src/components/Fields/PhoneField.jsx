@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/material.css';
-
-export default function PHONE ({ register, fieldItem, handleChange, errors, isFilter = false }) {
+import "./styles/PhoneField.css";
+export default function PHONE ({ register, fieldItem, handleChange, errors, isFilter = false, isDarkMode }) {
     const [isfocus, setisfocus] = useState(false);
     
     // Helper to compute the index from the label's last character
@@ -11,7 +11,6 @@ export default function PHONE ({ register, fieldItem, handleChange, errors, isFi
       const match = fieldItem.label.match(/\d+/);
       return match ? Number(match[0])-1 : 0; // Default to 0 if no number is found
     };
-  
     // Function to update the error class on the input and label elements
     const updateErrorClass = () => {
       if (isFilter) return;
@@ -19,7 +18,7 @@ export default function PHONE ({ register, fieldItem, handleChange, errors, isFi
       const index = getIndex();
       const inputElements = document.querySelectorAll(".react-tel-input .form-control");
       const labelElements = document.querySelectorAll(".react-tel-input .special-label");
-  
+
       if (inputElements[index] && labelElements[index]) {
         if (errors[fieldItem.label]) {
           // Add error classes
@@ -37,7 +36,14 @@ export default function PHONE ({ register, fieldItem, handleChange, errors, isFi
         }
       }
     };
-  
+    const addModeClass = (element) => {
+      if (isDarkMode) {
+          element.classList.add("dark-mode");
+      } else {
+          element.classList.remove("dark-mode");
+      }
+    };
+
     // Update the error class whenever errors or the field value change
     useEffect(() => {
       updateErrorClass();
@@ -48,54 +54,59 @@ export default function PHONE ({ register, fieldItem, handleChange, errors, isFi
     const handleupdateFocus = () => {
       const index = getIndex();
       const labelElements = document.querySelectorAll(".react-tel-input .special-label");
-  
-      if (labelElements[index] && isfocus) {
-          labelElements[index].classList.add("special-label-focus");
-        } else if (labelElements[index] && !isfocus) {
-          // Remove error classes
-          labelElements[index].classList.remove("special-label-focus");
+      const allPhonesFields = document.querySelectorAll(".react-tel-input");
+      addModeClass(allPhonesFields[index]);
+
+      if (labelElements[index]) {
+        if (isfocus) {
+            labelElements[index].classList.add("special-label-focus");
+        } else {
+            labelElements[index].classList.remove("special-label-focus");
         }
+      }
     }
 
     const phoneInputProps = isFilter ? {
-        value: fieldItem.value ?? "",
-        onFocus: () => setisfocus(true),
-        onBlur: () => setisfocus(false),
-        country: fieldItem.value ?? "ma",
-        onChange: (value) => {
-          const event = {
-            target: {
-              value: value && !value.startsWith("+") ? "+" + value : value || "",
-            },
-          };
-          handleChange(event);
-        },
-        specialLabel: fieldItem.props.label,
-        placeholder: fieldItem.props.placeholder,
-        enableSearch: true,
-        autocompleteSearch: true,
-        inputStyle: { width: "100%" }
-    } : {
-        ...register(fieldItem.label, fieldItem.validation),
-        value: fieldItem.value ?? "",
-        onFocus: () => setisfocus(true),
-        onBlur: () => setisfocus(false),
-        country: fieldItem.value ?? "ma",
-        onChange: (value) => {
-          const event = {
-            target: {
-              value: value && !value.startsWith("+") ? "+" + value : value || "",
-            },
-          };
-          handleChange(event, fieldItem.label);
-          updateErrorClass();
-        },
-        specialLabel: fieldItem.props.label,
-        placeholder: fieldItem.props.placeholder,
-        enableSearch: true,
-        autocompleteSearch: true,
-        inputStyle: { width: "100%" }
-    };
+      value: fieldItem.value ?? "",
+      onFocus: () => setisfocus(true),
+      onBlur: () => setisfocus(false),
+      country: fieldItem.value ?? "ma",
+      onChange: (value) => {
+        const event = {
+          target: {
+            value: value && !value.startsWith("+") ? "+" + value : value || "",
+          },
+        };
+        handleChange(event);
+      },
+      specialLabel: fieldItem.props.label,
+      placeholder: fieldItem.props.placeholder,
+      enableSearch: true,
+      autocompleteSearch: true,
+      containerStyle: { backgroundColor: 'transparent' },
+      inputStyle: { width: "100%", backgroundColor: 'transparent' }
+  } : {
+      ...register(fieldItem.label, fieldItem.validation),
+      value: fieldItem.value ?? "",
+      onFocus: () => setisfocus(true),
+      onBlur: () => setisfocus(false),
+      country: fieldItem.value ?? "ma",
+      onChange: (value) => {
+        const event = {
+          target: {
+            value: value && !value.startsWith("+") ? "+" + value : value || "",
+          },
+        };
+        handleChange(event, fieldItem.label);
+        updateErrorClass();
+      },
+      specialLabel: fieldItem.props.label,
+      placeholder: fieldItem.props.placeholder,
+      enableSearch: true,
+      autocompleteSearch: true,
+      containerStyle: { backgroundColor: 'transparent' },
+      inputStyle: { width: "100%", backgroundColor: 'transparent' }
+  };
   
     return (
       <PhoneInput

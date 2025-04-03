@@ -8,7 +8,7 @@ class EtudiantSeeder extends Seeder
 {
     public function run(): void
     {
-        Etudiant::factory()->count(1000)->create();
+        Etudiant::factory()->count(100)->create();
     }
 }
 ?>

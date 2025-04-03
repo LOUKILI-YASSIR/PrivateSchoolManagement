@@ -24,10 +24,10 @@ export const MainProvider = ({ ApiName, children }) => {
   }, []);
 
   const { data: { data = [], total = 0 } = {}, isLoading, error, isRefetching, refetch } = useFetchData(
-    ApiName,
+    ApiName+"/paginate",
     pagination.pageIndex * pagination.pageSize,
     pagination.pageSize
-  );
+  );console.log( ApiName+"/paginate",data, total, pagination.pageIndex * pagination.pageSize, pagination.pageSize)
 
   const [tableData, setTableData] = useState([]);
 
