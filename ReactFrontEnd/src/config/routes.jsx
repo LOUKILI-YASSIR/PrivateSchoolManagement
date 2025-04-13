@@ -12,10 +12,6 @@ const routes = [
     element: <Menu />,
     children: [
       {
-        path: "Login",
-        element: <Login />
-      },
-      {
         path: "DashBoard",
         element: <DashBoard />
       },
@@ -28,14 +24,50 @@ const routes = [
         element: <Main ApiName="etudiants" />
       },
       {
+        path: "AnneeScolaire",
+        element: <Main ApiName="academic-years" />
+      },
+      {
         path: "Professeurs",
         element: <Main ApiName="professeurs" />
+      },
+      {
+        path: "Matiere",
+        element: <Main ApiName="matieres" />
+      },
+      {
+        path: "Niveaux",
+        element: <Main ApiName="niveaux" />
+      },
+      {
+        path: "Salles",
+        element: <Main ApiName="salles" />
+      },
+      {
+        path: "Groupes",
+        element: <Main ApiName="groups" />
+      },
+      {
+        path: "Evaluations",
+        element: <Main ApiName="evaluations" />
+      },
+      {
+        path: "TimeTables",
+        element: <Main ApiName="regular-timetables" />
       }
     ]
   },
   {
+    path: "/YLSchool/Login",
+    element: <Login />
+  },
+  {
     path: "/YLSchool/error",
     element: <ErrorPage />
+  },
+  {
+    path: "/",
+    element: <Navigate to="/YLSchool/Login" replace />
   },
   {
     path: "*",

@@ -13,6 +13,7 @@ export const ExportOptions = () => {
       "Csv",
       "Excel",
       "Pdf",
+      "Word",
     ],
     OptionsExportFile :  [
       {

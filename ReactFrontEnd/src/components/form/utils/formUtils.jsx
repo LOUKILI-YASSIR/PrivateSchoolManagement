@@ -1,6 +1,16 @@
 // utils/formUtils.js
-
-import { DEFAULT } from './formConstants';
+import {
+  ETUDIANTS,
+  DAYWEEK,
+  GROUPS,
+  MATIERES,
+  NIVEAU,
+  PROFESSEUR,
+  REGULARTIMETABLE,
+  SALLE,
+  TIMESLOT,
+  EVALUATION,
+} from "../Steps/DefaultStates";
 
 export function CalcDefaultDate(ageStart) {
   const today = new Date();
@@ -11,59 +21,26 @@ export function CalcDefaultDate(ageStart) {
   ).toISOString().slice(0, 10);
 }
 
-export const getDefaultState = () => {
-  const {
-    COUNTRY_CODE: defaultCountry,
-    CITY_NAME: defaultCity,
-    POSTAL_CODE: defaultPostalCode,
-  } = DEFAULT;
+export const getDefaultState = () => ({
+  ETUDIANTS,
+  DAYWEEK,
+  GROUPS,
+  MATIERES,
+  NIVEAU,
+  PROFESSEUR,
+  REGULARTIMETABLE,
+  SALLE,
+  TIMESLOT,
+  EVALUATION,
+});
 
-  return {
-    ETUDIANTS: {
-      GENRE_1: "Homme",
-      PROFILE_PICTURE_1: "/uploads/default.jpg",
-      NOM_1: "",
-      PRENOM_1: "",
-      LIEU_NAISSANCE_1: defaultCity,
-      DATE_NAISSANCE_1: CalcDefaultDate(6),
-      NATIONALITE_1: defaultCountry,
-      PAYS_1: defaultCountry,
-      VILLE_1: defaultCity,
-      CODE_POSTAL_1: defaultPostalCode,
-      EMAIL_1: "",
-      ADRESSE_1: "",
-      OBSERVATION_1: "",
-      NOM_2: "",
-      PRENOM_2: "",
-      TELEPHONE1_2: "+212",
-      TELEPHONE2_2: "+212",
-      EMAIL_2: "",
-      OBSERVATION_2: "",
-      PROFESSION_2: "",
-      LIEN_PARENTE_2: "Père",
-    },
-    PROFESSEURS: {
-      CIVILITE_1: "",
-      NOM_1: "",
-      PRENOM_1: "",
-      NATIONALITE_1: defaultCountry,
-      TELEPHONE1_2: "+212",
-      TELEPHONE2_2: "+212",
-      EMAIL_1: "",
-      CIN_1: "",
-      DATE_EMBAUCHE_1: CalcDefaultDate(0),
-      NOM_BANQUE_1: "",
-      RIB_1: "",
-      ADRESSE_1: "",
-      OBSERVATION_1: "",
-    },
-  };
-};
 
 export const generateField = ({
   type,
   label,
+  propsLabel,
   classes = "",
+  propsType,
   value = "",
   enablePlaceholder = false,
   enableShrink = false,
@@ -73,19 +50,16 @@ export const generateField = ({
   validation,
 }) => ({
   type,
-  label: label
-    .replace(/[^\w]de|d'| N°/, "")
-    .toUpperCase()
-    .replace(" ", "_")
-    .replace(/É|È|Ê/g, "E"),
+  label: label,
   props: {
-    label: `${label} :`,
+    label: `${propsLabel} :`,
     classes,
     InputLabelProps: { shrink: enableShrink },
-    placeholder: enablePlaceholder ? `Enter ${label} ...` : "",
+    placeholder: enablePlaceholder ? `Enter ${propsLabel} ...` : "",
     options,
     isComponent,
     value,
+    propsType,
     ...extraProps,
   },
   validation,

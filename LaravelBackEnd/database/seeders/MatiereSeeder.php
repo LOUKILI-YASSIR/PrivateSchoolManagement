@@ -2,66 +2,35 @@
 
 namespace Database\Seeders;
 
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Matiere;
+use App\Models\Niveau;
+use App\Models\Professeur;
 
 class MatiereSeeder extends Seeder
 {
-    public function run()
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
     {
-        $matieres = [
-            [
-                'matriculeMat' => 'MAT001',
-                'matriculeSect' => 'SEC001',
-                'nomMatiere' => 'Mathematics',
-                'description' => 'Basic mathematics course',
-            ],
-            [
-                'matriculeMat' => 'MAT002',
-                'matriculeSect' => 'SEC001',
-                'nomMatiere' => 'Physics',
-                'description' => 'Basic physics course',
-            ],
-            [
-                'matriculeMat' => 'MAT003',
-                'matriculeSect' => 'SEC001',
-                'nomMatiere' => 'Chemistry',
-                'description' => 'Basic chemistry course',
-            ],
-            [
-                'matriculeMat' => 'MAT004',
-                'matriculeSect' => 'SEC001',
-                'nomMatiere' => 'Biology',
-                'description' => 'Basic biology course',
-            ],
-            [
-                'matriculeMat' => 'MAT005',
-                'matriculeSect' => 'SEC001',
-                'nomMatiere' => 'English',
-                'description' => 'English language course',
-            ],
-            [
-                'matriculeMat' => 'MAT006',
-                'matriculeSect' => 'SEC001',
-                'nomMatiere' => 'French',
-                'description' => 'French language course',
-            ],
-            [
-                'matriculeMat' => 'MAT007',
-                'matriculeSect' => 'SEC001',
-                'nomMatiere' => 'History',
-                'description' => 'World history course',
-            ],
-            [
-                'matriculeMat' => 'MAT008',
-                'matriculeSect' => 'SEC001',
-                'nomMatiere' => 'Geography',
-                'description' => 'World geography course',
-            ]
-        ];
+        $niveaux = Niveau::all();
+        $professeurs = Professeur::all();
 
-        foreach ($matieres as $matiere) {
-            Matiere::create($matiere);
+        if ($niveaux->isEmpty() || $professeurs->isEmpty()) {
+            $this->command->warn('Niveaux or Professeurs not found. Skipping MatiereSeeder. Please run NiveauSeeder and ProfesseurSeeder first.');
+            return;
+        }
+
+        // Create 3 Matieres for each Niveau, assigning a random Professeur
+        foreach ($niveaux as $niveau) {
+            for ($i = 0; $i < 3; $i++) {
+                Matiere::factory()
+                    ->forNiveau($niveau->matriculeNv)
+                    ->forProfesseur($professeurs->random()->matriculePr)
+                    ->create();
+            }
         }
     }
-} 
+}

@@ -2,49 +2,61 @@
 
 namespace App\Models;
 
+use App\Traits\GeneratesMatricule;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Notifications\Notifiable;
-use App\Traits\GeneratesMatricule;
 
 class Niveau extends Model
 {
-    use HasFactory, Notifiable, GeneratesMatricule;
+    use HasFactory, GeneratesMatricule;
 
+    protected $primaryKey = 'matriculeNv';
     public $incrementing = false;
-    protected $primaryKey = "matriculeNiv";
     protected $keyType = 'string';
 
-    const CREATED_AT = 'created_at';
-    const UPDATED_AT = 'updated_at';
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'niveaux';
 
     protected $fillable = [
-        'matriculeNiv', 'LIBELLEniv', 'DESCRIPTIONniv', 'ORDREniv', 'STATUTniv'
+        'matriculeNv',
+        'codeNv',
+        'NomNv',
+        'parent_matriculeNv',
+        'typeNv',
+        'descriptionNv',
+        'statusNv',
     ];
 
-    protected $casts = [
-        'ORDREniv' => 'integer',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime'
-    ];
+    // Relationships
 
-    /**
-     * تحديد بادئة الرقم التسلسلي للمستويات
-     *
-     * @return string
-     */
+    public function matieres()
+    {
+        return $this->hasMany(Matiere::class, 'matriculeNv', 'matriculeNv');
+    }
+
+    public function groups()
+    {
+        return $this->hasMany(Group::class, 'matriculeNv', 'matriculeNv');
+    }
+
+    // Self-referencing relationships
+    public function parent()
+    {
+        return $this->belongsTo(Niveau::class, 'parent_matriculeNv', 'matriculeNv');
+    }
+
+    public function children()
+    {
+        return $this->hasMany(Niveau::class, 'parent_matriculeNv', 'matriculeNv');
+    }
+
+    // Required method for GeneratesMatricule trait
     protected static function getMatriculePrefix()
     {
-        return 'NIV';
+        return 'NV';
     }
-
-    public function groupes()
-    {
-        return $this->hasMany(Groupe::class, 'matriculeNiv');
-    }
-
-    public function inscriptions()
-    {
-        return $this->hasMany(InscriptionEtudiant::class, 'matriculeNiv');
-    }
-} 
+}

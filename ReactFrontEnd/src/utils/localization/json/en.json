@@ -7,9 +7,11 @@
     "students": "Students",
     "teachers": "Teachers",
     "subjects": "Subjects",
+    "levels": "Levels",
     "rooms": "Rooms",
     "groups": "Groups",
-    "period": "periods",
+    "evaluations": "Evaluations",
+    "anneescolaire" : "School Year",
     "timetable": "Timetables"
   },
   "login": {
@@ -37,18 +39,56 @@
       "passwordRequired": "Password is required",
       "invalidEmail": "Please enter a valid email address",
       "invalidPhone": "Please enter a valid phone number",
-      "tooManyAttempts": "Too many login attempts. Please try again later"
+      "tooManyAttempts": "Too many login attempts. Please try again later",
+      "userNotFound": "User not found",
+      "invalidPassword": "Invalid password",
+      "noToken": "Login successful but no token received",
+      "general": "An error occurred during login. Please try again.",
+      "unauthorized": "Unauthorized access. Please log in again.",
+      "tokenExpired": "Your session has expired. Please log in again.",
+      "invalidToken": "Invalid authentication token. Please log in again."
     }
   },
-  "dashboard": {
-    "students": "Students",
-    "desc_students": "All registered students",
-    "boys": "Boys",
-    "desc_boys": "Registered boys",
-    "girls": "Girls",
-    "desc_girls": "Registered girls",
-    "class": "Classes",
-    "desc_class": "Total classes"
+  "auth": {
+    "error": {
+      "invalidToken": "Invalid authentication token",
+      "tokenExpired": "Authentication token has expired",
+      "unauthorized": "Unauthorized access",
+      "forbidden": "Access forbidden",
+      "notFound": "Resource not found",
+      "serverError": "Server error occurred",
+      "validationFailed": "Validation failed",
+      "userNotFound": "User not found",
+      "invalidCredentials": "Invalid credentials",
+      "accountLocked": "Account is locked",
+      "accountDisabled": "Account is disabled",
+      "passwordMismatch": "Passwords do not match",
+      "passwordTooWeak": "Password is too weak",
+      "emailAlreadyExists": "Email already exists",
+      "usernameAlreadyExists": "Username already exists",
+      "phoneAlreadyExists": "Phone number already exists",
+      "invalidEmailFormat": "Invalid email format",
+      "invalidPhoneFormat": "Invalid phone number format",
+      "registrationFailed": "Registration failed",
+      "loginFailed": "Login failed",
+      "logoutFailed": "Logout failed",
+      "profileUpdateFailed": "Profile update failed",
+      "passwordResetFailed": "Password reset failed",
+      "currentPasswordMismatch": "Current password does not match",
+      "newPasswordSameAsOld": "New password cannot be the same as the old password",
+      "passwordResetLinkSent": "Password reset link has been sent to your email",
+      "passwordResetSuccess": "Password has been reset successfully",
+      "accountCreated": "Account created successfully",
+      "accountUpdated": "Account updated successfully",
+      "accountDeleted": "Account deleted successfully"
+    }
+  },
+  "common": {
+    "error": {
+      "serverError": "Server error. Please try again later.",
+      "unexpectedError": "An unexpected error occurred. Please try again.",
+      "serviceUnavailable": "Service temporarily unavailable. Please try again later."
+    }
   },
   "profile": {
     "title": "My Profile",
@@ -73,7 +113,12 @@
     "address": "Address",
     "city": "City",
     "postalCode": "Postal Code",
-    "country": "Country"
+    "country": "Country",
+    "error": {
+      "updateFailed": "Failed to update profile. Please try again.",
+      "currentPasswordMismatch": "Current password does not match.",
+      "passwordResetFailed": "Password reset failed. Please try again."
+    }
   },
   "info": {
     "info": "Info:",
@@ -86,7 +131,7 @@
     "edit": "Edit",
     "delete": "Delete",
     "cancel": "Cancel",
-    "add": "Add a {{NomTable}}",
+    "add": "Add {{NomTable}}",
     "deleteSelected": "Delete selected {{NomTable}}",
     "download": "Download in",
     "export": "Export",
@@ -121,13 +166,37 @@
   },
   "TableDBName": {
     "student": "Students",
-    "prof": "Teachers"
+    "prof": "Teachers",
+    "subject": "Subjects",
+    "level": "Levels",
+    "room": "Rooms",
+    "group": "Groups",
+    "evaluation": "Evaluations",
+    "timetable": "Timetables"
   },
   "etudiants": {
     "list": "Student list"
   },
   "professeurs": {
     "list": "Teacher list"
+  },
+  "matiere": {
+    "list": "Subject list"
+  },
+  "niveaux": {
+    "list": "Level list"
+  },
+  "salles": {
+    "list": "Room list"
+  },
+  "groupes": {
+    "list": "Group list"
+  },
+  "evaluations": {
+    "list": "Evaluation list"
+  },
+  "regular-timetables": {
+    "list": "Timetable list"
   },
   "Data": { 
     "matricule": "Registration number",
@@ -235,5 +304,31 @@
     "history": "History",
     "geography": "Geography",
     "computerScience": "Computer Science"
+  },
+  "form": {
+    "add_title": "Add {{entity}}",
+    "edit_title": "Edit {{entity}}",
+    "submit": "Submit",
+    "next": "Next",
+    "previous": "Previous",
+    "cancel": "Cancel"
+  },
+  "register": {
+    "error": {
+      "usernameExists": "Username already exists. Please choose another.",
+      "emailExists": "Email already exists. Please use another email.",
+      "phoneExists": "Phone number already exists. Please use another number.",
+      "registrationFailed": "Registration failed. Please try again."
+    }
+  },
+  "dashboard": {
+    "students": "Students",
+    "desc_students": "All registered students",
+    "boys": "Boys",
+    "desc_boys": "Registered boys",
+    "girls": "Girls",
+    "desc_girls": "Registered girls",
+    "class": "Classes",
+    "desc_class": "Total classes"
   }
 }

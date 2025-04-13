@@ -1,124 +1,239 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Traits\CrudOperations;
+use App\Traits\GeneratesMatricule;
 use App\Models\Etudiant;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
-use Exception;
+use Illuminate\Support\Facades\DB;
 
 class EtudiantController extends Controller
 {
-    // Constants for Messages
-    private const MESSAGES = [
-        'not_found' => 'Étudiant non trouvé',
-        'created' => 'Étudiant créé avec succès',
-        'updated' => 'Étudiant mis à jour avec succès',
-        'deleted' => 'Étudiant supprimé avec succès',
-        'invalid_params' => 'Paramètres de pagination invalides'
+    use CrudOperations, GeneratesMatricule;
+
+    protected string $model = Etudiant::class;
+
+    protected array $validationRules = [
+        // User validation rules
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|max:255|unique:users,email',
+        'password' => 'required|string|min:8',
+        'role' => 'required|string|in:student',
+        'ProfileFileNamePl' => 'nullable|string|max:255',
+        
+        // Etudiant validation rules
+        'emailEt' => 'required|email|max:255|unique:etudiants,emailEt',
+        'phoneEt' => 'nullable|string|max:20',
+        'lienParenteTr' => 'nullable|string|max:255',
+        'professionTr' => 'nullable|string|max:255',
+        'NomTr' => 'nullable|string|max:255',
+        'PrenomTr' => 'nullable|string|max:255',
+        'Phone1Tr' => 'nullable|string|max:20',
+        'Phone2Tr' => 'nullable|string|max:20',
+        'EmailTr' => 'nullable|email|max:255',
+        'ObservationTr' => 'nullable|string|max:255',
+        'matriculeGp' => 'required|string|exists:groups,matriculeGp',
     ];
 
-    private const VALIDATION_RULES = [
-        'PROFILE_PICTUREEt' => 'required|string|max:100',
-        'GENREEt' => 'required|string|in:Homme,Femelle',
-        'NOMEt' => 'required|string|max:50',
-        'PRENOMEt' => 'required|string|max:30',
-        'LIEU_NAISSANCEEt' => 'required|string|max:100',
-        'DATE_NAISSANCEEt' => 'required|date',
-        'NATIONALITEEt' => 'required|string|max:60',
-        'ADRESSEEt' => 'required|string|max:150',
-        'VILLEEt' => 'required|string|max:100',
-        'PAYSEt' => 'required|string|max:60',
-        'CODE_POSTALEt' => 'required|string|max:10',
-        'EMAILEt' => 'required|email|max:100',
-        'OBSERVATIONEt' => 'nullable|string',
-        'LIEN_PARENTETr' => 'required|string|max:20',
-        'NOMTr' => 'required|string|max:50',
-        'PRENOMTr' => 'required|string|max:30',
-        'PROFESSIONTr' => 'required|string|max:100',
-        'TELEPHONE1Tr' => 'required|string|max:30',
-        'TELEPHONE2Tr' => 'nullable|string|max:30',
-        'EMAILTr' => 'required|email|max:100',
-        'OBSERVATIONTr' => 'nullable|string',
-    ];
-
-    private function response($data, $statusCode = 200)
+    protected static function getMatriculePrefix()
     {
-        return response()->json($data, $statusCode)
-            ->header('Access-Control-Allow-Origin', '*')
-            ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-            ->header('Access-Control-Allow-Headers', 'Content-Type, Accept, Authorization');
+        return 'ET';
     }
 
-    public function index()
-    {
-        return $this->response(Etudiant::all());
-    }
-
-    public function paginate(Request $request)
-    {
-        $start = (int) $request->query('start', 0);
-        $length = (int) $request->query('length', 10);
-
-        if ($start < 0 || $length <= 0) {
-            return $this->response(['error' => self::MESSAGES['invalid_params']], 422);
-        }
-
-        $etudiants = Etudiant::skip($start)->take($length)->get();
-        return $this->response(['data' => $etudiants, 'total' => Etudiant::count()]);
-    }
-
-    public function show($matricule)
-    {
-        $etudiant = Etudiant::find($matricule);
-        return $etudiant ? $this->response($etudiant) : $this->response(['error' => self::MESSAGES['not_found']], 404);
-    }
-
-    public function store(Request $request)
+    // Override store method to create both User and Etudiant
+    public function store(Request $request): \Illuminate\Http\JsonResponse
     {
         try {
-            $validatedData = $request->validate(self::VALIDATION_RULES);
-            $etudiant = Etudiant::create($validatedData);
-            return $this->response(['message' => self::MESSAGES['created'], 'etudiant' => $etudiant], 201);
-        } catch (ValidationException $e) {
-            return $this->response(['error' => $e->errors()], 422);
-        } catch (Exception $e) {
-            return $this->response(['error' => 'Une erreur est survenue'], 500);
+            DB::beginTransaction();
+
+            // Validate request data
+            $validatedData = $this->validateRequest($request, $this->validationRules);
+
+            // Create User first with generated matricule
+            $user = new User([
+                'nameUt' => $validatedData['name'],
+                'emailUt' => $validatedData['emailEt'],
+                'phoneUt' => $validatedData['phoneEt'],
+                'passwordUt' => bcrypt($validatedData['password']),
+                'roleUt' => $validatedData['roleUt'],
+                'ProfileFileNamePl' => $validatedData['ProfileFileNamePl'],
+                'NomPl' => $validatedData['NomEt'],
+                'PrenomPl' => $validatedData['PrenomEt'],
+                'genrePl' => $validatedData['genreEt'],
+                'adressPl' => $validatedData['adressEt'],
+                'villePl' => $validatedData['villeEt'],
+                'codePostalPl' => $validatedData['codePostalEt'],
+                'paysPl' => $validatedData['paysEt'],
+                'nationalitePl' => $validatedData['nationaliteEt'],
+                'lieuNaissancePl' => $validatedData['lieuNaissanceEt'],
+                'dateNaissancePl' => $validatedData['dateNaissanceEt'],
+                'ObservationPl' => $validatedData['ObservationEt'],
+                'statutUt' => $validatedData['statutUt'],
+            ]);
+            $user->save(); // This will trigger the GeneratesMatricule trait to create matriculeUt
+
+            // Create Etudiant with user reference
+            $etudiant = new Etudiant([
+                'emailEt' => $validatedData['emailEt'],
+                'phoneEt' => $validatedData['phoneEt'],
+                'lienParenteTr' => $validatedData['lienParenteTr'],
+                'professionTr' => $validatedData['professionTr'],
+                'NomTr' => $validatedData['NomTr'],
+                'PrenomTr' => $validatedData['PrenomTr'],
+                'Phone1Tr' => $validatedData['Phone1Tr'],
+                'Phone2Tr' => $validatedData['Phone2Tr'],
+                'EmailTr' => $validatedData['EmailTr'],
+                'ObservationTr' => $validatedData['ObservationTr'],
+                'matriculeUt' => $user->matriculeUt,
+                'matriculeGp' => $validatedData['matriculeGp']
+            ]);
+            $etudiant->save(); // This will trigger the GeneratesMatricule trait to create matriculeEt
+
+            DB::commit();
+
+            // Load the user relationship and return combined data
+            $etudiant->load('user');
+            return $this->successResponse($etudiant, 'created');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->errorResponse($e->getMessage(), 500);
         }
     }
 
-    public function update(Request $request, $matricule)
+    // Override update method to handle both User and Etudiant
+    public function update(Request $request, $matricule): \Illuminate\Http\JsonResponse
     {
-        $etudiant = Etudiant::find($matricule);
-        if (!$etudiant) {
-            return $this->response(['error' => self::MESSAGES['not_found']], 404);
-        }
-
         try {
-            $validatedData = $request->validate(self::VALIDATION_RULES);
-            $etudiant->update($validatedData);
-            return $this->response(['message' => self::MESSAGES['updated'], 'etudiant' => $etudiant]);
-        } catch (ValidationException $e) {
-            return $this->response(['error' => $e->errors()], 422);
-        } catch (Exception $e) {
-            return $this->response(['error' => 'Une erreur est survenue'], 500);
+            DB::beginTransaction();
+
+            // Find the Etudiant
+            $etudiant = Etudiant::where('matriculeEt', $matricule)->first();
+            if (!$etudiant) {
+                return $this->notFoundResponse($this->getResourceName());
+            }
+
+            // Get the associated User
+            $user = User::where('matriculeUt', $etudiant->matriculeUt)->first();
+            if (!$user) {
+                return $this->notFoundResponse('User');
+            }
+
+            // Modify validation rules for update
+            $rules = $this->validationRules;
+            $rules['email'] = 'required|email|max:255|unique:users,email,' . $user->id;
+            $rules['emailEt'] = 'required|email|max:255|unique:etudiants,emailEt,' . $etudiant->matriculeEt . ',matriculeEt';
+            $rules['password'] = 'nullable|string|min:8';
+
+            // Validate request data
+            $validatedData = $this->validateRequest($request, $rules);
+
+            // Update User
+            $userData = [
+                'nameUt' => $validatedData['name'],
+                'emailUt' => $validatedData['emailEt'],
+                'phoneUt' => $validatedData['phoneEt'],
+                'ProfileFileNamePl' => $validatedData['ProfileFileNamePl'],
+                'NomPl' => $validatedData['NomEt'],
+                'PrenomPl' => $validatedData['PrenomEt'],
+                'genrePl' => $validatedData['genreEt'],
+                'adressPl' => $validatedData['adressEt'],
+                'villePl' => $validatedData['villeEt'],
+                'codePostalPl' => $validatedData['codePostalEt'],
+                'paysPl' => $validatedData['paysEt'],
+                'nationalitePl' => $validatedData['nationaliteEt'],
+                'lieuNaissancePl' => $validatedData['lieuNaissanceEt'],
+                'dateNaissancePl' => $validatedData['dateNaissanceEt'],
+                'ObservationPl' => $validatedData['ObservationEt'],
+                'statutUt' => $validatedData['statutUt'],
+            ];
+            if (!empty($validatedData['password'])) {
+                $userData['passwordUt'] = bcrypt($validatedData['password']);
+            }
+            $user->update($userData);
+
+            // Update Etudiant
+            $etudiant->update([
+                'emailEt' => $validatedData['emailEt'],
+                'phoneEt' => $validatedData['phoneEt'],
+                'lienParenteTr' => $validatedData['lienParenteTr'],
+                'professionTr' => $validatedData['professionTr'],
+                'NomTr' => $validatedData['NomTr'],
+                'PrenomTr' => $validatedData['PrenomTr'],
+                'Phone1Tr' => $validatedData['Phone1Tr'],
+                'Phone2Tr' => $validatedData['Phone2Tr'],
+                'EmailTr' => $validatedData['EmailTr'],
+                'ObservationTr' => $validatedData['ObservationTr'],
+                'matriculeGp' => $validatedData['matriculeGp']
+            ]);
+
+            DB::commit();
+
+            // Load the user relationship and return combined data
+            $etudiant->load('user');
+            return $this->successResponse($etudiant, 'updated');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->handleException($e);
         }
     }
 
-    public function destroy($matricule)
+    // Override destroy method to delete both User and Etudiant
+    public function destroy($matricule): \Illuminate\Http\JsonResponse
     {
-        $etudiant = Etudiant::find($matricule);
-        if (!$etudiant) {
-            return $this->response(['error' => self::MESSAGES['not_found']], 404);
-        }
+        try {
+            DB::beginTransaction();
 
-        $etudiant->delete();
-        return $this->response(['message' => self::MESSAGES['deleted']]);
+            $etudiant = Etudiant::where('matriculeEt', $matricule)->first();
+            if (!$etudiant) {
+                return $this->notFoundResponse($this->getResourceName());
+            }
+
+            // Delete associated user
+            $user = User::where('matriculeUt', $etudiant->matriculeUt)->first();
+            if ($user) {
+                $user->delete();
+            }
+
+            // Delete etudiant
+            $etudiant->delete();
+
+            DB::commit();
+            return $this->successResponse(null, 'deleted');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->handleException($e);
+        }
     }
 
-    public function count()
+    // Override index method to include user data
+    public function index(): \Illuminate\Http\JsonResponse
     {
-        return $this->response(['count' => Etudiant::count()]);
+        try {
+            $records = $this->model::with('user')->get();
+            $total = $this->model::count();
+            return $this->successResponse([
+                'data' => $records,
+                'total' => $total
+            ]);
+        } catch (\Exception $e) {
+            return $this->handleException($e);
+        }
+    }
+
+    // Override show method to include user data
+    public function show($matricule): \Illuminate\Http\JsonResponse
+    {
+        try {
+            $etudiant = $this->model::with('user')->where('matriculeEt', $matricule)->firstOrFail();
+            return $this->successResponse($etudiant);
+        } catch (\Exception $e) {
+            return $this->handleException($e);
+        }
     }
 }

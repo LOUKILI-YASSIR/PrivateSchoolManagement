@@ -7,9 +7,11 @@
     "students": "Schüler",
     "teachers": "Lehrer",
     "subjects": "Fächer",
+    "levels": "Stufen",
     "rooms": "Räume",
     "groups": "Gruppen",
-    "period": "Periode",
+    "evaluations": "Bewertungen",
+    "anneescolaire": "Schuljahr",
     "timetable": "Stundenplan"
   },
   "login": {
@@ -17,27 +19,49 @@
     "title": "Willkommen bei YL School",
     "subtitle": "Bitte melden Sie sich an, um fortzufahren",
     "username": "Benutzername",
+    "email": "E-Mail",
+    "phone": "Telefonnummer",
+    "tabUsername": "Benutzername",
+    "tabEmail": "E-Mail",
+    "tabPhone": "Telefon",
     "password": "Passwort",
     "submit": "Anmelden",
     "forgotPassword": "Passwort vergessen?",
     "rememberMe": "Angemeldet bleiben",
-    "rememberMeTooltip": "Wenn aktiviert, werden Ihre Anmeldedaten sicher gespeichert. Sie bleiben auf diesem Gerät angemeldet, auch nach einem Neustart des Browsers.",
+    "rememberMeTooltip": "Wenn aktiviert, werden Ihre Anmeldedaten sicher gespeichert. Sie bleiben auf diesem Gerät angemeldet, auch nach dem Neustart des Browsers.",
     "loggingIn": "Anmeldung läuft...",
     "error": {
       "invalidCredentials": "Ungültiger Benutzername oder Passwort",
       "serverError": "Serverfehler. Bitte versuchen Sie es später erneut",
-      "tooManyAttempts": "Zu viele Anmeldeversuche. Bitte versuchen Sie es später erneut"
+      "usernameRequired": "Benutzername ist erforderlich",
+      "emailRequired": "E-Mail ist erforderlich",
+      "phoneRequired": "Telefonnummer ist erforderlich",
+      "passwordRequired": "Passwort ist erforderlich",
+      "invalidEmail": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+      "invalidPhone": "Bitte geben Sie eine gültige Telefonnummer ein",
+      "tooManyAttempts": "Zu viele Anmeldeversuche. Bitte versuchen Sie es später erneut",
+      "userNotFound": "Benutzer nicht gefunden",
+      "invalidPassword": "Ungültiges Passwort",
+      "noToken": "Anmeldung erfolgreich, aber kein Token erhalten",
+      "general": "Bei der Anmeldung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
     }
   },
-  "dashboard": {
-    "students": "Schüler",
-    "desc_students": "Alle registrierten Schüler",
-    "boys": "Jungen",
-    "desc_boys": "Registrierte Jungen",
-    "girls": "Mädchen",
-    "desc_girls": "Registrierte Mädchen",
-    "class": "Klassen",
-    "desc_class": "Gesamtzahl der Klassen"
+  "auth": {
+    "error": {
+      "invalidToken": "Ihre Sitzung ist ungültig. Bitte melden Sie sich erneut an.",
+      "tokenExpired": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
+      "unauthorized": "Sie sind nicht berechtigt, auf diese Ressource zuzugreifen.",
+      "forbidden": "Zugriff verboten"
+    }
+  },
+  "common": {
+    "error": {
+      "serverError": "Serverfehler. Bitte versuchen Sie es später erneut.",
+      "unexpectedError": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+      "serviceUnavailable": "Dienst vorübergehend nicht verfügbar. Bitte versuchen Sie es später erneut.",
+      "validationFailed": "Validierung fehlgeschlagen",
+      "notFound": "Ressource nicht gefunden"
+    }
   },
   "profile": {
     "title": "Mein Profil",
@@ -62,7 +86,12 @@
     "address": "Adresse",
     "city": "Stadt",
     "postalCode": "Postleitzahl",
-    "country": "Land"
+    "country": "Land",
+    "error": {
+      "updateFailed": "Fehler beim Aktualisieren des Profils. Bitte versuchen Sie es erneut.",
+      "currentPasswordMismatch": "Aktuelles Passwort stimmt nicht überein.",
+      "passwordResetFailed": "Fehler beim Zurücksetzen des Passworts. Bitte versuchen Sie es erneut."
+    }
   },
   "info": {
     "info": "Info:",
@@ -110,13 +139,37 @@
   },
   "TableDBName": {
     "student": "Schüler",
-    "prof": "Lehrer"
+    "prof": "Lehrer",
+    "subject": "Fächer",
+    "level": "Stufen",
+    "room": "Räume",
+    "group": "Gruppen",
+    "evaluation": "Bewertungen",
+    "timetable": "Stundenplan"
   },
   "etudiants": {
     "list": "Schülerliste"
   },
   "professeurs": {
     "list": "Lehrerliste"
+  },
+  "matiere": {
+    "list": "Fächerliste"
+  },
+  "niveaux": {
+    "list": "Stufenliste"
+  },
+  "salles": {
+    "list": "Raumliste"
+  },
+  "groupes": {
+    "list": "Gruppenliste"
+  },
+  "evaluations": {
+    "list": "Bewertungsliste"
+  },
+  "regular-timetables": {
+    "list": "Stundenplanliste"
   },
   "Data": {
     "matricule": "Matrikelnummer",
@@ -145,5 +198,13 @@
   },
   "Inputs": {
     "nationalite": {}
+  },
+  "register": {
+    "error": {
+      "usernameExists": "Dieser Benutzername existiert bereits. Bitte wählen Sie einen anderen.",
+      "emailExists": "Diese E-Mail existiert bereits. Bitte verwenden Sie eine andere E-Mail.",
+      "phoneExists": "Diese Telefonnummer existiert bereits. Bitte verwenden Sie eine andere Nummer.",
+      "registrationFailed": "Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut."
+    }
   }
 }

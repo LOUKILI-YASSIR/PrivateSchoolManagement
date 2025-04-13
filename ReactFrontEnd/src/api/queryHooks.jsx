@@ -5,19 +5,19 @@ const { fetchData, postData, updateData, deleteData, postImage,getPaginatedData 
 // Data Hooks with optimized caching
 
 // Hook for GET requests
-export const useFetchData = (apiName, start = 0, length = 10) => {
+export const useFetchData = (apiName) => {
   return useQuery({
-    queryKey: [apiName, start, length],
+    queryKey: [apiName],
     queryFn: () => {
-      if (!apiName || start < 0 || length <= 0) {
+      if (!apiName) {
         return Promise.reject(new Error("Invalid API parameters"));
       }
-      return getPaginatedData(apiName, start, length);
+      return apiServices.getData(apiName);
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     cacheTime: 10 * 60 * 1000, // 10 minutes
     refetchOnWindowFocus: false,
-    retry: 3,
+    retry: 3
   });
 };
 // Hook for POST requests

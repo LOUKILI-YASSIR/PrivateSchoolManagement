@@ -3,37 +3,52 @@
 namespace Database\Factories;
 
 use App\Models\Professeur;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
+
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Professeur>
+ */
 class ProfesseurFactory extends Factory
 {
     protected $model = Professeur::class;
-    public function definition()
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
-        $country = $this->faker->countryCode; // Random 2-letter country code
-        $admin1 = strtoupper($this->faker->lexify('??')); // Random 2-character code
-        $admin2 = $this->faker->numerify('###'); // Random 3-digit code
+        // Create a User with the 'professeur' role/status first
+        $user = User::factory()->professeur()->create();
+
         return [
-            'matriculePr' => Str::random(),
-            'image_urlPr' => $this->faker->imageUrl(),
-            'civilitePr' => $this->faker->randomElement(['Mr', 'Mme', 'Dr']),
-            'nomPr' => $this->faker->lastName(),
-            'prenomPr' => $this->faker->firstName(),
-            'nationalitePr' => $this->faker->country(),
-            'CINPr' => $this->faker->unique()->numerify('#########'),
-            'DateNaissancePr' => $this->faker->date(),
-            'adressePr' => $this->faker->address(),
-            'villePr' => "{$country}.{$admin1}.{$admin2}",
-            'CodePostalPr' => $this->faker->numberBetween(1000, 99999),
-            'paysPr' => $this->faker->country(),
-            'emailPr' => $this->faker->unique()->safeEmail(),
-            'Telephone1Pr' => $this->faker->phoneNumber(),
-            'Telephone2Pr' => $this->faker->phoneNumber(),
-            'dateEmbauchePr' => $this->faker->date(),
-            'salairePr' => $this->faker->randomFloat(2, 0, 100000),
-            'NomBanquePr' => $this->faker->company(),
-            'RIBPr' => $this->faker->iban(),
-            'observationPr' => $this->faker->text(),
+            // 'matriculePr' is handled by GeneratesMatricule trait
+            'matriculeUt' => $user->matriculeUt, // Assign the created user's ID
+            'CINPr' => $this->faker->unique()->numerify('########'), // Assuming 8 digits CIN
+            'civilitePr' => $this->faker->randomElement(['Mr.', 'Mrs.', 'Ms.', 'Dr.']),
+            'Phone1Pr' => $this->faker->phoneNumber(),
+            'Phone2Pr' => $this->faker->optional()->phoneNumber(),
+            'DateEmbauchePr' => $this->faker->date(),
+            'SalairePr' => $this->faker->randomFloat(2, 30000, 150000),
+            'NomBanquePr' => $this->faker->optional()->company() . ' Bank',
+            'RIBPr' => $this->faker->optional()->iban('MA'), // Generate Moroccan IBAN
         ];
     }
+
+    /**
+     * Configure the model factory.
+     *
+     * @return $this
+     */
+    // public function configure(): static // Remove this method
+    // {
+    //     return $this->afterCreating(function (Professeur $professeur) {
+    //         // If no user is associated, create one with the professeur state
+    //         if (!$professeur->user) {
+    //             $user = User::factory()->professeur()->create();
+    //             $professeur->update(['matriculeUt' => $user->matriculeUt]);
+    //         }
+    //     });
+    // }
 }

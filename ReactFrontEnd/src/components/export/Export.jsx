@@ -10,7 +10,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
     faFilePdf, 
     faFileExcel, 
-    faFileAlt
+    faFileAlt,
+    faFileWord
 } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from "react";
 import './Export.module.css';
@@ -48,6 +49,12 @@ export default function Export() {
                 return <FontAwesomeIcon icon={faFilePdf} style={{ color: '#f44336', fontSize: '2rem' }} />;
             case 'excel':
                 return <FontAwesomeIcon icon={faFileExcel} style={{ color: '#4caf50', fontSize: '2rem' }} />;
+            case 'word':
+                return <FontAwesomeIcon 
+                    icon={faFileWord} 
+                    className="export-icon format-word"
+                    style={{ color: '#2b579a', fontSize: '2rem' }} 
+                />;
             default:
                 return <FontAwesomeIcon icon={faFileAlt} style={{ color: '#2196f3', fontSize: '2rem' }} />;
         }
@@ -223,11 +230,16 @@ export default function Export() {
                                             <Typography
                                                 component="span"
                                                 variant="caption"
-              sx={{
-                                                    ml: 1, 
+                                                sx={{
+                                                    ml: 1,
                                                     opacity: 0.8,
                                                     fontStyle: 'italic',
-                                                    fontSize: '0.7rem'
+                                                    fontSize: '0.75rem',
+                                                    color: theme => theme.palette.error.light,
+                                                    bgcolor: theme => theme.palette.error.main + '10',
+                                                    padding: '2px 8px',
+                                                    borderRadius: '4px',
+                                                    transition: 'all 0.2s ease-in-out'
                                                 }}
                                             >
                                                 (unavailable)
@@ -235,10 +247,40 @@ export default function Export() {
                                         )}
                                     </Typography>
                                 }
-                                sx={{ 
+                                sx={theme => ({
                                     width: '100%',
-                                    opacity: exportType.disabled && exportType.disabled(tableData) ? 0.7 : 1
-                                }}
+                                    opacity: exportType.disabled && exportType.disabled(tableData) ? 0.65 : 1,
+                                    transition: 'all 0.2s ease-in-out',
+                                    filter: exportType.disabled && exportType.disabled(tableData) ? 'grayscale(0.8)' : 'none',
+                                    position: 'relative',
+                                    cursor: exportType.disabled && exportType.disabled(tableData) ? 'not-allowed' : 'pointer',
+                                    '&:hover': {
+                                        opacity: exportType.disabled && exportType.disabled(tableData) ? 0.7 : 1,
+                                        bgcolor: exportType.disabled && exportType.disabled(tableData) 
+                                            ? theme.palette.action.disabledBackground
+                                            : theme.palette.action.hover,
+                                        '& .MuiTypography-caption': {
+                                            opacity: 1,
+                                            transform: 'translateY(0)'
+                                        }
+                                    },
+                                    '& .MuiRadio-root': {
+                                        color: exportType.disabled && exportType.disabled(tableData) 
+                                            ? theme.palette.action.disabled
+                                            : theme.palette.primary.main
+                                    },
+                                    '&::after': exportType.disabled && exportType.disabled(tableData) ? {
+                                        content: '""',
+                                        position: 'absolute',
+                                        top: 0,
+                                        left: 0,
+                                        right: 0,
+                                        bottom: 0,
+                                        backgroundColor: theme.palette.background.paper,
+                                        opacity: 0.1,
+                                        pointerEvents: 'none'
+                                    } : {}
+                                })}
                             />
                         </Paper>
                     )

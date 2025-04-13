@@ -23,6 +23,8 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import { useSelector } from 'react-redux';
 import './Profile.css'; // Import the CSS file
 import UserForm from "./hooks/UserFormHook"
+import apiServices from '../../api/apiServices'; // Ensure apiServices is imported
+
 const Profile = () => {
   const { userRole, logout } = useAuth();
   const { t } = useTranslation();
@@ -33,7 +35,7 @@ const Profile = () => {
     personal: false,
     password: false
   });
-  const ImgPathUploads = userData?.role ? `/uploads/${userData.role}` : ''
+  const ImgPathUploads = userData?.roleUt ? `/uploads/${userData.roleUt}` : '';
   const handleAvatarChange = (uploadedFilename) => {
     const newAvatarUrl = uploadedFilename!=="" ? `${ImgPathUploads}/${uploadedFilename}` : "";
     setUserData({
@@ -64,42 +66,44 @@ const Profile = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
+      setIsLoading(true); // Start loading
       try {
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        const mockData = {
-          id: 1,
-          name: 'Admin User',
-          email: 'admin@ylschool.ma',
-          role: userRole || 'admin',
-          phone: '+212612345678',
-          joinDate: '2023-01-15',
-          avatar: '',
-          language: localStorage.getItem('i18nextLng') || 'en',
-          address: '123 School Avenue',
-          city: 'Casablanca',
-          postalCode: '20000',
-          country: 'Morocco'
-        };
-        setUserData(mockData);
-        setAccountData({
-          name: mockData.name,
-          email: mockData.email,
-          phone: mockData.phone
-        });
-        setPersonalData({
-          address: mockData.address,
-          city: mockData.city,
-          postalCode: mockData.postalCode,
-          country: mockData.country
-        });
+        // Fetch user data from the API
+        const response = await apiServices.getData('/user'); 
+        console.log('Fetched User Data Direct:', response); // Log the direct user object
+
+        // The response from /user is the user object directly
+        if (response) { 
+          const fetchedUser = response; // Assign direct response
+          setUserData(fetchedUser);
+
+          // Map backend fields to frontend state
+          setAccountData({
+            name: `${fetchedUser?.NomPl || ''} ${fetchedUser?.PrenomPl || ''}`.trim(), 
+            email: fetchedUser?.emailUt || '',
+            phone: fetchedUser?.phoneUt || ''
+          });
+
+          setPersonalData({
+            address: fetchedUser?.address || '', 
+            city: fetchedUser?.city || '',
+            postalCode: fetchedUser?.postalCode || '',
+            country: fetchedUser?.country || ''
+          });
+        } else {
+           // This else might indicate an actual API error handled by handleApiError
+           console.error('API service returned no user data:', response);
+        }
+
       } catch (error) {
         console.error('Error fetching user data:', error);
+        // Handle error state, maybe show a message to the user
       } finally {
         setIsLoading(false);
       }
     };
     fetchUserData();
-  }, [userRole]);
+  }, []); // Removed userRole dependency as we fetch based on auth token
 
   const handleEditToggle = (section) => {
     setEditState({
@@ -132,58 +136,89 @@ const Profile = () => {
     });
   };
 
-  const handleAccountSave = async () => {
+  // Consolidated save handler
+  const handleSave = async (section, dataToSave) => {
     setIsLoading(true);
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setUserData({
-        ...userData,
-        ...accountData
-      });
-      setEditState({ ...editState, account: false });
-    } catch (error) {
-      console.error('Error saving account data:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    let apiPayload = {};
+    let updatedLocalData = {};
 
-  const handlePersonalSave = async () => {
-    setIsLoading(true);
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setUserData({
-        ...userData,
-        ...personalData
-      });
-      setEditState({ ...editState, personal: false });
-    } catch (error) {
-      console.error('Error saving personal data:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handlePasswordSave = async () => {
-    setIsLoading(true);
-    try {
-      if (passwordData.newPassword !== passwordData.confirmPassword) {
+    // Prepare API payload based on section
+    if (section === 'account') {
+      // Split name back into NomPl and PrenomPl if needed by backend
+      const nameParts = dataToSave.name.split(' ');
+      apiPayload = {
+        NomPl: nameParts[0] || '',
+        PrenomPl: nameParts.slice(1).join(' ') || '',
+        emailUt: dataToSave.email,
+        phoneUt: dataToSave.phone,
+      };
+      updatedLocalData = { ...dataToSave };
+    } else if (section === 'personal') {
+      // Assuming backend expects these fields directly
+      apiPayload = { ...dataToSave }; 
+      updatedLocalData = { ...dataToSave };
+    } else if (section === 'password') {
+      if (dataToSave.newPassword !== dataToSave.confirmPassword) {
         alert(t('profile.passwordMismatch') || 'Passwords do not match');
-        return;
+        setIsLoading(false);
+        return; // Stop if passwords don't match
       }
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setPasswordData({
-        currentPassword: '',
-        newPassword: '',
-        confirmPassword: ''
-      });
-      setEditState({ ...editState, password: false });
+      apiPayload = {
+        current_password: dataToSave.currentPassword,
+        new_password: dataToSave.newPassword,
+        new_password_confirmation: dataToSave.confirmPassword, // Often required by Laravel validation
+      };
+      // Don't store password data locally after save
+      updatedLocalData = {}; 
+    }
+
+    console.log(`Saving ${section} data:`, apiPayload); // Log before sending
+
+    try {
+      const response = await apiServices.putData('/profile', apiPayload);
+      console.log(`Save ${section} response:`, response); // Log response
+
+      if (response && response.data) {
+        // Update the main userData state with the fresh data from backend
+        setUserData(prevData => ({ ...prevData, ...response.data })); 
+
+        // Update the specific section's state if needed (e.g., account, personal)
+        if (section === 'account') {
+            setAccountData(updatedLocalData);
+        } else if (section === 'personal') {
+            setPersonalData(updatedLocalData);
+        } else if (section === 'password') {
+             // Clear password fields after successful save
+            setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+        }
+
+        // Close the edit mode for the saved section
+        setEditState({ ...editState, [section]: false });
+         // Optionally show a success message
+         alert(t(`profile.saveSuccess.${section}`) || `${section.charAt(0).toUpperCase() + section.slice(1)} data saved successfully!`);
+
+      } else {
+        console.error(`Failed to save ${section} data:`, response);
+        alert(t('profile.saveError') || 'Failed to save data. Please check the console.');
+      }
+
     } catch (error) {
-      console.error('Error saving password:', error);
+      console.error(`Error saving ${section} data:`, error);
+      // Display specific validation errors if available
+      let errorMessage = t('profile.saveError');
+      if (error?.errors) {
+          errorMessage += '\n' + Object.values(error.errors).flat().join('\n');
+      }
+      alert(errorMessage);
     } finally {
       setIsLoading(false);
     }
   };
+
+  // Update existing handlers to use the consolidated function
+  const handleAccountSave = () => handleSave('account', accountData);
+  const handlePersonalSave = () => handleSave('personal', personalData);
+  const handlePasswordSave = () => handleSave('password', passwordData);
 
   const handleLogout = () => {
     logout();
@@ -191,6 +226,10 @@ const Profile = () => {
 
   if (isLoading) {
     return <LoadingSpinner message={t('profile.loading')} />;
+  }
+
+  if (!userData) {
+    return <Typography>{t('profile.loadError') || 'Could not load profile data.'}</Typography>;
   }
 
   return (
@@ -312,10 +351,10 @@ const Profile = () => {
             </Grid>
             <Grid item xs={12} sm={6}>
               <Typography variant="subtitle2" className="secondary-text">
-                {t('profile.role') || 'Role'}
+                {t('profile.roleUt') || 'roleUt'}
               </Typography>
               <Typography variant="body1">
-                {userData.role.charAt(0).toUpperCase() + userData.role.slice(1)}
+                {userData.roleUt.charAt(0).toUpperCase() + userData.roleUt.slice(1)}
               </Typography>
             </Grid>
           </Grid>

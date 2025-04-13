@@ -1,79 +1,74 @@
 <?php
+
 namespace App\Models;
 
+use App\Traits\GeneratesMatricule;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Notifications\Notifiable;
-use App\Traits\GeneratesMatricule;
 
 class Professeur extends Model
 {
-    use HasFactory, Notifiable, GeneratesMatricule;
+    use HasFactory, GeneratesMatricule;
 
+    protected $primaryKey = 'matriculePr';
     public $incrementing = false;
-    protected $primaryKey = "matriculePr";
     protected $keyType = 'string';
 
-    const CREATED_AT = 'created_at';
-    const UPDATED_AT = 'updated_at';
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'professeurs';
 
     protected $fillable = [
-        'matriculePr', 'GENREPr', 'NOMPr', 'PRENOMPr', 'LIEU_NAISSANCEPr', 'DATE_NAISSANCEPr',
-        'NATIONALITEPr', 'ADRESSEPr', 'VILLEPr', 'PAYSPr', 'CODE_POSTALPr', 'EMAILPr',
-        'TELEPHONE1Pr', 'TELEPHONE2Pr', 'PROFILE_PICTUREPr', 'OBSERVATIONPr', 'SPECIALITEPr',
-        'DIPLOME_SUPPr', 'ANNEE_EXPPr', 'STATUT_EMPLOIPr'
+        'matriculePr',
+        'CINPr',
+        'civilitePr',
+        'Phone1Pr',
+        'Phone2Pr',
+        'DateEmbauchePr',
+        'SalairePr',
+        'NomBanquePr',
+        'RIBPr',
+        'matriculeUt',
     ];
 
     protected $casts = [
-        'DATE_NAISSANCEPr' => 'date',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-        'ANNEE_EXPPr' => 'integer'
+        'DateEmbauchePr' => 'date',
+        'SalairePr' => 'float',
     ];
 
-    /**
-     * Get the user associated with the teacher.
-     */
+    // Relationships
+
     public function user()
     {
-        return $this->hasOne(User::class, 'matricule', 'matriculePr');
-    }
-
-    /**
-     * تحديد بادئة الرقم التسلسلي للأساتذة
-     *
-     * @return string
-     */
-    protected static function getMatriculePrefix()
-    {
-        return 'PR';
-    }
-
-    public function groupes()
-    {
-        return $this->belongsToMany(Groupe::class, 'professeur_groupes', 'matriculePr', 'matriculeGrp');
+        return $this->belongsTo(User::class, 'matriculeUt', 'matriculeUt');
     }
 
     public function matieres()
     {
-        return $this->belongsToMany(Matiere::class, 'affectation_professeurs', 'matriculePr', 'matriculeMat');
+        return $this->hasMany(Matiere::class, 'matriculePr', 'matriculePr');
     }
 
-    public function absences()
+    public function attendances()
     {
-        return $this->hasMany(AbsenceProfesseur::class, 'matriculePr');
+        return $this->hasMany(Attendance::class, 'matriculePr', 'matriculePr');
     }
 
-    public function emploisDuTemps()
+    public function teacherVocations()
     {
-        return $this->hasMany(EmploiDuTemps::class, 'matriculePr');
+        return $this->hasMany(TeacherVocation::class, 'matriculePr', 'matriculePr');
     }
 
-    /**
-     * Alias for emploisDuTemps to maintain consistent naming in the code
-     */
-    public function schedule()
+    public function regularTimeTables()
     {
-        return $this->emploisDuTemps();
+        return $this->hasMany(RegularTimeTable::class, 'matriculePr', 'matriculePr');
+    }
+
+    // Required method for GeneratesMatricule trait
+    protected static function getMatriculePrefix()
+    {
+        return 'PR';
     }
 }

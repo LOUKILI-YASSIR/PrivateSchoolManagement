@@ -2,62 +2,56 @@
 
 namespace App\Models;
 
+use App\Traits\GeneratesMatricule;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Notifications\Notifiable;
-use \App\Traits\GeneratesMatricule;
 
 class Evaluation extends Model
 {
-    use HasFactory, Notifiable, GeneratesMatricule;
+    use HasFactory, GeneratesMatricule;
 
+    protected $primaryKey = 'matriculeEv';
     public $incrementing = false;
-    protected $primaryKey = "matriculeEvl";
     protected $keyType = 'string';
 
-    const CREATED_AT = 'created_at';
-    const UPDATED_AT = 'updated_at';
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'evaluations';
 
     protected $fillable = [
-        'matriculeEvl', 'matriculeEt', 'matriculeMat', 'matriculeAnnee',
-        'typeEvaluation', 'max_grade', 'percentage', 'extraPar'
+        'matriculeEv',
+        'matriculeMt',
+        'matriculeEp',
+        'nbrEv',
     ];
 
     protected $casts = [
-        'max_grade' => 'decimal:5,2',
-        "percentage" => 'float',
-        'extraPar' => 'string',
-        'matriculeEvl' => 'string',
-        'matriculeEt' => 'string',
-        'matriculeMat' => 'string',
-        'matriculeAnnee' => 'string',
-        'typeEvaluation' => 'string',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime'
+        'nbrEv' => 'integer',
     ];
 
-    public function etudiant()
-    {
-        return $this->belongsTo(Etudiant::class, 'matriculeEt');
-    }
+    // Relationships
 
     public function matiere()
     {
-        return $this->belongsTo(Matiere::class, 'matriculeMat');
+        return $this->belongsTo(Matiere::class, 'matriculeMt', 'matriculeMt');
     }
 
-    public function anneeAcademique()
+    public function evaluationType()
     {
-        return $this->belongsTo(AnneeAcademique::class, 'matriculeAnnee');
+        return $this->belongsTo(EvaluationType::class, 'matriculeEp', 'matriculeEp');
     }
 
-    /**
-     * تحديد بادئة الرقم التسلسلي للتقييمات
-     *
-     * @return string
-     */
+    public function evaluationResults()
+    {
+        return $this->hasMany(EvaluationResult::class, 'matriculeEv', 'matriculeEv');
+    }
+
+    // Required method for GeneratesMatricule trait
     protected static function getMatriculePrefix()
     {
-        return 'EVL';
+        return 'EV';
     }
 }

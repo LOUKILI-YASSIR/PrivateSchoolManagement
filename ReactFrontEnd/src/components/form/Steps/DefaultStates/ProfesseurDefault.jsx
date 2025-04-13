@@ -1,0 +1,31 @@
+export const PROFESSEUR = {
+    matriculePr: '',
+    CINPr: '',
+    civilitePr: '',
+    Phone1Pr: '',
+    Phone2Pr: '',
+    DateEmbauchePr: '',
+    SalairePr: 0,
+    NomBanquePr: '',
+    RIBPr: '',
+    matriculeUt: '',
+    // User fields (linked through matriculeUt)
+    usernameUt: '',
+    emailUt: '',
+    phoneUt: '',
+    roleUt: '',
+    statutUt: '',
+    NomPl: '',
+    PrenomPl: '',
+    genrePl: '',
+    adressPl: '',
+    villePl: '',
+    codePostalPl: '',
+    paysPl: '',
+    nationalitePl: '',
+    lieuNaissancePl: '',
+    dateNaissancePl: '',
+    ObservationPl: '',
+    profileFileNamePl: ''
+};
+

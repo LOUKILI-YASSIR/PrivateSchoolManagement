@@ -1,8 +1,12 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Fade, useTheme } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Fade, useTheme, Box } from "@mui/material";
 import { useActionMenu } from "./hooks/useActionMenu";
 import { Fragment, useMemo } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import PropTypes from 'prop-types';
+import DarkModeToggle from "../common/DarkModeToggle";
+import LanguageSelector from "../common/LanguageSelector";
+import { useTranslation } from "react-i18next";
+import { toggleDarkMode } from "../../Store/Slices/ThemeSlice.jsx";
 
 /**
  * Enhanced ActionMenu component that displays a modal dialog with customizable content and actions
@@ -30,11 +34,22 @@ export default function ActionMenu({
   disableEscapeKey = true,
   fullScreen = false,
   className = '',
-  style = {}
+  style = {},
+  showOptions = false
 }) {
     const { ClickToClose, open, ClickToOpen, forceClose } = useActionMenu();
     const { Title, Btns, MainBtn } = contentOptions;
     const isDarkMode = useSelector((state) => state?.theme?.darkMode || false);
+    const dispatch = useDispatch();
+    const { i18n } = useTranslation();
+
+    const handleToggleDarkMode = () => {
+      dispatch(toggleDarkMode());
+    };
+
+    const handleLanguageChange = (lang) => {
+      i18n.changeLanguage(lang);
+    };
 
     // Memoize styles to prevent unnecessary re-renders
     const styles = useMemo(() => {
@@ -80,6 +95,9 @@ export default function ActionMenu({
                 fontSize: '1.25rem',
                 fontWeight: 600,
                 margin: 0,
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
             },
             content: {
                 color: theme.text,
@@ -172,11 +190,20 @@ export default function ActionMenu({
                 transitionDuration={{ enter: 300, exit: 200 }}
                 fullScreen={fullScreen}
             >
-                <DialogTitle 
-                    id="dialog-title"
-                    style={styles.title}
-                >
+                <DialogTitle sx={styles.title}>
                     {Title}
+                    {showOptions && (
+                    <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                        <DarkModeToggle 
+                            isDarkMode={isDarkMode} 
+                            toggleDarkMode={handleToggleDarkMode}
+                        />
+                        <LanguageSelector 
+                            isFormHeader={true}
+                            currentLanguage={i18n.language} 
+                            onLanguageChange={handleLanguageChange}
+                        />
+                    </Box>)}
                 </DialogTitle>
                 
                 {DialogContentComponent && (

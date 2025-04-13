@@ -2,51 +2,51 @@
 
 namespace App\Models;
 
+use App\Traits\GeneratesMatricule;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Notifications\Notifiable;
-use App\Traits\GeneratesMatricule;
 
 class Salle extends Model
 {
-    use HasFactory, Notifiable, GeneratesMatricule;
+    use HasFactory, GeneratesMatricule;
 
+    protected $primaryKey = 'matriculeSl';
     public $incrementing = false;
-    protected $primaryKey = "matriculeSalle";
     protected $keyType = 'string';
 
-    const CREATED_AT = 'created_at';
-    const UPDATED_AT = 'updated_at';
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'salles';
 
     protected $fillable = [
-        'matriculeSalle', 'NOMsalle', 'CAPACITEsalle', 'DESCRIPTIONsalle',
-        'ETAGEsalle', 'BLOCsalle', 'STATUTsalle', 'matriculeInst'
+        'matriculeSl',
+        'NameSl',
+        'CapacitySl',
+        'LocationSl',
+        'ressourcesSl',
+        'typeSl',
+        'statusSl',
+        'floorSl',
+        'observationSl',
     ];
 
     protected $casts = [
-        'CAPACITEsalle' => 'integer',
-        'ETAGEsalle' => 'integer',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime'
+        'CapacitySl' => 'integer',
     ];
 
-    /**
-     * تحديد بادئة الرقم التسلسلي للقاعات
-     *
-     * @return string
-     */
+    // Relationships
+
+    public function regularTimeTables()
+    {
+        return $this->hasMany(RegularTimeTable::class, 'matriculeSl', 'matriculeSl');
+    }
+
+    // Required method for GeneratesMatricule trait
     protected static function getMatriculePrefix()
     {
-        return 'SALLE';
+        return 'SL';
     }
-
-    public function institution()
-    {
-        return $this->belongsTo(Institution::class, 'matriculeInst');
-    }
-
-    public function emploisDuTemps()
-    {
-        return $this->hasMany(EmploiDuTemps::class, 'matriculeSalle');
-    }
-} 
+}

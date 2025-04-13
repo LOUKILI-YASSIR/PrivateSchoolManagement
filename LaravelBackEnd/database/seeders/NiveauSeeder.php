@@ -2,54 +2,27 @@
 
 namespace Database\Seeders;
 
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Niveau;
+use App\Models\Niveau; // Import Niveau model
 
 class NiveauSeeder extends Seeder
 {
-    public function run()
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
     {
-        $niveaux = [
-            [
-                'matriculeNiv' => 'NIV001',
-                'description' => 'Première année du cycle primaire',
-                'libelle' => 'CP1',
-                'order' => 1
-            ],
-            [
-                'matriculeNiv' => 'NIV002',
-                'description' => 'Deuxième année du cycle primaire',
-                'libelle' => 'CP2',
-                'order' => 2
-            ],
-            [
-                'matriculeNiv' => 'NIV003',
-                'description' => 'Troisième année du cycle primaire',
-                'libelle' => 'CE1',
-                'order' => 3
-            ],
-            [
-                'matriculeNiv' => 'NIV004',
-                'description' => 'Quatrième année du cycle primaire',
-                'libelle' => 'CE2',
-                'order' => 4
-            ],
-            [
-                'matriculeNiv' => 'NIV005',
-                'description' => 'Cinquième année du cycle primaire',
-                'libelle' => 'CM1',
-                'order' => 5
-            ],
-            [
-                'matriculeNiv' => 'NIV006',
-                'description' => 'Sixième année du cycle primaire',
-                'libelle' => 'CM2',
-                'order' => 6
-            ]
-        ];
+        // Create 5 top-level Niveaux
+        $parents = Niveau::factory(5)->create();
 
-        foreach ($niveaux as $niveau) {
-            Niveau::create($niveau);
+        // For each parent, create 2 child Niveaux
+        foreach ($parents as $parent) {
+            Niveau::factory(2)->childOf($parent->matriculeNv)->create([
+                'typeNv' => $parent->typeNv, // Assign same type as parent for consistency
+            ]);
         }
+
+        // You could add more levels of nesting if needed
     }
-} 
+}

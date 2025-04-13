@@ -7,9 +7,11 @@
     "students": "Élèves",
     "teachers": "Enseignants",
     "subjects": "Matières",
+    "levels": "Niveaux",
     "rooms": "Salles",
     "groups": "Groupes",
-    "period": "périodes",
+    "anneescolaire": "Année Scolaire",
+    "evaluations": "Évaluations",
     "timetable": "Emplois du Temps"
   },
   "login": {
@@ -86,7 +88,7 @@
     "edit": "Éditer",
     "delete": "Supprimer",
     "cancel": "Annuler",
-    "add": "Ajouter un {{NomTable}}",
+    "add": "Ajouter {{NomTable}}",
     "deleteSelected": "Supprimer la sélection de {{NomTable}}",
     "download": "Télécharger en ",
     "export": "Exporter",
@@ -121,13 +123,37 @@
   },
   "TableDBName": {
     "student": "Étudiants",
-    "prof": "Enseignants"
+    "prof": "Enseignants",
+    "subject": "Matières",
+    "level": "Niveaux",
+    "room": "Salles",
+    "group": "Groupes",
+    "evaluation": "Évaluations",
+    "timetable": "Emplois du Temps"
   },
   "etudiants": {
     "list": "Liste des étudiants"
   },
   "professeurs": {
     "list": "Liste des professeurs"
+  },
+  "matiere": {
+    "list": "Liste des matières"
+  },
+  "niveaux": {
+    "list": "Liste des niveaux"
+  },
+  "salles": {
+    "list": "Liste des salles"
+  },
+  "groupes": {
+    "list": "Liste des groupes"
+  },
+  "evaluations": {
+    "list": "Liste des évaluations"
+  },
+  "regular-timetables": {
+    "list": "Liste des emplois du temps"
   },
   "Data": { 
     "matricule": "Matricule",
@@ -230,5 +256,13 @@
     "history": "Histoire",
     "geography": "Géographie",
     "computerScience": "Informatique"
+  },
+  "form": {
+    "add_title": "Ajouter {{entity}}",
+    "edit_title": "Modifier {{entity}}",
+    "submit": "Soumettre",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "cancel": "Annuler"
   }
 }

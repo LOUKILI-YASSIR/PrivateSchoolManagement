@@ -8,7 +8,7 @@ import { useRef, useEffect } from "react";
 import './styles/CartMenu.css';
 import { Link, useNavigate } from "react-router-dom";
 
-const MenuCart = ({ menuItems, menuContent, menuType, maxHeight, title, margin }) => {
+const MenuCart = ({ menuItems, menuContent, menuType, maxHeight, title, margin, isFormHeader }) => {
   const {
     LanguageChange, open, anchorEl, itemRefs,
     handleClick, handleClose, handleMouseEnter, handleMouseLeave,
@@ -157,7 +157,7 @@ const MenuCart = ({ menuItems, menuContent, menuType, maxHeight, title, margin }
   const { languageItems, otherItems, hasMultipleGroups } = groupItems();
   
   return (
-    <div id={menuType} className={`cart-menu-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${open ? 'active' : ''}`}>
+    <div id={menuType} className={`cart-menu-container ${isDarkMode ? 'dark-mode' : 'light-mode'} ${open ? 'active' : ''} ${isFormHeader ? "inFormHeader" : ""}`}>
       <Button
         id={`${menuType}-menu-button`}
         aria-controls={open ? `${menuType}-menu` : undefined}

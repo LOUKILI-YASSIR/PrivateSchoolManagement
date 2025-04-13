@@ -6,9 +6,10 @@ const apiClient = axios.create({
   baseURL: 'http://127.0.0.1:8000/api', // Base URL for all requests
   headers: {
     'Content-Type': 'application/json',
-    Accept: 'application/json',
+    'Accept': 'application/json',
   },
-  timeout: 10000, // 10 seconds
+  withCredentials: true, // Important for CORS with credentials
+  timeout: 30000, // 30 seconds
 });
 
 // Request interceptor for adding auth token if available
@@ -23,20 +24,36 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response interceptor for handling common error cases
+// Response interceptor for handling common error cases and retries
+let retryCount = 0;
+const MAX_RETRIES = 2;
+
 apiClient.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     // Log the error for debugging
     console.error('API Error:', error);
     
     // Handle unauthorized errors (401)
     if (error.response && error.response.status === 401) {
       localStorage.removeItem('token');
-      // Don't use navigate here as it causes errors
       console.error('Authentication error: Please log in again');
+      return Promise.reject(error);
     }
-    
+
+    // Retry logic for timeout and network errors
+    const originalRequest = error.config;
+    if ((error.code === 'ECONNABORTED' || !error.response) && retryCount < MAX_RETRIES) {
+      retryCount++;
+      console.log(`Retrying request (${retryCount}/${MAX_RETRIES})...`);
+      
+      // Wait for 1 second before retrying
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      return apiClient(originalRequest);
+    }
+
+    retryCount = 0; // Reset retry count
     return Promise.reject(error);
   }
 );

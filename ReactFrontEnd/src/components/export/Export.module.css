@@ -1,6 +1,13 @@
 /* Export component styling */
 .export-icon {
   animation: pulse 1.5s infinite ease-in-out alternate;
+  transition: all 0.3s ease;
+}
+
+/* Format-specific hover effects */
+.format-word:hover {
+  color: #2b579a !important;
+  filter: drop-shadow(0 0 3px rgba(43, 87, 154, 0.3));
 }
 
 @keyframes pulse {
@@ -17,6 +24,12 @@ button:disabled .export-icon {
   animation: none !important;
   opacity: 0.5;
   color: rgba(255, 255, 255, 1);
+}
+
+/* Format-specific disabled states */
+button:disabled .format-word {
+  color: rgba(43, 87, 154, 0.5) !important;
+  filter: grayscale(0.5);
 }
 
 button:disabled {

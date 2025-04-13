@@ -1,0 +1,10 @@
+{
+  "error": {
+    "server": {
+      "general": "An unexpected server error occurred."
+    }
+  },
+  "success": {
+    "general": "Operation successful."
+  }
+} 

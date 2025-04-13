@@ -350,7 +350,7 @@ hr.active {
 }
 
 .main.active {
-  width: calc(100% - 80px);
+  width: calc(100% - 68px);
   left: 68px;
   transition: all 0.5s ease;
 }

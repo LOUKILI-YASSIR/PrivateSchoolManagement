@@ -1,0 +1,10 @@
+export { ETUDIANTS } from './EtudiantDefault.jsx';
+export { DAYWEEK } from './DayWeekDefault.jsx';
+export { GROUPS } from './GroupDefault.jsx';
+export { MATIERES } from './MatiereDefault.jsx';
+export { NIVEAU } from './NiveauDefault.jsx';
+export { PROFESSEUR } from './ProfesseurDefault.jsx';
+export { REGULARTIMETABLE } from './RegularTimeTableDefault.jsx';
+export { SALLE } from './SalleDefault.jsx';
+export { TIMESLOT } from './TimeSlotDefault.jsx';
+export { EVALUATION } from './EvaluationDefault.jsx';

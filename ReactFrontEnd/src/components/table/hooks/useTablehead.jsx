@@ -1,20 +1,18 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { MainContext } from "../../../utils/contexts/MainContext";
 
 export const UseTableHead = (Table, handleDelete) => {
     const ValueMainContext = useContext(MainContext);
-    const { setTableData } = useContext(MainContext)
-    useEffect(()=>{
-        setTableData(Table)
-    },[Table])
-    if(!!ValueMainContext) var { TableName } = ValueMainContext
+    const TableName = ValueMainContext?.TableName;
+    
     const ID_OF = {
         etudiants : "matriculeEt",
         professeurs : "matriculePr",
-    }[TableName]
+    }[TableName];
+
     return {
         DeleteSelected: (rows) => {
-            if (!rows) return;
+            if (!rows || !ID_OF) return;
             rows.forEach(row => {
                 handleDelete(row.original[ID_OF]);
             });

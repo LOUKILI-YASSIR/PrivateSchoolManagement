@@ -5,126 +5,205 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\EmploiDuTemps;
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Http\JsonResponse;
+use Exception;
 
+/**
+ * EmploiDuTemps Controller
+ * 
+ * Handles all operations related to school schedules including:
+ * - CRUD operations for schedule records
+ * - Schedule queries by teacher and class
+ * - Schedule statistics and reporting
+ */
 class EmploiDuTempsController extends Controller
 {
-    // Constants Errors Messages
-    const EMPLOI_DU_TEMPS_NOT_FOUND = 'Emploi du temps not found';
-    const EMPLOI_DU_TEMPS_CREATED = 'Emploi du temps created successfully';
-    const EMPLOI_DU_TEMPS_UPDATED = 'Emploi du temps updated successfully';
-    const EMPLOI_DU_TEMPS_DELETED = 'Emploi du temps deleted successfully';
-    const EMPLOI_DU_TEMPS_INVALID_PAGE_PARAMS = 'Invalid pagination parameters';
-    const VALIDATION_RULES = [
+    /**
+     * Default number of items per page for pagination
+     */
+    private const DEFAULT_PAGINATION_LIMIT = 10;
+
+    /**
+     * Validation rules for EmploiDuTemps model
+     */
+    private const VALIDATION_RULES = [
+        'matriculeClasse' => 'required|string|exists:classes,matriculeClasse',
         'matriculeMat' => 'required|string|exists:matieres,matriculeMat',
-        'matriculeGrp' => 'required|string|exists:groupes,matriculeGrp',
-        'matriculeSes' => 'required|string|exists:sessions,id',
-        'matriculeAnnee' => 'required|string|exists:annees_academiques,matriculeAnnee',
+        'matriculeProf' => 'required|string|exists:professeurs,matriculeProf',
         'matriculeSalle' => 'required|string|exists:salles,matriculeSalle',
-        'matriculeInst' => 'required|string|exists:institutions,matriculeInst',
-        'matriculePer' => 'required|string|exists:periodes,matriculePer',
-        'matriculePr' => 'required|string|exists:professeurs,matriculePr',
+        'matriculeAnnee' => 'required|string|exists:annees_academiques,matriculeAnnee',
+        'jour' => 'required|integer|between:1,6',
         'heureDebut' => 'required|date_format:H:i',
-        'heureFin' => 'required|date_format:H:i|after:heureDebut',
-        'jourSemaine' => 'required|string|in:Lundi,Mardi,Mercredi,Jeudi,Vendredi,Samedi'
+        'heureFin' => 'required|date_format:H:i|after:heureDebut'
     ];
 
     /**
-     * إرجاع جميع جداول المواعيد
+     * Get all schedule records
+     *
+     * @return JsonResponse The response containing all schedule records
      */
-    private function response($data, $statusCode = 200)
+    public function index(): JsonResponse
     {
-        return response()->json($data, $statusCode)
-            ->header('Access-Control-Allow-Origin', '*')
-            ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-            ->header('Access-Control-Allow-Headers', 'Content-Type, Accept, Authorization');
-    }
-
-    public function index()
-    {
-        return $this->response(EmploiDuTemps::all());
-    }
-
-    /**
-     * إرجاع قائمة جداول المواعيد بطريقة متدرجة (Pagination)
-     */
-    public function paginated($start, $length)
-    {
-        $start = (int) $start;
-        $length = (int) $length;
-
-        if ($start < 0 || $length <= 0) {
-            return $this->response(['error' => self::EMPLOI_DU_TEMPS_INVALID_PAGE_PARAMS], 422);
+        try {
+            $emplois = EmploiDuTemps::with(['classe', 'matiere', 'professeur', 'salle', 'anneeAcademique'])->get();
+            return $this->successResponse($emplois, 'retrieved');
+        } catch (Exception $e) {
+            return $this->handleException($e);
         }
-
-        $emplois = EmploiDuTemps::skip($start)->take($length)->get();
-        return $this->response(['data' => $emplois, 'total' => EmploiDuTemps::count()]);
     }
 
     /**
-     * إرجاع جدول مواعيد معين بناءً على الرقم التسلسلي
+     * Get paginated list of schedule records
+     *
+     * @param Request $request The request containing pagination parameters
+     * @return JsonResponse The response containing paginated schedule records
      */
-    public function show($matriculeEmpt)
+    public function paginate(Request $request): JsonResponse
     {
-        $emploi = EmploiDuTemps::where('matriculeEmpt', $matriculeEmpt)->first();
-        if (!$emploi) {
-            return $this->response(['error' => self::EMPLOI_DU_TEMPS_NOT_FOUND], 404);
+        try {
+            $pagination = $this->handlePagination($request, self::DEFAULT_PAGINATION_LIMIT);
+            
+            $emplois = EmploiDuTemps::with(['classe', 'matiere', 'professeur', 'salle', 'anneeAcademique'])
+                ->paginate(
+                    $pagination['per_page'],
+                    ['*'],
+                    'page',
+                    $pagination['page']
+                );
+                
+            return $this->successResponse([
+                'data' => $emplois->items(),
+                'total' => $emplois->total(),
+                'current_page' => $emplois->currentPage(),
+                'per_page' => $emplois->perPage()
+            ], 'retrieved');
+        } catch (Exception $e) {
+            return $this->handleException($e);
         }
-        return $this->response($emploi);
     }
 
     /**
-     * إنشاء جدول مواعيد جديد
+     * Get a specific schedule record
+     *
+     * @param string $matricule The matricule of the schedule record to retrieve
+     * @return JsonResponse The response containing the schedule record
      */
-    public function store(Request $request)
+    public function show(string $matricule): JsonResponse
     {
-        $validatedData = $request->validate(self::VALIDATION_RULES);
-        $emploi = EmploiDuTemps::create($validatedData);
-
-        return $this->response([
-            'message' => self::EMPLOI_DU_TEMPS_CREATED,
-            'emploi' => $emploi
-        ], 201);
-    }
-
-    /**
-     * تحديث بيانات جدول مواعيد
-     */
-    public function update(Request $request, $matriculeEmpt)
-    {
-        $emploi = EmploiDuTemps::where('matriculeEmpt', $matriculeEmpt)->first();
-        if (!$emploi) {
-            return $this->response(['error' => self::EMPLOI_DU_TEMPS_NOT_FOUND], 404);
+        try {
+            $emploi = EmploiDuTemps::with(['classe', 'matiere', 'professeur', 'salle', 'anneeAcademique'])
+                ->where('matriculeEmploi', $matricule)
+                ->firstOrFail();
+                
+            return $this->successResponse($emploi, 'retrieved');
+        } catch (Exception $e) {
+            return $this->notFoundResponse('schedule');
         }
-
-        $validatedData = $request->validate(self::VALIDATION_RULES);
-        $emploi->update($validatedData);
-
-        return $this->response([
-            'message' => self::EMPLOI_DU_TEMPS_UPDATED,
-            'emploi' => $emploi
-        ]);
     }
 
     /**
-     * حذف جدول مواعيد معين
+     * Create a new schedule record
+     *
+     * @param Request $request The request containing the schedule record data
+     * @return JsonResponse The response containing the created schedule record
      */
-    public function destroy($matriculeEmpt)
+    public function store(Request $request): JsonResponse
     {
-        $emploi = EmploiDuTemps::where('matriculeEmpt', $matriculeEmpt)->first();
-        if (!$emploi) {
-            return $this->response(['error' => self::EMPLOI_DU_TEMPS_NOT_FOUND], 404);
+        try {
+            $validatedData = $this->validateRequest($request, self::VALIDATION_RULES);
+            $emploi = EmploiDuTemps::create($validatedData);
+            return $this->successResponse($emploi, 'created', 201);
+        } catch (Exception $e) {
+            return $this->handleException($e);
         }
-
-        $emploi->delete();
-        return $this->response(['message' => self::EMPLOI_DU_TEMPS_DELETED]);
     }
 
     /**
-     * حساب عدد جداول المواعيد
+     * Update a schedule record
+     *
+     * @param Request $request The request containing the updated schedule record data
+     * @param string $matricule The matricule of the schedule record to update
+     * @return JsonResponse The response containing the updated schedule record
      */
-    public function count()
+    public function update(Request $request, string $matricule): JsonResponse
     {
-        return $this->response(['count' => EmploiDuTemps::count()]);
+        try {
+            $emploi = EmploiDuTemps::where('matriculeEmploi', $matricule)->firstOrFail();
+            $validatedData = $this->validateRequest($request, self::VALIDATION_RULES);
+            $emploi->update($validatedData);
+            return $this->successResponse($emploi, 'updated');
+        } catch (Exception $e) {
+            return $this->notFoundResponse('schedule');
+        }
+    }
+
+    /**
+     * Delete a schedule record
+     *
+     * @param string $matricule The matricule of the schedule record to delete
+     * @return JsonResponse The response indicating the success of the deletion
+     */
+    public function destroy(string $matricule): JsonResponse
+    {
+        try {
+            $emploi = EmploiDuTemps::where('matriculeEmploi', $matricule)->firstOrFail();
+            $emploi->delete();
+            return $this->successResponse(null, 'deleted');
+        } catch (Exception $e) {
+            return $this->notFoundResponse('schedule');
+        }
+    }
+
+    /**
+     * Get the total count of schedule records
+     *
+     * @return JsonResponse The response containing the count of schedule records
+     */
+    public function count(): JsonResponse
+    {
+        try {
+            $count = EmploiDuTemps::count();
+            return $this->successResponse(['count' => $count], 'retrieved');
+        } catch (Exception $e) {
+            return $this->handleException($e);
+        }
+    }
+
+    /**
+     * Get schedule records for a specific teacher
+     *
+     * @param string $matriculeProf The teacher's matricule
+     * @return JsonResponse The response containing the teacher's schedule records
+     */
+    public function byTeacher(string $matriculeProf): JsonResponse
+    {
+        try {
+            $emplois = EmploiDuTemps::with(['classe', 'matiere', 'salle', 'anneeAcademique'])
+                ->where('matriculeProf', $matriculeProf)
+                ->get();
+                
+            return $this->successResponse($emplois, 'retrieved');
+        } catch (Exception $e) {
+            return $this->handleException($e);
+        }
+    }
+
+    /**
+     * Get schedule records for a specific class
+     *
+     * @param string $matriculeClasse The class's matricule
+     * @return JsonResponse The response containing the class's schedule records
+     */
+    public function byClass(string $matriculeClasse): JsonResponse
+    {
+        try {
+            $emplois = EmploiDuTemps::with(['matiere', 'professeur', 'salle', 'anneeAcademique'])
+                ->where('matriculeClasse', $matriculeClasse)
+                ->get();
+                
+            return $this->successResponse($emplois, 'retrieved');
+        } catch (Exception $e) {
+            return $this->handleException($e);
+        }
     }
 } 

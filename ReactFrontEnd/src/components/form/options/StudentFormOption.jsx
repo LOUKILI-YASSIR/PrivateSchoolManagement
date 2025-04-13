@@ -19,8 +19,15 @@ export const getFormStepsEt = () => {
         {
             title: "Etudiant",
             Fields: [
-                GENRE, PROFILE, NOM, PRENOM, LIEU_NAISSANCE, DATE_NAISSANCE, 
-                NATIONALITE, PAYS, VILLE, CODE_POSTAL, EMAIL, ADRESSE, OBSERVATION,
+                GENRE, PROFILE, 
+                { ...NOM, name: 'nomEt' }, 
+                { ...PRENOM, name: 'prenomEt' },
+                LIEU_NAISSANCE, DATE_NAISSANCE, 
+                NATIONALITE, PAYS, VILLE, CODE_POSTAL, 
+                { ...EMAIL, name: 'emailEt' }, 
+                { ...TELEPHONE1, name: 'phoneEt' },
+                ADRESSE, 
+                { ...OBSERVATION, name: 'observationEt' }
             ]
         },
         
@@ -29,6 +36,7 @@ export const getFormStepsEt = () => {
             title: "Responsable d'Etudiant",
             Fields: [
                 generateField({
+                    name: 'lienParenteTr',
                     type: TEXT_SELECT,
                     label: "Lien de Parenté",
                     options: lienParenteOptions.map(value => ({
@@ -39,22 +47,27 @@ export const getFormStepsEt = () => {
                       required: 'Parent relationship is required',
                       validate: (value) => lienParenteOptions.includes(value) || "Veuillez sélectionner une option valide",
                     }
-                  }),
-                NOM, PRENOM,
+                }),
+                { ...NOM, name: 'NomTr' }, 
+                { ...PRENOM, name: 'PrenomTr' },
                 generateField({
+                    name: 'professionTr',
                     type: TEXT,
                     label: "Profession",
-                    value:"",
+                    value: "",
                     enablePlaceholder: true,
                     validation: { 
                         required: 'Profession is required', 
                         validate: (value) => 
                             /\b[A-Za-z]+[- ]?[A-Za-z]*'?[- ]?[A-Za-z]+\b/.test(value) 
-                            || `Professiondoit commencer par une lettre majuscule, 
+                            || `Profession doit commencer par une lettre majuscule, 
                                 contenir uniquement des noms valides et avoir un seul espace entre les mots.`
                     }
                 }),
-                TELEPHONE1, TELEPHONE2, EMAIL, OBSERVATION
+                { ...TELEPHONE1, name: 'Phone1Tr' }, 
+                { ...TELEPHONE2, name: 'Phone2Tr' }, 
+                { ...EMAIL, name: 'EmailTr' }, 
+                { ...OBSERVATION, name: 'ObservationTr' }
             ]   
         }
     ];

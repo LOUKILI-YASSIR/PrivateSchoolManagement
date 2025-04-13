@@ -8,7 +8,7 @@ import { useContext } from "react";
 import { MainContext } from "../../../utils/contexts/MainContext";
 import FormWrapper from "../../form/FormWrapper"; // Adjust import path as needed
 import { useTranslation } from "react-i18next";
-import ActionMenu from "../../Menu/ActionMenu";
+import ActionMenu from "../../menu/ActionMenu";
 import { useSelector } from "react-redux";
 
 export const GetInfoTable = () => {
@@ -21,7 +21,13 @@ export const GetInfoTable = () => {
 
   const PageTranslate = {
     etudiants: Traduction("TableDBName.student"),
-    prefesseurs: Traduction("TableDBName.prof"), // Note: typo "prefesseurs" should be "professeurs"
+    professeurs: Traduction("TableDBName.prof"),
+    matiere: Traduction("TableDBName.subject"),
+    niveaux: Traduction("TableDBName.level"),
+    salles: Traduction("TableDBName.room"),
+    groupes: Traduction("TableDBName.group"),
+    evaluations: Traduction("TableDBName.evaluation"),
+    "regular-timetables": Traduction("TableDBName.timetable")
   };
 
   return {
@@ -37,6 +43,12 @@ export const GetInfoTable = () => {
       const itemId = row[{
         etudiants: "matriculeEt",
         professeurs: "matriculePr",
+        matiere: "matriculeMt",
+        niveaux: "matriculeNv",
+        salles: "matriculeSl",
+        groupes: "matriculeGp",
+        evaluations: "matriculeEv",
+        "regular-timetables": "matriculeRt"
       }[TableName]];
       const actions = [
         consult && (
@@ -54,15 +66,21 @@ export const GetInfoTable = () => {
             row={row}
             typeOpt="MOD" // Indicate this is for modification
             key="edit"
+            maxWidth="lg"
+            fullWidth={true}
+            style={{ minHeight: '60vh' }}
+            showOptions={true}
           />
         ),
         remove && (
           <ActionMenu
             key="DeleteBox"
+            fullWidth={true}
             contentOptions={BoxOptionDeleteBy1({ handleDelete, closeMenu, itemId, Traduction })}
-            maxWidth="xs"
+            maxWidth="lg"
             disableBackdropClick={false}
             style={{ 
+              width: '70vh',
               borderLeft: isDarkMode ? '3px solid rgba(220, 38, 38, 0.8)' : '3px solid rgba(220, 38, 38, 0.7)' 
             }}
           />

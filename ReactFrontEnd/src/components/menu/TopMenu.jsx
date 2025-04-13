@@ -9,14 +9,16 @@ import { toggleDarkMode } from "../../Store/Slices/ThemeSlice.jsx";
 import { useEffect } from "react";
 import DateWithCalendar from "../common/DateWithCalendar.jsx";
 import { useAuth } from "../../utils/contexts/AuthContext.jsx";
+import LanguageSelector from "../common/LanguageSelector.jsx";
+import { useTranslation } from "react-i18next";
 
 export default function MenuTop ({content}) {
   const { logout } = useAuth();
   const {userMenuItems} = getMenu(()=>logout());
+  const { i18n } = useTranslation();
   const {
     handleToggleClick,
-    Language,isToggleActive,Dispatch,
-    Traduction
+    isToggleActive,Dispatch,
   } = useMenuTop();
   
   // Dark mode from Redux
@@ -25,6 +27,10 @@ export default function MenuTop ({content}) {
   
   const handleToggleDarkMode = () => {
     dispatch(toggleDarkMode());
+  };
+  
+  const handleLanguageChange = (lang) => {
+    i18n.changeLanguage(lang);
   };
   
   // Add the CSS for rotating animation
@@ -111,18 +117,9 @@ export default function MenuTop ({content}) {
               />
             </div>
             
-            <MenuCart
-              menuItems={["fr","en","es","de"]}
-              menuContent={
-                <img 
-                  src={`/Locales/${Language}.png`} 
-                  alt={Language} 
-                  className="w-10 my-1 transition-transform duration-200 hover:scale-110"
-                />
-              }
-              menuPositionActive={{ x: 230, y: -5 }}
-              menuPositionNotActive={{ x: 450, y: 0 }}
-              menuType="language"
+            <LanguageSelector 
+              currentLanguage={i18n.language} 
+              onLanguageChange={handleLanguageChange}
             />
             <MenuCart
               menuItems={userMenuItems}

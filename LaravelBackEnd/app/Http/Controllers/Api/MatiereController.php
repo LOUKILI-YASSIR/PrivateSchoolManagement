@@ -1,125 +1,79 @@
 <?php
-namespace App\Http\Controllers\Api;
+
+namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Traits\CrudOperations;
 use App\Models\Matiere;
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Http\JsonResponse;
+use Exception;
 
 class MatiereController extends Controller
 {
-    // Constants for error and success messages
-    private const MESSAGES = [
-        'not_found' => 'Matiere not found',
-        'created' => 'Matiere created successfully',
-        'updated' => 'Matiere updated successfully',
-        'deleted' => 'Matiere deleted successfully',
-        'invalid_page_params' => 'Invalid pagination parameters'
-    ];
+    use CrudOperations;
 
-    // Validation rules for creating and updating matieres
-    private const VALIDATION_RULES = [
-        'name' => 'sometimes|required|string|max:255',
-        'description' => 'nullable|string',
-        'coefficient' => 'sometimes|required|integer|min:1|max:10',
-        'num_controls' => 'sometimes|required|integer|min:1',
-        'has_final_exam' => 'sometimes|required|boolean',
-        'has_other_grade' => 'sometimes|required|boolean',
-        'has_monitoring_behavior_grade' => 'sometimes|required|boolean',
+    protected string $model = Matiere::class;
+
+    protected array $validationRules = [
+        'nameMt' => 'required|string|max:255',
+        'codeMt' => 'required|string|max:255',
+        'descriptionMt' => 'nullable|string|max:255',
+        'coefficientMt' => 'nullable|numeric',
+        'matriculeNv' => 'required|string|exists:niveaux,matriculeNv',
+        'matriculePr' => 'required|string|exists:professeurs,matriculePr',
     ];
 
     /**
-     * Standardize JSON responses with CORS headers
+     * Display a listing of the resource with related data.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    private function response($data, $statusCode = 200)
+    public function index(): JsonResponse
     {
-        return response()->json($data, $statusCode);
-    }
+        try {
+            $records = $this->getModelClass()::with([
+                'niveau:matriculeNv,NomNv',
+                'professeur.user:matriculeUt,NomPl,PrenomPl',
+                'evaluations'
+            ])->get();
 
-    /**
-     * Return all matieres
-     */
-    public function index()
-    {
-        return $this->response(Matiere::all());
-    }
-
-    /**
-     * Return paginated list of matieres using query parameters
-     */
-    public function paginated(Request $request)
-    {
-        $start = (int) $request->query('start', 0);
-        $length = (int) $request->query('length', 10);
-
-        if ($start < 0 || $length <= 0) {
-            return $this->response(['error' => self::MESSAGES['invalid_page_params']], 422);
+            return $this->successResponse($records, 'retrieved');
+        } catch (Exception $e) {
+            return $this->handleException($e);
         }
-
-        return $this->response([
-            'data' => Matiere::skip($start)->take($length)->get(),
-            'total' => Matiere::count()
-        ]);
     }
 
     /**
-     * Show a specific matiere by ID (matriculeMat)
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
      */
-    public function show($matriculeMat)
-    {
-        $matiere = Matiere::find($matriculeMat);
-        return $matiere ? $this->response($matiere) : $this->response(['error' => self::MESSAGES['not_found']], 404);
-    }
+    // store() provided by CrudOperations trait
 
     /**
-     * Create a new matiere
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Matiere  $matiere
+     * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        $validatedData = $request->validate(self::VALIDATION_RULES);
-        return $this->response([
-            'message' => self::MESSAGES['created'],
-            'matiere' => Matiere::create($validatedData)
-        ], 201);
-    }
+    // show() provided by CrudOperations trait
 
     /**
-     * Update an existing matiere
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Matiere  $matiere
+     * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $matriculeMat)
-    {
-        $matiere = Matiere::find($matriculeMat);
-        if (!$matiere) {
-            return $this->response(['error' => self::MESSAGES['not_found']], 404);
-        }
-
-        $validatedData = $request->validate(self::VALIDATION_RULES);
-        $matiere->update($validatedData);
-        return $this->response([
-            'message' => self::MESSAGES['updated'],
-            'matiere' => $matiere
-        ]);
-    }
+    // update() provided by CrudOperations trait
 
     /**
-     * Delete a matiere
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\Matiere  $matiere
+     * @return \Illuminate\Http\Response
      */
-    public function destroy($matriculeMat)
-    {
-        $matiere = Matiere::find($matriculeMat);
-        if (!$matiere) {
-            return $this->response(['error' => self::MESSAGES['not_found']], 404);
-        }
-
-        $matiere->delete();
-        return $this->response(['message' => self::MESSAGES['deleted']]);
-    }
-
-    /**
-     * Count total matieres
-     */
-    public function count()
-    {
-        return $this->response(['count' => Matiere::count()]);
-    }
+    // destroy() provided by CrudOperations trait
 }

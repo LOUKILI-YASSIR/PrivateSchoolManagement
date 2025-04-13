@@ -2,98 +2,95 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\DashboardController;
-use App\Http\Controllers\Api\EtudiantController;
-use App\Http\Controllers\Api\ProfesseurController;
-use App\Http\Controllers\Api\GroupeController;
+
+// Import Refactored Controllers
+use App\Http\Controllers\Api\AuthController; // Still needed for /user route
+use App\Http\Controllers\Api\NiveauController;
 use App\Http\Controllers\Api\MatiereController;
-use App\Http\Controllers\Api\SalleController;
-use App\Http\Controllers\Api\PeriodeController;
-use App\Http\Controllers\Api\InscriptionController;
-use App\Http\Controllers\Api\AffectationController;
+use App\Http\Controllers\Api\EvaluationTypeController;
+use App\Http\Controllers\Api\ProfesseurController;
+use App\Http\Controllers\Api\GroupController;
+use App\Http\Controllers\Api\EtudiantController;
+use App\Http\Controllers\Api\AttendanceController;
+use App\Http\Controllers\Api\TeacherVocationController;
 use App\Http\Controllers\Api\EvaluationController;
 use App\Http\Controllers\Api\NoteController;
+use App\Http\Controllers\Api\NoteFinalController;
 use App\Http\Controllers\Api\EvaluationResultController;
-use App\Http\Controllers\Api\EmploiDuTempsController;
-use App\Http\Controllers\Api\AbsenceController;
+use App\Http\Controllers\Api\AcademicYearController;
+use App\Http\Controllers\Api\SchoolCalendarController;
+use App\Http\Controllers\Api\HolidayController;
+use App\Http\Controllers\Api\SalleController;
+use App\Http\Controllers\Api\DayWeekController;
+use App\Http\Controllers\Api\TimeSlotController;
+use App\Http\Controllers\Api\RegularTimeTableController;
+use App\Http\Controllers\Api\SchoolEventController;
+use App\Http\Controllers\Api\SpecialDayScheduleController;
+use App\Http\Controllers\Api\TimeTableExceptionController;
+use App\Http\Controllers\Api\GradeAdjustmentController;
+
 
 /*
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
 */
 
-// Public routes
-Route::post('/login', [AuthController::class, 'login']);
+// --- Include Authentication Routes ---
+// This will register the routes defined in auth.php under the /api prefix
+require __DIR__.'/auth.php';
 
-// Protected routes
-Route::middleware('auth.api')->group(function () {
-    // Auth routes
-    Route::post('/logout', [AuthController::class, 'logout']);
-    Route::post('/refresh-token', [AuthController::class, 'refreshToken']);
-    Route::put('/profile', [AuthController::class, 'updateProfile']);
-    Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
-    Route::post('/reset-password', [AuthController::class, 'resetPassword']);
-    Route::get('/user/me', [AuthController::class, 'me']);
+// Authentication routes are typically in routes/auth.php or included here
 
-    // Dashboard routes
-    Route::get('/dashboard/admin', [DashboardController::class, 'adminDashboard']);
-    Route::get('/dashboard/statistics', [DashboardController::class, 'getStatistics']);
-    Route::get('/dashboard/performance-metrics', [DashboardController::class, 'getPerformanceMetrics']);
-    Route::get('/dashboard/student/{studentId}', [DashboardController::class, 'studentDashboard']);
-    Route::get('/dashboard/professor/{professorId}', [DashboardController::class, 'professorDashboard']);
-    Route::get('/dashboard/attendance/{role}/{userId}', [DashboardController::class, 'getAttendance']);
-    Route::get('/dashboard/performance/{role}/{userId}', [DashboardController::class, 'getPerformance']);
-    Route::get('/dashboard/events/{role}/{userId}', [DashboardController::class, 'getEvents']);
-    Route::post('/dashboard/attendance/submit', [DashboardController::class, 'submitAttendance']);
-    Route::post('/dashboard/grades/submit', [DashboardController::class, 'submitGrades']);
-    Route::post('/dashboard/events', [DashboardController::class, 'createEvent']);
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
+})->name('api.current_user'); // Renamed from api.user to avoid conflict if auth.php is separate
 
-    // Resource routes
-    $controllers = [
-        'etudiants' => EtudiantController::class,
-        'professeurs' => ProfesseurController::class,
-        'groupes' => GroupeController::class,
+Route::middleware('auth:sanctum')->group(function () {
+
+    // --- Add Paginate and Count Routes for Resources ---
+    $resourceControllers = [
+        'niveaux' => NiveauController::class,
         'matieres' => MatiereController::class,
-        'salles' => SalleController::class,
-        'periodes' => PeriodeController::class,
-        'inscriptions' => InscriptionController::class,
-        'affectations' => AffectationController::class,
+        'evaluation-types' => EvaluationTypeController::class,
+        'professeurs' => ProfesseurController::class,
+        'groups' => GroupController::class,
+        'etudiants' => EtudiantController::class,
+        'attendances' => AttendanceController::class,
+        'teacher-vocations' => TeacherVocationController::class,
         'evaluations' => EvaluationController::class,
         'notes' => NoteController::class,
+        'note-finals' => NoteFinalController::class,
         'evaluation-results' => EvaluationResultController::class,
-        'emploi-du-temps' => EmploiDuTempsController::class,
-        'absences' => AbsenceController::class,
+        'academic-years' => AcademicYearController::class,
+        'school-calendars' => SchoolCalendarController::class,
+        'holidays' => HolidayController::class,
+        'salles' => SalleController::class,
+        'day-weeks' => DayWeekController::class,
+        'time-slots' => TimeSlotController::class,
+        'regular-timetables' => RegularTimeTableController::class,
+        'school-events' => SchoolEventController::class,
+        'special-day-schedules' => SpecialDayScheduleController::class,
+        'timetable-exceptions' => TimeTableExceptionController::class,
+        'grade-adjustments' => GradeAdjustmentController::class,
+        // Add other controllers here if they use CrudOperations and need these routes
     ];
 
-    foreach ($controllers as $resource => $controller) {
-        Route::prefix($resource)->group(function () use ($controller) {
-            Route::get('/paginate', [$controller, 'paginate']);
-            Route::get('/index', [$controller, 'index']);
-            Route::get('/count', [$controller, 'count']);
-            Route::post('/', [$controller, 'store']);
-            Route::get('/{matricule}', [$controller, 'show']);
-            Route::put('/{matricule}', [$controller, 'update']);
-            Route::delete('/{matricule}', [$controller, 'destroy']);
-        });
+    foreach ($resourceControllers as $resource => $controller) {
+        Route::get("/{$resource}/count", [$controller, 'count'])->name("{$resource}.count");
+        Route::apiResource($resource, $controller);
     }
 
-    // Additional specific routes
-    // Notes routes
-    Route::prefix('notes')->group(function () {
-        Route::get('/student/{etudiantId}', [NoteController::class, 'getStudentNotes']);
-        Route::get('/subject/{matiereId}', [NoteController::class, 'getSubjectNotes']);
-    });
+    // Note: Protected routes from auth.php (like /logout) are already defined
+    // with the 'auth:sanctum' middleware within the auth.php file itself.
 
-    // Evaluation Results routes
-    Route::prefix('evaluation-results')->group(function () {
-        Route::get('/student/{etudiantId}', [EvaluationResultController::class, 'getStudentResults']);
-        Route::get('/evaluation/{evaluationId}', [EvaluationResultController::class, 'getEvaluationResults']);
-    });
 });
+
+// Add OPTIONS route handler for CORS preflight requests
+Route::options('/{any}', function () {
+    return response()->json([], 200)
+        ->header('Access-Control-Allow-Origin', 'http://localhost:5173')
+        ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+        ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+        ->header('Access-Control-Allow-Credentials', 'true');
+})->where('any', '.*');

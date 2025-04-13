@@ -1,47 +1,35 @@
-import { useContext } from "react";
+import { useContext, useCallback } from "react";
 import { MainContext } from "../../../utils/contexts/MainContext";
 
 export const useTable = () => {
-    const ValueMainContext = useContext(MainContext);
-    
-    const contextValues = ValueMainContext ? {
-        data: ValueMainContext.data || [],
-        total: ValueMainContext.total || 0,
-        isLoading: ValueMainContext.isLoading || false,
-        isRefetching: ValueMainContext.isRefetching || false,
-        TableName: ValueMainContext.TableName || "",
-        refetch: ValueMainContext.refetch || (() => {}),
-        setPagination: ValueMainContext.setPagination || (() => {}),
-        pagination: ValueMainContext.pagination || { pageIndex: 0, pageSize: 10 },
-        setTableData: ValueMainContext.setTableData || (() => {}),
-        tableData: ValueMainContext.tableData || []
-    } : {
-        data: [],
-        total: 0,
-        isLoading: false,
-        isRefetching: false,
-        TableName: "",
-        refetch: () => {},
-        setPagination: () => {},
-        pagination: { pageIndex: 0, pageSize: 10 },
-        setTableData: () => {},
-        tableData: []
-    };
+    const {
+        data,
+        columns,
+        isLoading,
+        isRefetching,
+        refetch,
+        TableName,
+        table
+    } = useContext(MainContext) || {};
 
-    const OnDrowRows = ({ table }) => ({
+    // Simplified drag/drop handler - Needs API integration for persistence
+    const OnDrowRows = useCallback(({ table: dndTable }) => ({
         onDragEnd: () => {
-            const { draggingRow, hoveredRow } = table.getState();
+            const { draggingRow, hoveredRow } = dndTable.getState();
             if (hoveredRow && draggingRow) {
-                const newData = [...contextValues.data];
-                const [movedRow] = newData.splice(draggingRow.index, 1);
-                newData.splice(hoveredRow.index, 0, movedRow);
-                contextValues.setTableData(newData);
+                console.warn("Drag and drop detected, but local reordering is disabled for server-side data. Implement API call to persist order.");
             }
         },
-    });
+    }), []);
 
     return {
-        ...contextValues,
+        table: table || null,
+        data: data || [],
+        columns: columns || [],
+        isLoading: isLoading || false,
+        isRefetching: isRefetching || false,
+        TableName: TableName || "",
+        refetch: refetch || (() => {}),
         OnDrowRows
     };
 };

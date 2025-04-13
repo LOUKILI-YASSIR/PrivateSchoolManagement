@@ -1,4 +1,4 @@
- import { useTranslation } from "react-i18next"
+import { useTranslation } from "react-i18next"
 import { 
     faSchool, 
     faUserGraduate,
@@ -8,10 +8,12 @@ import {
     faDoorOpen,
     faUsers,
     faCalendarDays,
-    faClock
+    faClock,
+    faLayerGroup,
+    faClipboardCheck
  } from "@fortawesome/free-solid-svg-icons";
 
- export const getNavigationMenu = () => {
+export const getNavigationMenu = (tableName) => {
     const {t:Traduction} = useTranslation()
     return { 
         menuItems : [
@@ -31,6 +33,11 @@ import {
                 link: "/YLSchool/Etudiants",
             },
             { 
+                text: Traduction("menu.anneescolaire"),
+                icon: faCalendarDays,
+                link: "/YLSchool/AnneeScolaire", 
+            },
+            { 
                 text: Traduction("menu.teachers"), 
                 icon: faChalkboardTeacher, 
                 link: "/YLSchool/Professeurs",
@@ -38,7 +45,12 @@ import {
             { 
                 text: Traduction("menu.subjects"), 
                 icon: faBookOpen, 
-                link: "/YLSchool/Matieres",
+                link: "/YLSchool/Matiere",
+            },
+            { 
+                text: Traduction("menu.levels"), 
+                icon: faLayerGroup, 
+                link: "/YLSchool/Niveaux",
             },      
             { 
                 text: Traduction("menu.rooms"), 
@@ -48,17 +60,17 @@ import {
             { 
                 text: Traduction("menu.groups"), 
                 icon: faUsers, 
-                link: "/YLSchool/Groups",
+                link: "/YLSchool/Groupes",
             },
             { 
-                text: Traduction("menu.period"), 
-                icon: faCalendarDays, 
-                link: "/YLSchool/Periodes",
+                text: Traduction("menu.evaluations"), 
+                icon: faClipboardCheck, 
+                link: "/YLSchool/Evaluations",
             },
             { 
                 text: Traduction("menu.timetable"), 
                 icon: faClock, 
-                link: "/YLSchool/EmploisDuTemps",
+                link: "/YLSchool/TimeTables",
             }
         ],     
     }

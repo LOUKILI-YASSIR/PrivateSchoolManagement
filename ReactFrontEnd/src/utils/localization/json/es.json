@@ -7,9 +7,11 @@
     "students": "Estudiantes",
     "teachers": "Profesores",
     "subjects": "Materias",
+    "levels": "Niveles",
     "rooms": "Aulas",
     "groups": "Groupes",
-    "period": "períodos",
+    "anneescolaire": "Año Escolar",
+    "evaluations": "Evaluaciones",
     "timetable": "Horarios"
   },
   "login": {
@@ -17,6 +19,11 @@
     "title": "Bienvenido a YL School",
     "subtitle": "Por favor, inicia sesión para continuar",
     "username": "Nombre de usuario",
+    "email": "Correo electrónico",
+    "phone": "Número de teléfono",
+    "tabUsername": "Nombre de usuario",
+    "tabEmail": "Correo electrónico",
+    "tabPhone": "Teléfono",
     "password": "Contraseña",
     "submit": "Iniciar sesión",
     "forgotPassword": "¿Olvidaste tu contraseña?",
@@ -26,7 +33,17 @@
     "error": {
       "invalidCredentials": "Nombre de usuario o contraseña inválidos",
       "serverError": "Error del servidor. Por favor, inténtalo más tarde",
-      "tooManyAttempts": "Demasiados intentos de inicio de sesión. Por favor, inténtalo más tarde"
+      "usernameRequired": "El nombre de usuario es obligatorio",
+      "emailRequired": "El correo electrónico es obligatorio",
+      "phoneRequired": "El número de teléfono es obligatorio",
+      "passwordRequired": "La contraseña es obligatoria",
+      "invalidEmail": "Por favor, introduzca una dirección de correo electrónico válida",
+      "invalidPhone": "Por favor, introduzca un número de teléfono válido",
+      "tooManyAttempts": "Demasiados intentos de inicio de sesión. Por favor, inténtalo más tarde",
+      "userNotFound": "Usuario no encontrado",
+      "invalidPassword": "Contraseña inválida",
+      "noToken": "Inicio de sesión exitoso pero no se recibió ningún token",
+      "general": "Ocurrió un error durante el inicio de sesión. Por favor, inténtalo más tarde"
     }
   },
   "dashboard": {
@@ -62,7 +79,12 @@
     "address": "Dirección",
     "city": "Ciudad",
     "postalCode": "Código Postal",
-    "country": "País"
+    "country": "País",
+    "error": {
+      "updateFailed": "Error al actualizar el perfil. Por favor, inténtelo de nuevo.",
+      "currentPasswordMismatch": "La contraseña actual no coincide.",
+      "passwordResetFailed": "Error al restablecer la contraseña. Por favor, inténtelo de nuevo."
+    }
   },
   "info": {
     "info": "Info:",
@@ -110,13 +132,37 @@
   },
   "TableDBName": {
     "student": "Estudiantes",
-    "prof": "Profesores"
+    "prof": "Profesores",
+    "subject": "Materias",
+    "level": "Niveles",
+    "room": "Aulas",
+    "group": "Grupos",
+    "evaluation": "Evaluaciones",
+    "timetable": "Horarios"
   },
   "etudiants": {
     "list": "Lista de estudiantes"
   },
   "professeurs": {
     "list": "Lista de profesores"
+  },
+  "matiere": {
+    "list": "Lista de materias"
+  },
+  "niveaux": {
+    "list": "Lista de niveles"
+  },
+  "salles": {
+    "list": "Lista de aulas"
+  },
+  "groupes": {
+    "list": "Lista de grupos"
+  },
+  "evaluations": {
+    "list": "Lista de evaluaciones"
+  },
+  "regular-timetables": {
+    "list": "Lista de horarios"
   },
   "Data": {
     "matricule": "Número de registro",
@@ -145,5 +191,27 @@
   },
   "Inputs": {
     "nationalite": {}
+  },
+  "auth": {
+    "error": {
+      "invalidToken": "Su sesión no es válida. Por favor, inicie sesión de nuevo.",
+      "tokenExpired": "Su sesión ha expirado. Por favor, inicie sesión de nuevo.",
+      "unauthorized": "No está autorizado para acceder a este recurso."
+    }
+  },
+  "common": {
+    "error": {
+      "serverError": "Error del servidor. Por favor, inténtelo de nuevo más tarde.",
+      "unexpectedError": "Ocurrió un error inesperado. Por favor, inténtelo de nuevo.",
+      "serviceUnavailable": "Servicio temporalmente no disponible. Por favor, inténtelo de nuevo más tarde."
+    }
+  },
+  "register": {
+    "error": {
+      "usernameExists": "Este nombre de usuario ya existe. Por favor, elija otro.",
+      "emailExists": "Este correo electrónico ya existe. Por favor, utilice otro correo.",
+      "phoneExists": "Este número de teléfono ya existe. Por favor, utilice otro número.",
+      "registrationFailed": "Error en el registro. Por favor, inténtelo de nuevo."
+    }
   }
 }

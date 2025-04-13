@@ -1,13 +1,16 @@
 import apiClient from './apiClient';
 
 const apiServices = {
-  // GET request
+  // GET request with optional params
   getData: async (endpoint, params = {}) => {
     try {
-      const response = await apiClient.get(endpoint, { params });
-  return response.data;
+      const response = await apiClient.get(endpoint);
+      return response.data;
     } catch (error) {
       console.error(`Error fetching data from ${endpoint}:`, error);
+      if (error.response?.status === 401) {
+        console.error('Unauthorized access. Please log in.');
+      }
       return handleApiError(error);
     }
   },
@@ -42,23 +45,6 @@ const apiServices = {
       return response.data;
     } catch (error) {
       console.error(`Error deleting data at ${endpoint}/${matricule}:`, error);
-      return handleApiError(error);
-    }
-  },
-  // GET request for paginated data
-  getPaginatedData: async (endpoint, start, length) => {
-    try {
-      if (start < 0 || length <= 0) {
-        throw new Error("Invalid pagination parameters");
-      }
-  
-      const response = await apiClient.get(endpoint, {
-        params: { start, length },
-      });
-  
-      return response.data;
-    } catch (error) {
-      console.error(`Error fetching paginated data from ${endpoint}:`, error);
       return handleApiError(error);
     }
   }

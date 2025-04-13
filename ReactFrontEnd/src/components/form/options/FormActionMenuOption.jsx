@@ -2,50 +2,57 @@ import { faUserPlus, } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconButton, Tooltip } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
-export const getFromActionMenu = (AddOption) => ({
-    ADD : {
-        Title: "Inscription d'un Etudiant",
-        MainBtn : ({ClickToOpen}) => ( 
-            <Tooltip title={AddOption}>
-                <IconButton style={{ borderRadius: "5px" }} className='px-3' onClick={ClickToOpen}>
-                    <FontAwesomeIcon icon={faUserPlus} className="h5 mt-2 text-blue-600"/>
-                </IconButton>
-            </Tooltip>
-        ),
-        Btns: [
-            {
-                handleClose: true,
-                value: "cancel"
-            },
-            {
-                handleClick: () => {
-                    DeleteSelected(rows);
+
+// This function should receive the translation function and translated table name as parameters
+export const getFromActionMenu = (actionType, tableName, t, tableNameTranslated) => {
+    // Get action text with the table name inserted
+    const actionText = t ? t(actionType, { NomTable: tableNameTranslated }) : `${actionType} ${tableNameTranslated}`;
+    
+    return {
+        ADD: {
+            Title: t ? t('form.add_title', { entity: tableNameTranslated }) : `Add ${tableNameTranslated}`,
+            MainBtn: ({ClickToOpen}) => ( 
+                <Tooltip title={actionText}>
+                    <IconButton style={{ borderRadius: "5px" }} className='px-3' onClick={ClickToOpen}>
+                        <FontAwesomeIcon icon={faUserPlus} className="h5 mt-2 text-blue-600"/>
+                    </IconButton>
+                </Tooltip>
+            ),
+            Btns: [
+                {
+                    handleClose: true,
+                    value: t ? t('actions.cancel') : 'Cancel'
                 },
-                handleClose: true,
-                value: "Submit",
-            }
-        ]
-    },
-    UPDATE : {
-        Title: "Modification d'un Etudiant",
-        MainBtn : ({ClickToOpen}) => (
-            <span className="hover:text-green-600 flex p-2 pl-3 cursor-pointer" onClick={ClickToOpen}>
-                <EditIcon />
-                <div className="pl-2">Modifier</div>
-            </span>
-        ),
-        Btns: [
-            {
-                handleClose: true,
-                value: "cancel"
-            },
-            {
-                handleClick: () => {
-                    DeleteSelected(rows);
+                {
+                    handleClick: () => {
+                        console.log("Form submitted");
+                    },
+                    handleClose: true,
+                    value: t ? t('form.submit') : 'Submit',
+                }
+            ]
+        },
+        UPDATE: {
+            Title: t ? t('form.edit_title', { entity: tableNameTranslated }) : `Edit ${tableNameTranslated}`,
+            MainBtn: ({ClickToOpen}) => (
+                <span className="hover:text-green-600 flex p-2 pl-3 cursor-pointer" onClick={ClickToOpen}>
+                    <EditIcon />
+                    <div className="pl-2">{t ? t('actions.edit') : 'Edit'}</div>
+                </span>
+            ),
+            Btns: [
+                {
+                    handleClose: true,
+                    value: t ? t('actions.cancel') : 'Cancel'
                 },
-                handleClose: true,
-                value: "Submit",
-            }
-        ]
-    },
-})
+                {
+                    handleClick: () => {
+                        console.log("Form submitted");
+                    },
+                    handleClose: true,
+                    value: t ? t('form.submit') : 'Submit',
+                }
+            ]
+        },
+    };
+};

@@ -2,80 +2,76 @@
 
 namespace App\Models;
 
+use App\Traits\GeneratesMatricule;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Notifications\Notifiable;
-use App\Traits\GeneratesMatricule;
 
 class Etudiant extends Model
 {
-    use HasFactory, Notifiable, GeneratesMatricule;
+    use HasFactory, GeneratesMatricule;
 
-    public $incrementing = false; // منع التزايد التلقائي لأن المفتاح الأساسي نصي
-    protected $primaryKey = "matriculeEt"; // المفتاح الأساسي
-    protected $keyType = 'string'; // نوع المفتاح الأساسي نصي
+    protected $primaryKey = 'matriculeEt';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
-    const CREATED_AT = 'created_at';
-    const UPDATED_AT = 'updated_at';
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'etudiants';
 
     protected $fillable = [
-        'matriculeEt', 'GENREEt', 'NOMEt', 'PRENOMEt', 'LIEU_NAISSANCEEt', 'DATE_NAISSANCEEt',
-        'NATIONALITEEt', 'ADRESSEEt', 'VILLEEt', 'PAYSEt', 'CODE_POSTALEt', 'EMAILEt',
-        'PROFILE_PICTUREEt', 'OBSERVATIONEt', 'LIEN_PARENTETr', 'NOMTr', 'PRENOMTr', 'PROFESSIONTr',
-        'TELEPHONE1Tr', 'TELEPHONE2Tr', 'EMAILTr', 'OBSERVATIONTr', 'user_id'
+        'matriculeEt',
+        'emailEt',
+        'phoneEt',
+        'lienParenteTr',
+        'professionTr',
+        'NomTr',
+        'PrenomTr',
+        'Phone1Tr',
+        'Phone2Tr',
+        'EmailTr',
+        'ObservationTr',
+        'matriculeUt',
+        'matriculeGp',
     ];
 
-    protected $casts = [
-        'matriculeEt' => 'string',
-        'GENREEt' => 'string',
-        'NOMEt' => 'string',
-        'PRENOMEt' => 'string',
-        'LIEU_NAISSANCEEt' => 'string',
-        'DATE_NAISSANCEEt' => 'date',
-        'NATIONALITEEt' => 'string',
-        'ADRESSEEt' => 'string',
-        'VILLEEt' => 'string',
-        'PAYSEt' => 'string',
-        'CODE_POSTALEt' => 'string',
-        'EMAILEt' => 'string',
-        'PROFILE_PICTUREEt' => 'string',
-        'OBSERVATIONEt' => 'string',
-        'LIEN_PARENTETr' => 'string',
-        'NOMTr' => 'string',
-        'PRENOMTr' => 'string',
-        'PROFESSIONTr' => 'string',
-        'TELEPHONE1Tr' => 'string',
-        'TELEPHONE2Tr' => 'string',
-        'EMAILTr' => 'string',
-        'OBSERVATIONTr' => 'string',
-        'user_id' => 'string',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-    ];
+    // Relationships
 
-    /**
-     * Get the user associated with the student.
-     */
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'matriculeUt', 'matriculeUt');
     }
 
-    /**
-     * Get the student's inscriptions.
-     */
-    public function inscriptions()
+    public function group()
     {
-        return $this->hasMany(InscriptionEtudiant::class, 'matriculeEt');
+        return $this->belongsTo(Group::class, 'matriculeGp', 'matriculeGp');
     }
 
-    /**
-     * تحديد بادئة الرقم التسلسلي للطلاب
-     *
-     * @return string
-     */
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class, 'matriculeEt', 'matriculeEt');
+    }
+
+    public function notes()
+    {
+        return $this->hasMany(Note::class, 'matriculeEt', 'matriculeEt');
+    }
+
+    public function noteFinals()
+    {
+        return $this->hasMany(NoteFinal::class, 'matriculeEt', 'matriculeEt');
+    }
+
+    public function evaluationResults()
+    {
+        return $this->hasMany(EvaluationResult::class, 'matriculeEt', 'matriculeEt');
+    }
+
+    // Required method for GeneratesMatricule trait
     protected static function getMatriculePrefix()
     {
-        return 'ET'; // يمكن تغييره إذا كنت تستخدم نفس الـ Trait لنماذج أخرى
+        return 'ET';
     }
 }

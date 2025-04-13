@@ -1,14 +1,15 @@
-import { Fragment } from "react";
+import { Fragment, useContext, useEffect } from "react";
 import { GetInfoTable } from "./options/TableOption";
 import { Box, IconButton, Tooltip } from '@mui/material';
 import { UseTableHead } from "./hooks/useTablehead";
-import ActionMenu from "../Menu/ActionMenu";
+import ActionMenu from "../menu/ActionMenu";
 import { getActionOptionsMenu } from "./options/TableActionMenuOption";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRotateLeft } from "@fortawesome/free-solid-svg-icons";
 import { getFromActionMenu } from "../form/options/FormActionMenuOption";
 import FormWrapper from "../form/FormWrapper";
 import { useSelector } from "react-redux";
+import { MainContext } from "../../utils/contexts/MainContext";
 
 const TableHead = ({ tableData, handleDelete, refetch }) => {
   const { AddOption, DeleteOption, RefreshOption, TableName } = GetInfoTable();
@@ -17,7 +18,8 @@ const TableHead = ({ tableData, handleDelete, refetch }) => {
   const rows = tableData.getSelectedRowModel().rows;
   const { BoxOptionDeleteByN } = getActionOptionsMenu(rows, DeleteSelected, DeleteOption);
   const isDarkMode = useSelector((state) => state?.theme?.darkMode || false);
-
+  const { setTableData } = useContext(MainContext);
+  useEffect(()=>setTableData(tableData),[tableData])
   return (
     <Box
       sx={{
@@ -43,13 +45,15 @@ const TableHead = ({ tableData, handleDelete, refetch }) => {
           <FontAwesomeIcon icon={faRotateLeft} className="h5 mt-2"/>
         </IconButton>
       </Tooltip>
-      {["etudiants", "professeurs"].includes(TableName) && (
+      {!["regular-timetables"].includes(TableName) && (
         <Fragment>
           <ActionMenu 
             contentOptions={BoxOptionDeleteByN} 
-            maxWidth="xs"
+            maxWidth="lg"
+            fullWidth={true}
             disableBackdropClick={false}
             style={{ 
+              width: '80vh',
               borderLeft: isDarkMode ? '3px solid rgba(220, 38, 38, 0.8)' : '3px solid rgba(220, 38, 38, 0.7)' 
             }}
           />

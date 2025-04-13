@@ -2,7 +2,12 @@
   position: relative;
   margin-left: 8px;
 }
-
+.cart-menu-container.inFormHeader {
+  height: 60px;
+  width: 60px;
+  margin-left: 50px !important;
+  margin-top:10px
+}
 .cart-menu-container.active::after {
   content: '';
   position: absolute;

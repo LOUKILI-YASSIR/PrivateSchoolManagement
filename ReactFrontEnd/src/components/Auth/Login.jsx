@@ -52,10 +52,10 @@ const Login = () => {
   const storeCredentials = (loginVal, passwordVal) => {
     // In production, consider using more secure storage methods or encryption
     localStorage.setItem('rememberMe', 'true');
-    localStorage.setItem('login', loginVal);
+    localStorage.setItem('identifier', loginVal);
     
     // Option 1: Store password directly (less secure)
-    localStorage.setItem('password', passwordVal);
+    localStorage.setItem('passwordUt', passwordVal);
     
     // Option 2: Store an auth token instead of password (more secure)
     // This would require backend support for persistent tokens
@@ -64,8 +64,8 @@ const Login = () => {
   // Clear stored credentials
   const clearStoredCredentials = () => {
     localStorage.removeItem('rememberMe');
-    localStorage.removeItem('login');
-    localStorage.removeItem('password');
+    localStorage.removeItem('identifier');
+    localStorage.removeItem('passwordUt');
     // If using tokens, also remove those
   };
 
@@ -74,8 +74,8 @@ const Login = () => {
     const rememberMeStatus = localStorage.getItem('rememberMe') === 'true';
     if (rememberMeStatus) {
       setRememberMe(true);
-      const storedLogin = localStorage.getItem('login');
-      const storedPassword = localStorage.getItem('password');
+      const storedLogin = localStorage.getItem('identifier');
+      const storedPassword = localStorage.getItem('passwordUt');
       
       if (storedLogin) setLoginValue(storedLogin);
       if (storedPassword) setPassword(storedPassword);
@@ -186,10 +186,10 @@ const Login = () => {
     try {
       setIsLoading(true);
       
-      // Create login data structure with a single login field
+      // Create login data structure matching backend expectations
       const loginData = {
-        password: password,
-        login: loginValue
+        identifier: loginValue,
+        passwordUt: password
       };
       
       // Handle remember me
@@ -202,67 +202,42 @@ const Login = () => {
       // For testing/development - log out request data
       console.log('Login request data:', loginData);
       
-      try {
-        // Direct API call for testing
-        const response = await fetch('http://127.0.0.1:8000/api/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(loginData),
-        });
+      // Use apiServices for the login request
+      const response = await apiServices.postData('/login', loginData);
+      
+      // Log the full response for debugging
+      console.log('Login response:', response);
+      
+      if (response && response.data && response.data.access_token) {
+        // Extract user role from response (using roleUt from backend)
+        const userRole = response.data.user?.roleUt || 'admin'; // Default to student if role not provided
         
-        // Log response for debugging
-        console.log('Login response status:', response.status);
+        // Store both token and role
+        login(response.data.access_token, userRole);
         
-        if (response.ok) {
-          const data = await response.json();
-          console.log('Login successful:', data);
-          if (data.token) {
-            // Extract user role from response
-            const userRole = data.user?.role || 'etudiant'; // Default to student if role not provided
-            
-            // Store both token and role
-            
-            login(data.token, userRole);
-            
-            // Role-based navigation is handled in the AuthContext
-          } else {
-            setError("Login successful but no token received");
-          }
-        } else {
-          // Try to get error details
-          try {
-            const errorData = await response.json();
-            console.error('Login error details:', errorData);
-            
-            // Handle specific error cases
-            if (response.status === 401) {
-              setError(t('login.error.invalidCredentials'));
-            } else if (response.status === 422) {
-              // Validation errors
-              const errorMessage = errorData.message || 
-                errorData.errors?.login?.[0] || 
-                errorData.errors?.password?.[0] ||
-                t('login.error.invalidCredentials');
-              setError(errorMessage);
-            } else if (response.status === 429) {
-              setError(t('login.error.tooManyAttempts') || 'Too many login attempts. Please try again later.');
-            } else {
-              // Default error message
-              setError(errorData.message || t('login.error.serverError'));
-            }
-          } catch (jsonError) {
-            setError(t('login.error.serverError'));
-          }
-        }
-      } catch (fetchError) {
-        console.error('Fetch error:', fetchError);
-        setError(t('login.error.serverError'));
+        // Role-based navigation is handled in the AuthContext
+      } else {
+        console.error('Login response missing token:', response);
+        setError("Login successful but no token received");
       }
     } catch (error) {
       console.error('Login error:', error);
-      setError(t('login.error.serverError'));
+      
+      // Handle specific error cases
+      if (error.status === 401) {
+        setError(t('login.error.invalidCredentials'));
+      } else if (error.status === 422) {
+        // Validation errors
+        const errorMessage = error.message || 
+          error.errors?.login?.[0] || 
+          error.errors?.password?.[0] ||
+          t('login.error.invalidCredentials');
+        setError(errorMessage);
+      } else if (error.status === 429) {
+        setError(t('login.error.tooManyAttempts') || 'Too many login attempts. Please try again later.');
+      } else {
+        setError(error.message || t('login.error.general'));
+      }
     } finally {
       setIsLoading(false);
     }
@@ -502,7 +477,7 @@ const Login = () => {
               onChange={(e) => setLoginValue(e.target.value)}
               required
               disabled={isLoading}
-              onFocus={() => setFocusedField('login')}
+              onFocus={() => setFocusedField('identifier')}
               onBlur={() => setFocusedField(null)}
               sx={{ 
                 mb: 2,
@@ -543,8 +518,8 @@ const Login = () => {
                 startAdornment: (
                   <InputAdornment position="start">
                     <Box sx={{ 
-                      transform: focusedField === 'login' ? 'scale(1.2)' : 'scale(1)',
-                      color: focusedField === 'login' ? getThemeColor() : 'inherit',
+                      transform: focusedField === 'identifier' ? 'scale(1.2)' : 'scale(1)',
+                      color: focusedField === 'identifier' ? getThemeColor() : 'inherit',
                       transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
                     }}>
                       {getLoginIcon()}
@@ -557,14 +532,14 @@ const Login = () => {
             <TextField
               fullWidth
               label={t('login.password')}
-              type={showPassword ? 'text' : 'password'}
+              type={showPassword ? 'text' : 'passwordUt'}
               margin="normal"
               variant={labelVariant}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={isLoading}
               required
-              onFocus={() => setFocusedField('password')}
+              onFocus={() => setFocusedField('passwordUt')}
               onBlur={() => setFocusedField(null)}
               sx={{ 
                 mb: 2,
@@ -605,8 +580,8 @@ const Login = () => {
                 startAdornment: (
                   <InputAdornment position="start">
                     <Box sx={{ 
-                      transform: focusedField === 'password' ? 'scale(1.2)' : 'scale(1)',
-                      color: focusedField === 'password' ? getThemeColor() : 'inherit',
+                      transform: focusedField === 'passwordUt' ? 'scale(1.2)' : 'scale(1)',
+                      color: focusedField === 'passwordUt' ? getThemeColor() : 'inherit',
                       transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
                     }}>
                       <LockIcon />
@@ -620,10 +595,10 @@ const Login = () => {
                       edge="end"
                       disabled={isLoading}
                       sx={{ 
-                        color: focusedField === 'password' 
+                        color: focusedField === 'passwordUt' 
                           ? getThemeColor() 
                           : isDarkMode ? 'rgba(255,255,255,0.7)' : 'inherit',
-                        transform: focusedField === 'password' ? 'scale(1.1)' : 'scale(1)',
+                        transform: focusedField === 'passwordUt' ? 'scale(1.1)' : 'scale(1)',
                         transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
                       }}
                     >

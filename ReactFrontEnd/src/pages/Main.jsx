@@ -23,7 +23,7 @@ export default function Main ({ApiName}) {
         >
           <Head/>
           <div className="p-6 pb-0">
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto" style={{height:"100%"}}>
               <TableTemplate/>
             </div>
           </div>
