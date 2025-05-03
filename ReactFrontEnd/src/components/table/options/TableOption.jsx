@@ -41,14 +41,14 @@ export const GetInfoTable = () => {
       const { consult, edit, remove } = options;
       const { handleDelete } = Handels;
       const itemId = row[{
-        etudiants: "matriculeEt",
-        professeurs: "matriculePr",
-        matiere: "matriculeMt",
-        niveaux: "matriculeNv",
-        salles: "matriculeSl",
-        groupes: "matriculeGp",
-        evaluations: "matriculeEv",
-        "regular-timetables": "matriculeRt"
+        etudiants: "MatriculeET",
+        professeurs: "MatriculePR",
+        matiere: "MatriculeMT",
+        niveaux: "MatriculeNV",
+        salles: "MatriculeSL",
+        groupes: "MatriculeGP",
+        evaluations: "MatriculeEV",
+        "regular-timetables": "MatriculeRT"
       }[TableName]];
       const actions = [
         consult && (

@@ -12,23 +12,23 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('etudiants', function (Blueprint $table) {
-            $table->string('matriculeEt')->primary();
-            $table->string('emailEt')->unique();
-            $table->string('phoneEt')->nullable();
-            $table->string('lienParenteTr')->nullable();
-            $table->string('professionTr')->nullable();
-            $table->string('NomTr')->nullable();
-            $table->string('PrenomTr')->nullable();
-            $table->string('Phone1Tr')->nullable();
-            $table->string('Phone2Tr')->nullable();
-            $table->string('EmailTr')->nullable();
-            $table->text('ObservationTr')->nullable();
-            $table->string('matriculeUt');
-            $table->string('matriculeGp');
+            $table->string('MatriculeET')->primary();
+            $table->string('EmailET')->unique()->nullable();
+            $table->string('PhoneET')->unique()->nullable();
+            $table->string('LienParenteTR')->nullable();
+            $table->string('ProfessionTR')->nullable();
+            $table->string('NomTR')->nullable();
+            $table->string('PrenomTR')->nullable();
+            $table->string('Phone1TR')->nullable();
+            $table->string('Phone2TR')->nullable();
+            $table->string('EmailTR')->nullable();
+            $table->text('ObservationTR')->nullable();
+            $table->string('MatriculeUT');
+            $table->string('MatriculeGP');
             $table->timestamps();
 
-            $table->foreign('matriculeUt')->references('matriculeUt')->on('users')->onDelete('cascade');
-            $table->foreign('matriculeGp')->references('matriculeGp')->on('groups')->onDelete('cascade');
+            $table->foreign('MatriculeUT')->references('MatriculeUT')->on('users')->onDelete('cascade');
+            $table->foreign('MatriculeGP')->references('MatriculeGP')->on('groups')->onDelete('cascade');
         });
     }
 

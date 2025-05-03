@@ -12,15 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('salles', function (Blueprint $table) {
-            $table->string('matriculeSl')->primary();
-            $table->string('NameSl');
-            $table->integer('CapacitySl');
-            $table->string('LocationSl')->nullable();
-            $table->string('ressourcesSl')->nullable();
-            $table->string('typeSl')->nullable();
-            $table->string('statusSl')->nullable();
-            $table->string('floorSl')->nullable();
-            $table->text('observationSl')->nullable();
+            $table->string('MatriculeSL')->primary();
+            $table->string('NameSL');
+            $table->integer('CapacitySL');
+            $table->string('LocationSL')->nullable();
+            $table->string('RessourcesSL')->nullable();
+            $table->string('TypeSL')->nullable();
+            $table->string('StatusSL')->nullable();
+            $table->string('FloorSL')->nullable();
+            $table->text('ObservationSL')->nullable();
             $table->timestamps();
         });
     }

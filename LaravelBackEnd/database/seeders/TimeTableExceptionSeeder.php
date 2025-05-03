@@ -24,19 +24,19 @@ class TimeTableExceptionSeeder extends Seeder
         // Create 5 cancellation exceptions for random timeslots
         for ($i = 0; $i < 5; $i++) {
             TimeTableException::factory()
-                ->forTimeSlot($timeSlots->random()->matriculeTs)
-                ->create(['exceptionTypeTe' => 'Cancellation', 'newMatriculeTs' => null]);
+                ->forTimeSlot($timeSlots->random()->MatriculeTS)
+                ->create(['ExceptionTypeTE' => 'Cancellation', 'NewMatriculeTS' => null]);
         }
 
         // Create 3 reschedule exceptions for random timeslots
-        $availableSlots = $timeSlots->pluck('matriculeTs');
+        $availableSlots = $timeSlots->pluck('MatriculeTS');
         for ($i = 0; $i < 3; $i++) {
             $originalSlot = $timeSlots->random();
             // Find a different slot for rescheduling
-            $newSlotMatricule = $availableSlots->whereNotIn('matriculeTs', [$originalSlot->matriculeTs])->random();
+            $newSlotMatricule = $availableSlots->whereNotIn('MatriculeTS', [$originalSlot->MatriculeTS])->random();
 
             TimeTableException::factory()
-                ->forTimeSlot($originalSlot->matriculeTs)
+                ->forTimeSlot($originalSlot->MatriculeTS)
                 ->reschedule($newSlotMatricule)
                 ->create();
         }

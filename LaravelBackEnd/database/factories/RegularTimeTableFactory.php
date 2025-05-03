@@ -26,13 +26,13 @@ class RegularTimeTableFactory extends Factory
     {
         // These should ideally be replaced by existing models in the seeder
         return [
-            // 'matriculeRt' handled by trait
-            'matriculeDW' => DayWeek::factory(),
-            'matriculeTs' => TimeSlot::factory(),
-            'matriculeGp' => Group::factory(),
-            'matriculeMt' => Matiere::factory(),
-            'matriculePr' => Professeur::factory(),
-            'matriculeSl' => Salle::factory(),
+            // 'MatriculeRT' handled by trait
+            'MatriculeDW' => DayWeek::factory(),
+            'MatriculeTS' => TimeSlot::factory(),
+            'MatriculeGP' => Group::factory(),
+            'MatriculeMT' => Matiere::factory(),
+            'MatriculePR' => Professeur::factory(),
+            'MatriculeSL' => Salle::factory(),
         ];
     }
 }

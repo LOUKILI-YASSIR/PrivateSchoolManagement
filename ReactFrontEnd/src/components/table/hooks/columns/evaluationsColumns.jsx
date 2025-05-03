@@ -3,13 +3,13 @@ import React from "react";
 export const evaluationsColumns = (Traduction, FilterModeOptions) => [
   {
     header: Traduction("Data.matricule"),
-    accessorKey: "matriculeEv",
+    accessorKey: "MatriculeEV",
     filterFn: "equals",
     columnFilterModeOptions: [...FilterModeOptions["equality"]],
   },
   {
     header: Traduction("Data.subject"),
-    accessorKey: "matiere.nameMt",
+    accessorKey: "matiere.NameMT",
     filterFn: "fuzzy",
     columnFilterModeOptions: [
       ...FilterModeOptions["text"],
@@ -18,7 +18,7 @@ export const evaluationsColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.evaluationType"),
-    accessorKey: "evaluation_type.nameEp",
+    accessorKey: "evaluation_type.NameEP",
     filterFn: "fuzzy",
     columnFilterModeOptions: [
       ...FilterModeOptions["text"],
@@ -27,7 +27,7 @@ export const evaluationsColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.evaluationNumber"),
-    accessorKey: "nbrEv",
+    accessorKey: "NbrEV",
     filterFn: "greaterThanOrEqualTo",
     columnFilterModeOptions: [
       ...FilterModeOptions["comparison"],

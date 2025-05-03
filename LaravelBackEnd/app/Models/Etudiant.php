@@ -10,7 +10,7 @@ class Etudiant extends Model
 {
     use HasFactory, GeneratesMatricule;
 
-    protected $primaryKey = 'matriculeEt';
+    protected $primaryKey = 'MatriculeET';
     public $incrementing = false;
     protected $keyType = 'string';
 
@@ -22,51 +22,51 @@ class Etudiant extends Model
     protected $table = 'etudiants';
 
     protected $fillable = [
-        'matriculeEt',
-        'emailEt',
-        'phoneEt',
-        'lienParenteTr',
-        'professionTr',
-        'NomTr',
-        'PrenomTr',
-        'Phone1Tr',
-        'Phone2Tr',
-        'EmailTr',
-        'ObservationTr',
-        'matriculeUt',
-        'matriculeGp',
+        'MatriculeET',
+        'EmailET',
+        'PhoneET',
+        'LienParenteTR',
+        'ProfessionTR',
+        'NomTR',
+        'PrenomTR',
+        'Phone1TR',
+        'Phone2TR',
+        'EmailTR',
+        'ObservationTR',
+        'MatriculeUT',
+        'MatriculeGP',
     ];
 
     // Relationships
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'matriculeUt', 'matriculeUt');
+        return $this->belongsTo(User::class, 'MatriculeUT', 'MatriculeUT');
     }
 
     public function group()
     {
-        return $this->belongsTo(Group::class, 'matriculeGp', 'matriculeGp');
+        return $this->belongsTo(Group::class, 'MatriculeGP', 'MatriculeGP');
     }
 
     public function attendances()
     {
-        return $this->hasMany(Attendance::class, 'matriculeEt', 'matriculeEt');
+        return $this->hasMany(Attendance::class, 'MatriculeET', 'MatriculeET');
     }
 
     public function notes()
     {
-        return $this->hasMany(Note::class, 'matriculeEt', 'matriculeEt');
+        return $this->hasMany(Note::class, 'MatriculeET', 'MatriculeET');
     }
 
     public function noteFinals()
     {
-        return $this->hasMany(NoteFinal::class, 'matriculeEt', 'matriculeEt');
+        return $this->hasMany(NoteFinal::class, 'MatriculeET', 'MatriculeET');
     }
 
     public function evaluationResults()
     {
-        return $this->hasMany(EvaluationResult::class, 'matriculeEt', 'matriculeEt');
+        return $this->hasMany(EvaluationResult::class, 'MatriculeET', 'MatriculeET');
     }
 
     // Required method for GeneratesMatricule trait

@@ -14,9 +14,9 @@ class SchoolCalendarController extends Controller
     protected string $model = SchoolCalendar::class;
 
     protected array $validationRules = [
-        'calendarDateSc' => 'required|date',
-        'dayTypeSc' => 'required|string|max:255',
-        'matriculeYR' => 'required|string|exists:academic_years,matriculeYR',
+        'CalendarDateSC' => 'required|date',
+        'DayTypeSC' => 'required|string|max:255',
+        'MatriculeYR' => 'required|string|exists:academic_years,MatriculeYR',
     ];
 
     // Define resource name for messages

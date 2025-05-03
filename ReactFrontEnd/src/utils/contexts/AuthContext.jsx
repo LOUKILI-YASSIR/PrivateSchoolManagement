@@ -20,72 +20,58 @@ export const AuthProvider = ({ children }) => {
   const location = useLocation();
 
   useEffect(() => {
-    // Check for stored token and auto-login
-    const token = localStorage.getItem('token');
-    const storedRole = localStorage.getItem('userRole');
-    
+    const token = sessionStorage.getItem('token');
+    const storedRole = sessionStorage.getItem('userRole');
+
     if (token && storedRole) {
       setIsAuthenticated(true);
       setUserRole(storedRole);
       console.log('Auto-login successful with role:', storedRole);
-    } else {
-      console.log('No stored credentials found');
     }
-    
+
     setIsLoading(false);
   }, []);
 
   useEffect(() => {
-    // Don't do redirects while still loading
     if (isLoading) return;
-    
-    console.log('Route check:', { 
-      isAuthenticated, 
-      userRole, 
-      currentPath: location.pathname 
-    });
 
-    const isLoginPage = location.pathname === '/YLSchool/Login';
-    
-    if (!isAuthenticated && !isLoginPage) {
-      // If not authenticated and not on login page, redirect to login
-      console.log('Redirecting to login');
+    const isLoginPage = location.pathname === '/YLSchool/Login'
+    const isResetPasswordPage = [
+      '/YLSchool/reset-password-request',
+      '/YLSchool/reset-password',
+      '/YLSchool/select-reset-password',
+      '/YLSchool/reset-password-request-sms', 
+      '/YLSchool/reset-password-request-email',
+      '/YLSchool/check-user-reset-password' 
+    ].includes(location.pathname);
+
+    if (!isAuthenticated && !isLoginPage && !isResetPasswordPage) {
       navigate('/YLSchool/Login', { replace: true });
-    } else if (isAuthenticated && isLoginPage) {
-      // If authenticated and on login page, redirect to dashboard
-      console.log('Redirecting to dashboard');
+    } else if (isAuthenticated && isLoginPage && isResetPasswordPage) {
       redirectToDashboard();
     }
   }, [isAuthenticated, isLoading, location.pathname, navigate, userRole]);
 
   const redirectToDashboard = () => {
-    console.log('Redirecting to dashboard based on role:', userRole);
-    
-    // Redirect to a single dashboard route instead of role-specific routes
     navigate('/YLSchool/DashBoard', { replace: true });
   };
 
-  const login = (token, role) => {
-    console.log('Login with role:', role);
-    
-    localStorage.setItem('token', token);
-    localStorage.setItem('userRole', role);
-    
+  const login = (token, role, must_change_password=false, obj) => {
+    sessionStorage.setItem('token', token);
+    sessionStorage.setItem('userRole', role);
     setUserRole(role);
     setIsAuthenticated(true);
-    
-    // Redirect will happen in the useEffect
+    if(must_change_password) {
+      navigate('/YLSchool/reset-password', { state: { ...obj } });
+    }else{
+      navigate('/YLSchool/DashBoard', { replace: true });
+    }
   };
 
   const logout = () => {
-    console.log('Logging out');
-    
-    localStorage.removeItem('token');
-    localStorage.removeItem('userRole');
-    
+    sessionStorage.clear(); // Remove all sensitive data
     setUserRole(null);
     setIsAuthenticated(false);
-    
     navigate('/YLSchool/Login', { replace: true });
   };
 

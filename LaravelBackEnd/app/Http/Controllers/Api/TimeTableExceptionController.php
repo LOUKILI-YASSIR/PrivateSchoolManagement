@@ -14,12 +14,12 @@ class TimeTableExceptionController extends Controller
     protected string $model = TimeTableException::class;
 
     protected array $validationRules = [
-        'exceptionTypeTe' => 'required|string|max:255',
-        'exceptionDateTe' => 'required|date',
-        'isFulldayTe' => 'sometimes|boolean',
-        'matriculeTs' => 'required|string|exists:time_slots,matriculeTs',
-        'reasonTe' => 'nullable|string',
-        'newMatriculeTs' => 'nullable|string|exists:time_slots,matriculeTs',
+        'ExceptionTypeTE' => 'required|string|max:255',
+        'ExceptionDateTE' => 'required|date',
+        'IsFulldayTE' => 'sometimes|boolean',
+        'MatriculeTS' => 'required|string|exists:time_slots,MatriculeTS',
+        'ReasonTE' => 'nullable|string',
+        'NewMatriculeTS' => 'nullable|string|exists:time_slots,MatriculeTS',
     ];
 
     // Define resource name for messages

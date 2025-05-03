@@ -1,8 +1,8 @@
 export const EVALUATION = {
-    nameEp : "",
-    codeEp : "",
-    descriptionEp : "",
+    NameEP : "",
+    CodeEP : "",
+    DescriptionEP : "",
     maxGradeEp : "",
-    porsentageEp : "",
+    PorsentageEP : "",
 };
 

@@ -14,11 +14,11 @@ class HolidayController extends Controller
     protected string $model = Holiday::class;
 
     protected array $validationRules = [
-        'startdateHd' => 'required|date',
-        'endDateHd' => 'required|date|after_or_equal:startdateHd',
-        'nameHd' => 'required|string|max:255',
-        'descriptionHd' => 'nullable|string',
-        'matriculeYR' => 'required|string|exists:academic_years,matriculeYR',
+        'StartDateHD' => 'required|date',
+        'EndDateHD' => 'required|date|after_or_equal:StartDateHD',
+        'NameHD' => 'required|string|max:255',
+        'DescriptionHD' => 'nullable|string',
+        'MatriculeYR' => 'required|string|exists:academic_years,MatriculeYR',
     ];
 
     // Define resource name for messages

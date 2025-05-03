@@ -3,13 +3,13 @@ import React from "react";
 export const matiereColumns = (Traduction, FilterModeOptions) => [
   {
     header: Traduction("Data.matricule"),
-    accessorKey: "matriculeMt",
+    accessorKey: "MatriculeMT",
     filterFn: "equals",
     columnFilterModeOptions: [...FilterModeOptions["equality"]],
   },
   {
     header: Traduction("Data.name"),
-    accessorKey: "nameMt",
+    accessorKey: "NameMT",
     filterFn: "fuzzy",
     columnFilterModeOptions: [
       ...FilterModeOptions["text"],
@@ -18,7 +18,7 @@ export const matiereColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.code"),
-    accessorKey: "codeMt",
+    accessorKey: "CodeMT",
     filterFn: "fuzzy",
     columnFilterModeOptions: [
       ...FilterModeOptions["text"],
@@ -27,7 +27,7 @@ export const matiereColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.description"),
-    accessorKey: "descriptionMt",
+    accessorKey: "DescriptionMT",
     filterFn: "fuzzy",
     columnFilterModeOptions: [
       ...FilterModeOptions["text"],
@@ -36,7 +36,7 @@ export const matiereColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.coefficient"),
-    accessorKey: "coefficientMt",
+    accessorKey: "CoefficientMT",
     filterFn: "greaterThanOrEqualTo",
     columnFilterModeOptions: [
       ...FilterModeOptions["comparison"],
@@ -45,7 +45,7 @@ export const matiereColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.niveau"),
-    accessorFn: (row) => row.niveau?.NomNv || '-',
+    accessorFn: (row) => row.niveau?.NomNV || '-',
     id: 'niveauNom',
     filterFn: "fuzzy",
     columnFilterModeOptions: [
@@ -58,7 +58,7 @@ export const matiereColumns = (Traduction, FilterModeOptions) => [
     accessorFn: (row) => {
       const prof = row.professeur;
       if (!prof?.user) return '-';
-      return `${prof.user.NomPl} ${prof.user.PrenomPl}`;
+      return `${prof.user.NomPL} ${prof.user.PrenomPL}`;
     },
     id: 'professeurNom',
     filterFn: "fuzzy",

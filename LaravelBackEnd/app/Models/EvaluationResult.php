@@ -10,7 +10,7 @@ class EvaluationResult extends Model
 {
     use HasFactory, GeneratesMatricule;
 
-    protected $primaryKey = 'matriculeER';
+    protected $primaryKey = 'MatriculeER';
     public $incrementing = false;
     protected $keyType = 'string';
 
@@ -22,11 +22,11 @@ class EvaluationResult extends Model
     protected $table = 'evaluation_results';
 
     protected $fillable = [
-        'matriculeER',
-        'matriculeEt',
-        'matriculeEv',
+        'MatriculeER',
+        'MatriculeET',
+        'MatriculeEV',
         'GradeER',
-        'commentaireER',
+        'CommentaireER',
     ];
 
     protected $casts = [
@@ -37,17 +37,17 @@ class EvaluationResult extends Model
 
     public function etudiant()
     {
-        return $this->belongsTo(Etudiant::class, 'matriculeEt', 'matriculeEt');
+        return $this->belongsTo(Etudiant::class, 'MatriculeET', 'MatriculeET');
     }
 
     public function evaluation()
     {
-        return $this->belongsTo(Evaluation::class, 'matriculeEv', 'matriculeEv');
+        return $this->belongsTo(Evaluation::class, 'MatriculeEV', 'MatriculeEV');
     }
 
     public function gradeAdjustments()
     {
-        return $this->hasMany(GradeAdjustment::class, 'matriculeER', 'matriculeER');
+        return $this->hasMany(GradeAdjustment::class, 'MatriculeER', 'MatriculeER');
     }
 
     // Required method for GeneratesMatricule trait

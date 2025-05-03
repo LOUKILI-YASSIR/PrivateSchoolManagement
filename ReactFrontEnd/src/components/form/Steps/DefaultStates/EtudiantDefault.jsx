@@ -1,30 +1,30 @@
   
 export const ETUDIANTS = {
     // Etudiant fields
-    emailEt: 'yl@gmail.com',
-    phoneEt: '+212675648482',
-    lienParenteTr: 'Père',
-    professionTr: 'Prof',
-    NomTr: 'Nomm',
-    PrenomTr: 'Prennn',
-    Phone1Tr: '+212612345678',
-    Phone2Tr: '',
-    EmailTr: 'tr@gmail.com',
-    ObservationTr: 'hellow maroc',
-    matriculeNv: '',
+    EmailET: 'yl@gmail.com',
+    PhoneET: '+212675648482',
+    LienParenteTR: 'Père',
+    ProfessionTR: 'Prof',
+    NomTR: 'Nomm',
+    PrenomTR: 'Prennn',
+    Phone1TR: '+212612345678',
+    Phone2TR: '',
+    EmailTR: 'tr@gmail.com',
+    ObservationTR: 'hellow maroc',
+    MatriculeNV: '',
 
-    // User fields (linked through matriculeUt)
-    NomPl: 'Yassir',
-    PrenomPl: 'Loukili',
-    genrePl: 'Homme',
-    adressPl: 'addds1',
-    villePl: 'Meknes',
-    codePostalPl: '50000',
-    paysPl: 'MA',
-    nationalitePl: 'MA',
-    lieuNaissancePl: 'Meknes',
-    dateNaissancePl: "",
-    ObservationPl: 'hello word',
-    profileFileNamePl: '/uploads/default.jpg'
+    // User fields (linked through MatriculeUT)
+    NomPL: 'Yassir',
+    PrenomPL: 'Loukili',
+    GenrePL: 'Homme',
+    AdressPL: 'addds1',
+    VillePL: 'Meknes',
+    CodePostalPL: '50000',
+    PaysPL: 'MA',
+    NationalitePL: 'MA',
+    LieuNaissancePL: 'Meknes',
+    DateNaissancePL: "",
+    ObservationPL: 'hello word',
+    ProfileFileNamePL: '/uploads/default.jpg'
 };
 

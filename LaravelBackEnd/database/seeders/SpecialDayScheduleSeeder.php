@@ -23,7 +23,7 @@ class SpecialDayScheduleSeeder extends Seeder
         if (!$timeSlots->isEmpty()) {
             for ($i = 0; $i < 5; $i++) {
                 SpecialDaySchedule::factory()
-                    ->forTimeSlot($timeSlots->random()->matriculeTs)
+                    ->forTimeSlot($timeSlots->random()->MatriculeTS)
                     ->create();
             }
         } else {

@@ -18,34 +18,34 @@ class ProfesseurController extends Controller
 
     protected array $validationRules = [
         // User validation rules
-        'usernameUt' => 'required|string|max:255',
-        'emailUt' => 'required|email|max:255|unique:users,emailUt',
-        'phoneUt' => 'nullable|string|max:20',
-        'roleUt' => 'required|string|in:teacher',
-        'passwordUt' => 'required|string|min:8',
-        'statutUt' => 'required|string|in:active,inactive',
-        'NomPl' => 'required|string|max:255',
-        'PrenomPl' => 'required|string|max:255',
-        'genrePl' => 'required|string|in:male,female',
-        'adressPl' => 'nullable|string|max:255',
-        'villePl' => 'nullable|string|max:255',
-        'codePostalPl' => 'nullable|string|max:20',
-        'paysPl' => 'nullable|string|max:255',
-        'nationalitePl' => 'nullable|string|max:255',
-        'lieuNaissancePl' => 'nullable|string|max:255',
-        'dateNaissancePl' => 'nullable|date',
-        'ObservationPl' => 'nullable|string',
-        'profileFileNamePl' => 'nullable|string|max:255',
+        'UserNameUT' => 'required|string|max:255',
+        'EmailUT' => 'required|email|max:255|unique:users,EmailUT',
+        'PhoneUT' => 'nullable|string|max:20',
+        'RoleUT' => 'required|string|in:teacher',
+        'PasswordUT' => 'required|string|min:8',
+        'StatutUT' => 'required|string|in:active,inactive',
+        'NomPL' => 'required|string|max:255',
+        'PrenomPL' => 'required|string|max:255',
+        'GenrePL' => 'required|string|in:male,female',
+        'AdressPL' => 'nullable|string|max:255',
+        'VillePL' => 'nullable|string|max:255',
+        'CodePostalPL' => 'nullable|string|max:20',
+        'PaysPL' => 'nullable|string|max:255',
+        'NationalitePL' => 'nullable|string|max:255',
+        'LieuNaissancePL' => 'nullable|string|max:255',
+        'DateNaissancePL' => 'nullable|date',
+        'ObservationPL' => 'nullable|string',
+        'ProfileFileNamePL' => 'nullable|string|max:255',
         
         // Professeur validation rules
-        'CINPr' => 'required|string|max:255|unique:professeurs,CINPr',
-        'civilitePr' => 'nullable|string|max:255',
-        'Phone1Pr' => 'nullable|string|max:20',
-        'Phone2Pr' => 'nullable|string|max:20',
-        'DateEmbauchePr' => 'nullable|date',
-        'SalairePr' => 'nullable|numeric',
-        'NomBanquePr' => 'nullable|string|max:255',
-        'RIBPr' => 'nullable|string|max:255',
+        'CINPR' => 'required|string|max:255|unique:professeurs,CINPR',
+        'CivilitePR' => 'nullable|string|max:255',
+        'Phone1PR' => 'nullable|string|max:20',
+        'Phone2PR' => 'nullable|string|max:20',
+        'DateEmbauchePR' => 'nullable|date',
+        'SalairePR' => 'nullable|numeric',
+        'NomBanquePR' => 'nullable|string|max:255',
+        'RIBPR' => 'nullable|string|max:255',
     ];
 
     protected static function getMatriculePrefix()
@@ -73,38 +73,38 @@ class ProfesseurController extends Controller
 
             // Create User first
             $user = new User([
-                'usernameUt' => $validatedData['usernameUt'],
-                'emailUt' => $validatedData['emailUt'],
-                'phoneUt' => $validatedData['phoneUt'],
-                'roleUt' => $validatedData['roleUt'],
-                'passwordUt' => bcrypt($validatedData['passwordUt']),
-                'statutUt' => $validatedData['statutUt'],
-                'NomPl' => $validatedData['NomPl'],
-                'PrenomPl' => $validatedData['PrenomPl'],
-                'genrePl' => $validatedData['genrePl'],
-                'adressPl' => $validatedData['adressPl'],
-                'villePl' => $validatedData['villePl'],
-                'codePostalPl' => $validatedData['codePostalPl'],
-                'paysPl' => $validatedData['paysPl'],
-                'nationalitePl' => $validatedData['nationalitePl'],
-                'lieuNaissancePl' => $validatedData['lieuNaissancePl'],
-                'dateNaissancePl' => $validatedData['dateNaissancePl'],
-                'ObservationPl' => $validatedData['ObservationPl'],
-                'profileFileNamePl' => $validatedData['profileFileNamePl'],
+                'UserNameUT' => $validatedData['UserNameUT'],
+                'EmailUT' => $validatedData['EmailUT'],
+                'PhoneUT' => $validatedData['PhoneUT'],
+                'RoleUT' => $validatedData['RoleUT'],
+                'PasswordUT' => bcrypt($validatedData['PasswordUT']),
+                'StatutUT' => $validatedData['StatutUT'],
+                'NomPL' => $validatedData['NomPL'],
+                'PrenomPL' => $validatedData['PrenomPL'],
+                'GenrePL' => $validatedData['GenrePL'],
+                'AdressPL' => $validatedData['AdressPL'],
+                'VillePL' => $validatedData['VillePL'],
+                'CodePostalPL' => $validatedData['CodePostalPL'],
+                'PaysPL' => $validatedData['PaysPL'],
+                'NationalitePL' => $validatedData['NationalitePL'],
+                'LieuNaissancePL' => $validatedData['LieuNaissancePL'],
+                'DateNaissancePL' => $validatedData['DateNaissancePL'],
+                'ObservationPL' => $validatedData['ObservationPL'],
+                'ProfileFileNamePL' => $validatedData['ProfileFileNamePL'],
             ]);
             $user->save();
 
             // Create Professeur with user reference
             $professeur = new Professeur([
-                'CINPr' => $validatedData['CINPr'],
-                'civilitePr' => $validatedData['civilitePr'],
-                'Phone1Pr' => $validatedData['Phone1Pr'],
-                'Phone2Pr' => $validatedData['Phone2Pr'],
-                'DateEmbauchePr' => $validatedData['DateEmbauchePr'],
-                'SalairePr' => $validatedData['SalairePr'],
-                'NomBanquePr' => $validatedData['NomBanquePr'],
-                'RIBPr' => $validatedData['RIBPr'],
-                'matriculeUt' => $user->matriculeUt,
+                'CINPR' => $validatedData['CINPR'],
+                'CivilitePR' => $validatedData['CivilitePR'],
+                'Phone1PR' => $validatedData['Phone1PR'],
+                'Phone2PR' => $validatedData['Phone2PR'],
+                'DateEmbauchePR' => $validatedData['DateEmbauchePR'],
+                'SalairePR' => $validatedData['SalairePR'],
+                'NomBanquePR' => $validatedData['NomBanquePR'],
+                'RIBPR' => $validatedData['RIBPR'],
+                'MatriculeUT' => $user->MatriculeUT,
             ]);
             $professeur->save();
 
@@ -124,7 +124,7 @@ class ProfesseurController extends Controller
     {
         try {
             $professeur = $this->model::with(['user', 'matieres', 'attendances', 'teacherVocations', 'regularTimeTables'])
-                ->where('matriculePr', $matricule)
+                ->where('MatriculePR', $matricule)
                 ->firstOrFail();
             return $this->successResponse($professeur);
         } catch (\Exception $e) {
@@ -138,38 +138,38 @@ class ProfesseurController extends Controller
             DB::beginTransaction();
 
             // Find the Professeur
-            $professeur = Professeur::where('matriculePr', $matricule)->firstOrFail();
+            $professeur = Professeur::where('MatriculePR', $matricule)->firstOrFail();
 
             // Get the associated User
-            $user = User::where('matriculeUt', $professeur->matriculeUt)->firstOrFail();
+            $user = User::where('MatriculeUT', $professeur->MatriculeUT)->firstOrFail();
 
             // Modify validation rules for update
             $rules = $this->validationRules;
-            $rules['emailUt'] = 'required|email|max:255|unique:users,emailUt,' . $user->matriculeUt . ',matriculeUt';
-            $rules['CINPr'] = 'required|string|max:255|unique:professeurs,CINPr,' . $professeur->matriculePr . ',matriculePr';
-            $rules['passwordUt'] = 'nullable|string|min:8';
+            $rules['EmailUT'] = 'required|email|max:255|unique:users,EmailUT,' . $user->MatriculeUT . ',MatriculeUT';
+            $rules['CINPR'] = 'required|string|max:255|unique:professeurs,CINPR,' . $professeur->MatriculePR . ',MatriculePR';
+            $rules['PasswordUT'] = 'nullable|string|min:8';
 
             // Validate request data
             $validatedData = $this->validateRequest($request, $rules);
 
             // Update User
             $userData = array_intersect_key($validatedData, array_flip([
-                'usernameUt', 'emailUt', 'phoneUt', 'roleUt', 'statutUt',
-                'NomPl', 'PrenomPl', 'genrePl', 'adressPl', 'villePl',
-                'codePostalPl', 'paysPl', 'nationalitePl', 'lieuNaissancePl',
-                'dateNaissancePl', 'ObservationPl', 'profileFileNamePl'
+                'UserNameUT', 'EmailUT', 'PhoneUT', 'RoleUT', 'StatutUT',
+                'NomPL', 'PrenomPL', 'GenrePL', 'AdressPL', 'VillePL',
+                'CodePostalPL', 'PaysPL', 'NationalitePL', 'LieuNaissancePL',
+                'DateNaissancePL', 'ObservationPL', 'ProfileFileNamePL'
             ]));
             
-            if (!empty($validatedData['passwordUt'])) {
-                $userData['passwordUt'] = bcrypt($validatedData['passwordUt']);
+            if (!empty($validatedData['PasswordUT'])) {
+                $userData['PasswordUT'] = bcrypt($validatedData['PasswordUT']);
             }
             
             $user->update($userData);
 
             // Update Professeur
             $professeurData = array_intersect_key($validatedData, array_flip([
-                'CINPr', 'civilitePr', 'Phone1Pr', 'Phone2Pr',
-                'DateEmbauchePr', 'SalairePr', 'NomBanquePr', 'RIBPr'
+                'CINPR', 'CivilitePR', 'Phone1PR', 'Phone2PR',
+                'DateEmbauchePR', 'SalairePR', 'NomBanquePR', 'RIBPR'
             ]));
             
             $professeur->update($professeurData);
@@ -191,10 +191,10 @@ class ProfesseurController extends Controller
         try {
             DB::beginTransaction();
 
-            $professeur = Professeur::where('matriculePr', $matricule)->firstOrFail();
+            $professeur = Professeur::where('MatriculePR', $matricule)->firstOrFail();
             
             // Delete associated user
-            $user = User::where('matriculeUt', $professeur->matriculeUt)->first();
+            $user = User::where('MatriculeUT', $professeur->MatriculeUT)->first();
             if ($user) {
                 $user->delete();
             }

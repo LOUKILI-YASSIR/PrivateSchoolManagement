@@ -1,5 +1,5 @@
 export const TIMESLOT = {
-    matriculeTs: '',
+    MatriculeTS: '',
     startTimeTs: '',
     endTimeTs: ''
 };

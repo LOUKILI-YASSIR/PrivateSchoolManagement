@@ -14,10 +14,10 @@ class GroupController extends Controller
     protected string $model = Group::class;
 
     protected array $validationRules = [
-        'NameGp' => 'required|string|max:255',
-        'descriptionGp' => 'nullable|string',
-        'statusGp' => 'nullable|string|max:255',
-        'matriculeNv' => 'required|string|exists:niveaux,matriculeNv',
+        'NameGP' => 'required|string|max:255',
+        'DescriptionGp' => 'nullable|string',
+        'StatusGP' => 'nullable|string|max:255',
+        'MatriculeNV' => 'required|string|exists:niveaux,MatriculeNV',
     ];
 
     // Define resource name for messages

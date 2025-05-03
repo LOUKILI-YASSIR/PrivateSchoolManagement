@@ -24,14 +24,14 @@ class SalleController extends Controller
     }
 
     protected array $validationRules = [
-        'NameSl' => 'required|string|max:255',
-        'CapacitySl' => 'required|integer|min:0',
-        'LocationSl' => 'nullable|string|max:255',
-        'ressourcesSl' => 'nullable|string',
-        'typeSl' => 'nullable|string|max:255',
-        'statusSl' => 'nullable|string|max:255',
-        'floorSl' => 'nullable|string|max:255',
-        'observationSl' => 'nullable|string',
+        'NameSL' => 'required|string|max:255',
+        'CapacitySL' => 'required|integer|min:0',
+        'LocationSL' => 'nullable|string|max:255',
+        'RessourcesSL' => 'nullable|string',
+        'TypeSL' => 'nullable|string|max:255',
+        'StatusSL' => 'nullable|string|max:255',
+        'FloorSL' => 'nullable|string|max:255',
+        'ObservationSL' => 'nullable|string',
     ];
 
     // Define resource name for messages

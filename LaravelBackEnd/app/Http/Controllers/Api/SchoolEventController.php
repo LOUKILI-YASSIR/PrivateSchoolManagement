@@ -14,12 +14,12 @@ class SchoolEventController extends Controller
     protected string $model = SchoolEvent::class;
 
     protected array $validationRules = [
-        'nameSe' => 'required|string|max:255',
-        'descriptionSe' => 'nullable|string',
-        'isFulldaySe' => 'sometimes|boolean',
-        'locationSe' => 'nullable|string|max:255',
-        'dateSe' => 'required|date',
-        'matriculeTs' => 'required|string|exists:time_slots,matriculeTs',
+        'NameSE' => 'required|string|max:255',
+        'DescriptionSE' => 'nullable|string',
+        'IsFullDaySE' => 'sometimes|boolean',
+        'LocationSE' => 'nullable|string|max:255',
+        'DateSE' => 'required|date',
+        'MatriculeTS' => 'required|string|exists:time_slots,MatriculeTS',
     ];
 
     // Define resource name for messages

@@ -12,14 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('evaluations', function (Blueprint $table) {
-            $table->string('matriculeEv')->primary();
-            $table->string('matriculeMt');
-            $table->string('matriculeEp');
-            $table->integer('nbrEv')->nullable();
+            $table->string('MatriculeEV')->primary();
+            $table->string('MatriculeMT');
+            $table->string('MatriculeEP');
+            $table->integer('NbrEV')->nullable();
             $table->timestamps();
 
-            $table->foreign('matriculeMt')->references('matriculeMt')->on('matieres')->onDelete('cascade');
-            $table->foreign('matriculeEp')->references('matriculeEp')->on('evaluation_types')->onDelete('cascade');
+            $table->foreign('MatriculeMT')->references('MatriculeMT')->on('matieres')->onDelete('cascade');
+            $table->foreign('MatriculeEP')->references('MatriculeEP')->on('evaluation_types')->onDelete('cascade');
         });
     }
 

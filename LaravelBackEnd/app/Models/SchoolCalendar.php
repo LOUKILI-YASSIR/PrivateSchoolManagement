@@ -10,7 +10,7 @@ class SchoolCalendar extends Model
 {
     use HasFactory, GeneratesMatricule;
 
-    protected $primaryKey = 'matriculeSc';
+    protected $primaryKey = 'MatriculeSC';
     public $incrementing = false;
     protected $keyType = 'string';
 
@@ -22,21 +22,21 @@ class SchoolCalendar extends Model
     protected $table = 'school_calendars';
 
     protected $fillable = [
-        'matriculeSc',
-        'calendarDateSc',
-        'dayTypeSc',
-        'matriculeYR',
+        'MatriculeSC',
+        'CalendarDateSC',
+        'DayTypeSC',
+        'MatriculeYR',
     ];
 
     protected $casts = [
-        'calendarDateSc' => 'date',
+        'CalendarDateSC' => 'date',
     ];
 
     // Relationships
 
     public function academicYear()
     {
-        return $this->belongsTo(AcademicYear::class, 'matriculeYR', 'matriculeYR');
+        return $this->belongsTo(AcademicYear::class, 'MatriculeYR', 'MatriculeYR');
     }
 
     // Required method for GeneratesMatricule trait

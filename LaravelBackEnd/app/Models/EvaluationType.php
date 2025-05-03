@@ -10,7 +10,7 @@ class EvaluationType extends Model
 {
     use HasFactory, GeneratesMatricule;
 
-    protected $primaryKey = 'matriculeEp';
+    protected $primaryKey = 'MatriculeEP';
     public $incrementing = false;
     protected $keyType = 'string';
 
@@ -22,24 +22,24 @@ class EvaluationType extends Model
     protected $table = 'evaluation_types';
 
     protected $fillable = [
-        'matriculeEp',
-        'nameEp',
-        'max_gradeEp',
-        'descriptionEp',
-        'porsentageEp',
-        'codeEp',
+        'MatriculeEP',
+        'NameEP',
+        'MaxGradeEP',
+        'DescriptionEP',
+        'PorsentageEP',
+        'CodeEP',
     ];
 
     protected $casts = [
-        'max_gradeEp' => 'float',
-        'porsentageEp' => 'float',
+        'MaxGradeEP' => 'float',
+        'PorsentageEP' => 'float',
     ];
 
     // Relationships
 
     public function evaluations()
     {
-        return $this->hasMany(Evaluation::class, 'matriculeEp', 'matriculeEp');
+        return $this->hasMany(Evaluation::class, 'MatriculeEP', 'MatriculeEP');
     }
 
     // Required method for GeneratesMatricule trait

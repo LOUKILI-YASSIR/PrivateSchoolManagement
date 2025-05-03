@@ -23,7 +23,7 @@ class GroupSeeder extends Seeder
 
         // Create 2 Groups for each Niveau
         foreach ($niveaux as $niveau) {
-            Group::factory(2)->forNiveau($niveau->matriculeNv)->create();
+            Group::factory(2)->forNiveau($niveau->MatriculeNV)->create();
         }
     }
 }

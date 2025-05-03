@@ -20,12 +20,12 @@ class GroupFactory extends Factory
     public function definition(): array
     {
         return [
-            // 'matriculeGp' handled by trait
-            'NameGp' => 'Group ' . $this->faker->randomLetter() . $this->faker->randomNumber(1),
-            'descriptionGp' => $this->faker->optional()->sentence(),
-            'statusGp' => $this->faker->randomElement(['Active', 'Archived', 'Planned']),
+            // 'MatriculeGP' handled by trait
+            'NameGP' => 'Group ' . $this->faker->randomLetter() . $this->faker->randomNumber(1),
+            'DescriptionGp' => $this->faker->optional()->sentence(),
+            'StatusGp' => $this->faker->randomElement(['Active', 'Archived', 'Planned']),
             // Foreign key will be set in the seeder or using a state
-            'matriculeNv' => Niveau::factory(), // Default: create a new Niveau if not specified
+            'MatriculeNV' => Niveau::factory(), // Default: create a new Niveau if not specified
         ];
     }
 
@@ -35,7 +35,7 @@ class GroupFactory extends Factory
     public function forNiveau(string $niveauMatricule): static
     {
         return $this->state(fn (array $attributes) => [
-            'matriculeNv' => $niveauMatricule,
+            'MatriculeNV' => $niveauMatricule,
         ]);
     }
 }

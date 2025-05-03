@@ -1,12 +1,12 @@
 export const SALLE = {
-    matriculeSl: '',
-    NameSl: '',
-    CapacitySl: 0,
-    LocationSl: '',
-    ressourcesSl: '',
-    typeSl: '',
-    statusSl: '',
-    floorSl: '',
-    observationSl: ''
+    MatriculeSL: '',
+    NameSL: '',
+    CapacitySL: 0,
+    LocationSL: '',
+    RessourcesSL: '',
+    TypeSL: '',
+    StatusSL: '',
+    FloorSL: '',
+    ObservationSL: ''
 };
 

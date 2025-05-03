@@ -20,13 +20,13 @@ class SchoolEventFactory extends Factory
     public function definition(): array
     {
         return [
-            // 'matriculeSe' handled by trait
-            'nameSe' => $this->faker->words(4, true),
-            'descriptionSe' => $this->faker->sentence(),
-            'isFulldaySe' => $this->faker->boolean(25),
-            'locationSe' => $this->faker->optional()->address(),
-            'dateSe' => $this->faker->dateTimeBetween('now', '+3 months')->format('Y-m-d'),
-            'matriculeTs' => null, // Default to null (can be set if not full day)
+            // 'MatriculeSE' handled by trait
+            'NameSE' => $this->faker->words(4, true),
+            'DescriptionSE' => $this->faker->sentence(),
+            'IsFulldaySE' => $this->faker->boolean(25),
+            'LocationSE' => $this->faker->optional()->address(),
+            'DateSE' => $this->faker->dateTimeBetween('now', '+3 months')->format('Y-m-d'),
+            'MatriculeTS' => null, // Default to null (can be set if not full day)
         ];
     }
 
@@ -36,8 +36,8 @@ class SchoolEventFactory extends Factory
     public function forTimeSlot(string $timeSlotMatricule): static
     {
         return $this->state(fn (array $attributes) => [
-            'matriculeTs' => $timeSlotMatricule,
-            'isFulldaySe' => false,
+            'MatriculeTS' => $timeSlotMatricule,
+            'IsFulldaySE' => false,
         ]);
     }
 
@@ -47,8 +47,8 @@ class SchoolEventFactory extends Factory
     public function fullDay(): static
     {
         return $this->state(fn (array $attributes) => [
-            'isFulldaySe' => true,
-            'matriculeTs' => null,
+            'IsFulldaySE' => true,
+            'MatriculeTS' => null,
         ]);
     }
 }

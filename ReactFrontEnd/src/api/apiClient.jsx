@@ -3,19 +3,19 @@ import { handleError } from '../utils/errorHandler';
 
 // Create an axios instance with default configurations
 const apiClient = axios.create({
-  baseURL: 'http://127.0.0.1:8000/api', // Base URL for all requests
+  baseURL: 'http://127.0.0.1:8000/api', // Secure config via env variable
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
   },
-  withCredentials: true, // Important for CORS with credentials
-  timeout: 30000, // 30 seconds
+  withCredentials: true,
+  timeout: 30000,
 });
 
-// Request interceptor for adding auth token if available
+// Request interceptor
 apiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token'); // Use sessionStorage instead of localStorage (more secure)
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -24,39 +24,34 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response interceptor for handling common error cases and retries
+// Response interceptor
 let retryCount = 0;
 const MAX_RETRIES = 2;
 
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
-    // Log the error for debugging
     console.error('API Error:', error);
-    
-    // Handle unauthorized errors (401)
+
+    const originalRequest = error.config;
+
     if (error.response && error.response.status === 401) {
-      localStorage.removeItem('token');
-      console.error('Authentication error: Please log in again');
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('userRole');
       return Promise.reject(error);
     }
 
-    // Retry logic for timeout and network errors
-    const originalRequest = error.config;
+    // Retry network or timeout errors
     if ((error.code === 'ECONNABORTED' || !error.response) && retryCount < MAX_RETRIES) {
       retryCount++;
-      console.log(`Retrying request (${retryCount}/${MAX_RETRIES})...`);
-      
-      // Wait for 1 second before retrying
+      console.warn(`Retrying request (${retryCount}/${MAX_RETRIES})...`);
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
       return apiClient(originalRequest);
     }
 
-    retryCount = 0; // Reset retry count
+    retryCount = 0;
     return Promise.reject(error);
   }
 );
 
 export default apiClient;
-    

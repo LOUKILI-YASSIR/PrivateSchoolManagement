@@ -12,12 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('evaluation_types', function (Blueprint $table) {
-            $table->string('matriculeEp')->primary();
-            $table->string('nameEp');
-            $table->float('max_gradeEp')->nullable();
-            $table->float('porsentageEp')->nullable();
-            $table->string('descriptionEp')->nullable();
-            $table->string('codeEp');
+            $table->string('MatriculeEP')->primary();
+            $table->string('NameEP');
+            $table->float('MaxGradeEP')->nullable();
+            $table->float('PorsentageEP')->nullable();
+            $table->string('DescriptionEP')->nullable();
+            $table->string('CodeEP');
             $table->timestamps();
         });
     }

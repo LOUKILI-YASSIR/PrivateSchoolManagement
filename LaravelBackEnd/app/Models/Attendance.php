@@ -11,7 +11,7 @@ class Attendance extends Model
     use HasFactory, GeneratesMatricule;
 
 
-    protected $primaryKey = 'matriculeAt';
+    protected $primaryKey = 'MatriculeAT';
     public $incrementing = false;
     protected $keyType = 'string';
 
@@ -23,36 +23,36 @@ class Attendance extends Model
     protected $table = 'attendances';
 
     protected $fillable = [
-        'matriculeAt',
-        'statusAt',
-        'isJustifAt',
-        'justifAt',
-        'DateAt',
-        'matriculeUt',
-        'matriculeEt',
-        'matriculePr',
+        'MatriculeAT',
+        'StatusAT',
+        'IsJustifAT',
+        'JustifAT',
+        'DateAT',
+        'MatriculeUT',
+        'MatriculeET',
+        'MatriculePR',
     ];
 
     protected $casts = [
-        'isJustifAt' => 'boolean',
-        'DateAt' => 'date',
+        'IsJustifAT' => 'boolean',
+        'DateAT' => 'date',
     ];
 
     // Relationships
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'matriculeUt', 'matriculeUt');
+        return $this->belongsTo(User::class, 'MatriculeUT', 'MatriculeUT');
     }
 
     public function etudiant()
     {
-        return $this->belongsTo(Etudiant::class, 'matriculeEt', 'matriculeEt')->withDefault();
+        return $this->belongsTo(Etudiant::class, 'MatriculeET', 'MatriculeET')->withDefault();
     }
 
     public function professeur()
     {
-        return $this->belongsTo(Professeur::class, 'matriculePr', 'matriculePr')->withDefault();
+        return $this->belongsTo(Professeur::class, 'MatriculePR', 'MatriculePR')->withDefault();
     }
 
     // Required method for GeneratesMatricule trait

@@ -27,7 +27,7 @@ export const getFormStepsEp = () => {
                   }), 
                 generateField({
                     type: TEXT,
-                    label: "codeEp",
+                    label: "CodeEP",
                     propsType: "text",
                     propsLabel: "Code",
                     enablePlaceholder: true,
@@ -57,7 +57,7 @@ export const getFormStepsEp = () => {
                 }), 
                 generateField({
                     type: TEXT,
-                    label: "porsentageEp",
+                    label: "PorsentageEP",
                     propsType: "number",
                     propsLabel: "Porsentage",
                     enablePlaceholder: true,
@@ -72,7 +72,7 @@ export const getFormStepsEp = () => {
                   generateField({
                     type: TEXTAREA,
                     propsLabel: 'Description',
-                    label: "descriptionEp",
+                    label: "DescriptionEP",
                     enablePlaceholder: true,
                     extraProps: { maxLength: 321, rows: 3 },
                     validation: commonValidations.combine(

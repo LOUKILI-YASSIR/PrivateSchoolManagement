@@ -10,7 +10,7 @@ class Niveau extends Model
 {
     use HasFactory, GeneratesMatricule;
 
-    protected $primaryKey = 'matriculeNv';
+    protected $primaryKey = 'MatriculeNV';
     public $incrementing = false;
     protected $keyType = 'string';
 
@@ -22,36 +22,36 @@ class Niveau extends Model
     protected $table = 'niveaux';
 
     protected $fillable = [
-        'matriculeNv',
-        'codeNv',
-        'NomNv',
-        'parent_matriculeNv',
-        'typeNv',
-        'descriptionNv',
-        'statusNv',
+        'MatriculeNV',
+        'CodeNV',
+        'NomNV',
+        'SubMatriculeNV',
+        'TypeNV',
+        'DescriptionNV',
+        'StatusNV',
     ];
 
     // Relationships
 
     public function matieres()
     {
-        return $this->hasMany(Matiere::class, 'matriculeNv', 'matriculeNv');
+        return $this->hasMany(Matiere::class, 'MatriculeNV', 'MatriculeNV');
     }
 
     public function groups()
     {
-        return $this->hasMany(Group::class, 'matriculeNv', 'matriculeNv');
+        return $this->hasMany(Group::class, 'MatriculeNV', 'MatriculeNV');
     }
 
     // Self-referencing relationships
     public function parent()
     {
-        return $this->belongsTo(Niveau::class, 'parent_matriculeNv', 'matriculeNv');
+        return $this->belongsTo(Niveau::class, 'SubMatriculeNV', 'MatriculeNV');
     }
 
     public function children()
     {
-        return $this->hasMany(Niveau::class, 'parent_matriculeNv', 'matriculeNv');
+        return $this->hasMany(Niveau::class, 'SubMatriculeNV', 'MatriculeNV');
     }
 
     // Required method for GeneratesMatricule trait

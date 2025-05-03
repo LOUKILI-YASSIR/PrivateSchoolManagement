@@ -32,9 +32,9 @@ class AttendanceSeeder extends Seeder
                  // Only record on weekdays, and skip ~20% of days
                 if ($date->isWeekday() && rand(1, 10) <= 8) {
                     // Check if record exists
-                     if (!Attendance::where('matriculeEt', $etudiant->matriculeEt)->whereDate('DateAt', $date)->exists()) {
-                        Attendance::factory()->forEtudiant($etudiant->matriculeEt)->create([
-                            'DateAt' => $date->format('Y-m-d'),
+                     if (!Attendance::where('MatriculeET', $etudiant->MatriculeET)->whereDate('DateAT', $date)->exists()) {
+                        Attendance::factory()->forEtudiant($etudiant->MatriculeET)->create([
+                            'DateAT' => $date->format('Y-m-d'),
                         ]);
                     }
                 }
@@ -47,9 +47,9 @@ class AttendanceSeeder extends Seeder
                 // Only record on weekdays, and skip ~10% of days
                 if ($date->isWeekday() && rand(1, 10) <= 9) {
                     // Check if record exists
-                    if (!Attendance::where('matriculePr', $professeur->matriculePr)->whereDate('DateAt', $date)->exists()) {
-                        Attendance::factory()->forProfesseur($professeur->matriculePr)->create([
-                            'DateAt' => $date->format('Y-m-d'),
+                    if (!Attendance::where('MatriculePR', $professeur->MatriculePR)->whereDate('DateAT', $date)->exists()) {
+                        Attendance::factory()->forProfesseur($professeur->MatriculePR)->create([
+                            'DateAT' => $date->format('Y-m-d'),
                         ]);
                     }
                 }

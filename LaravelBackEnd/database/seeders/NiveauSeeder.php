@@ -18,8 +18,8 @@ class NiveauSeeder extends Seeder
 
         // For each parent, create 2 child Niveaux
         foreach ($parents as $parent) {
-            Niveau::factory(2)->childOf($parent->matriculeNv)->create([
-                'typeNv' => $parent->typeNv, // Assign same type as parent for consistency
+            Niveau::factory(2)->childOf($parent->MatriculeNV)->create([
+                'TypeNV' => $parent->TypeNV, // Assign same type as parent for consistency
             ]);
         }
 

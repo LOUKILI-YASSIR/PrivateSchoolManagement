@@ -12,19 +12,19 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('attendances', function (Blueprint $table) {
-            $table->string('matriculeAt')->primary();
-            $table->string('statusAt');
-            $table->boolean('isJustifAt')->default(false);
-            $table->string('justifAt')->nullable();
-            $table->date('DateAt');
-            $table->string('matriculeUt');
-            $table->string('matriculeEt')->nullable(); // Nullable based on diagram (0..1 relation)
-            $table->string('matriculePr')->nullable(); // Nullable based on diagram (0..1 relation)
+            $table->string('MatriculeAT')->primary();
+            $table->string('StatusAT');
+            $table->boolean('IsJustifAT')->default(false);
+            $table->string('JustifAT')->nullable();
+            $table->date('DateAT');
+            $table->string('MatriculeUT');
+            $table->string('MatriculeET')->nullable(); // Nullable based on diagram (0..1 relation)
+            $table->string('MatriculePR')->nullable(); // Nullable based on diagram (0..1 relation)
             $table->timestamps();
 
-            $table->foreign('matriculeUt')->references('matriculeUt')->on('users')->onDelete('cascade');
-            $table->foreign('matriculeEt')->references('matriculeEt')->on('etudiants')->onDelete('cascade');
-            $table->foreign('matriculePr')->references('matriculePr')->on('professeurs')->onDelete('cascade');
+            $table->foreign('MatriculeUT')->references('MatriculeUT')->on('users')->onDelete('cascade');
+            $table->foreign('MatriculeET')->references('MatriculeET')->on('etudiants')->onDelete('cascade');
+            $table->foreign('MatriculePR')->references('MatriculePR')->on('professeurs')->onDelete('cascade');
         });
     }
 

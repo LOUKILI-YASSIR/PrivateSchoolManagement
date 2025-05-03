@@ -10,7 +10,7 @@ class SchoolEvent extends Model
 {
     use HasFactory, GeneratesMatricule; // Use the trait
 
-    protected $primaryKey = 'matriculeSe';
+    protected $primaryKey = 'MatriculeSE';
     public $incrementing = false;
     protected $keyType = 'string';
 
@@ -23,25 +23,25 @@ class SchoolEvent extends Model
 
     // Added fillable
     protected $fillable = [
-        'matriculeSe',
-        'nameSe',
-        'descriptionSe',
-        'isFulldaySe',
-        'locationSe',
-        'dateSe',
-        'matriculeTs',
+        'MatriculeSE',
+        'NameSE',
+        'DescriptionSE',
+        'IsFullDaySE',
+        'LocationSE',
+        'DateSE',
+        'MatriculeTS',
     ];
 
     // Added casts
     protected $casts = [
-        'isFulldaySe' => 'boolean',
-        'dateSe' => 'date',
+        'IsFullDaySE' => 'boolean',
+        'DateSE' => 'date',
     ];
 
     // Added relationships
     public function timeSlot()
     {
-        return $this->belongsTo(TimeSlot::class, 'matriculeTs', 'matriculeTs');
+        return $this->belongsTo(TimeSlot::class, 'MatriculeTS', 'MatriculeTS');
     }
 
     // Required method for GeneratesMatricule trait

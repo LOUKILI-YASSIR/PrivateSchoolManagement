@@ -6,8 +6,8 @@ export const UseTableHead = (Table, handleDelete) => {
     const TableName = ValueMainContext?.TableName;
     
     const ID_OF = {
-        etudiants : "matriculeEt",
-        professeurs : "matriculePr",
+        etudiants : "MatriculeET",
+        professeurs : "MatriculePR",
     }[TableName];
 
     return {

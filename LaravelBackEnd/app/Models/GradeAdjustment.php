@@ -10,7 +10,7 @@ class GradeAdjustment extends Model
 {
     use HasFactory, GeneratesMatricule; // Use the trait
 
-    protected $primaryKey = 'matriculeGA';
+    protected $primaryKey = 'MatriculeGA';
     public $incrementing = false;
     protected $keyType = 'string';
 
@@ -23,24 +23,24 @@ class GradeAdjustment extends Model
 
     // Added fillable
     protected $fillable = [
-        'matriculeGA',
-        'typeGA',
-        'valueGA',
-        'reasonGA',
-        'DateGa',
-        'matriculeER',
+        'MatriculeGA',
+        'TypeGA',
+        'ValueGA',
+        'ReasonGA',
+        'DateGA',
+        'MatriculeER',
     ];
 
     // Added casts
     protected $casts = [
-        'valueGA' => 'float',
-        'DateGa' => 'date',
+        'ValueGA' => 'float',
+        'DateGA' => 'date',
     ];
 
     // Added relationships
     public function evaluationResult()
     {
-        return $this->belongsTo(EvaluationResult::class, 'matriculeER', 'matriculeER');
+        return $this->belongsTo(EvaluationResult::class, 'MatriculeER', 'MatriculeER');
     }
 
     // Required method for GeneratesMatricule trait

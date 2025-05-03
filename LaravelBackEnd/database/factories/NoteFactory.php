@@ -21,11 +21,11 @@ class NoteFactory extends Factory
     public function definition(): array
     {
         return [
-            // 'matriculeNt' handled by trait
-            'matriculeEt' => Etudiant::factory(),
-            'matriculeMt' => Matiere::factory(),
-            'gradeNt' => $this->faker->randomFloat(2, 0, 20), // Assuming a default max grade of 20
-            'commentaireNt' => $this->faker->optional()->sentence(),
+            // 'MatriculeNT' handled by trait
+            'MatriculeET' => Etudiant::factory(),
+            'MatriculeMT' => Matiere::factory(),
+            'GradeNT' => $this->faker->randomFloat(2, 0, 20), // Assuming a default max grade of 20
+            'CommentaireNT' => $this->faker->optional()->sentence(),
         ];
     }
 
@@ -35,7 +35,7 @@ class NoteFactory extends Factory
     public function forEtudiant(string $etudiantMatricule): static
     {
         return $this->state(fn (array $attributes) => [
-            'matriculeEt' => $etudiantMatricule,
+            'MatriculeET' => $etudiantMatricule,
         ]);
     }
 
@@ -45,7 +45,7 @@ class NoteFactory extends Factory
     public function forMatiere(string $matiereMatricule): static
     {
         return $this->state(fn (array $attributes) => [
-            'matriculeMt' => $matiereMatricule,
+            'MatriculeMT' => $matiereMatricule,
         ]);
     }
 }

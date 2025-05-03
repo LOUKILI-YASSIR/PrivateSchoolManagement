@@ -26,7 +26,7 @@ class GradeAdjustmentSeeder extends Seeder
 
         foreach ($resultsToAdjust as $result) {
             GradeAdjustment::factory()
-                ->forEvaluationResult($result->matriculeER)
+                ->forEvaluationResult($result->MatriculeER)
                 ->create();
         }
     }

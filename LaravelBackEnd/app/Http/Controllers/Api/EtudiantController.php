@@ -18,24 +18,38 @@ class EtudiantController extends Controller
 
     protected array $validationRules = [
         // User validation rules
-        'name' => 'required|string|max:255',
-        'email' => 'required|email|max:255|unique:users,email',
-        'password' => 'required|string|min:8',
-        'role' => 'required|string|in:student',
-        'ProfileFileNamePl' => 'nullable|string|max:255',
-        
+        'UserNameUT' => 'required|string|max:255',
+        'EmailUT' => 'required|email|max:255|unique:users,EmailUT',
+        'PasswordUT' => 'required|string|min:8',
+        'RoleUT' => 'required|string|in:student',
+        'ProfileFileNamePL' => 'nullable|string|max:255',
+
         // Etudiant validation rules
-        'emailEt' => 'required|email|max:255|unique:etudiants,emailEt',
-        'phoneEt' => 'nullable|string|max:20',
-        'lienParenteTr' => 'nullable|string|max:255',
-        'professionTr' => 'nullable|string|max:255',
-        'NomTr' => 'nullable|string|max:255',
-        'PrenomTr' => 'nullable|string|max:255',
-        'Phone1Tr' => 'nullable|string|max:20',
-        'Phone2Tr' => 'nullable|string|max:20',
-        'EmailTr' => 'nullable|email|max:255',
-        'ObservationTr' => 'nullable|string|max:255',
-        'matriculeGp' => 'required|string|exists:groups,matriculeGp',
+        'EmailET' => 'required|email|max:255|unique:etudiants,EmailET',
+        'PhoneET' => 'nullable|string|max:20',
+        'LienParenteTR' => 'nullable|string|max:255',
+        'ProfessionTR' => 'nullable|string|max:255',
+        'NomTR' => 'nullable|string|max:255',
+        'PrenomTR' => 'nullable|string|max:255',
+        'Phone1TR' => 'nullable|string|max:20',
+        'Phone2TR' => 'nullable|string|max:20',
+        'EmailTR' => 'nullable|email|max:255',
+        'ObservationTR' => 'nullable|string|max:255',
+        'MatriculeGP' => 'required|string|exists:groups,MatriculeGP',
+
+        // Person data
+        'NomPL' => 'required|string|max:255',
+        'PrenomPL' => 'required|string|max:255',
+        'GenrePL' => 'nullable|string|max:255',
+        'AdressPL' => 'nullable|string|max:255',
+        'VillePL' => 'nullable|string|max:255',
+        'CodePostalPL' => 'nullable|string|max:10',
+        'PaysPL' => 'nullable|string|max:255',
+        'NationalitePL' => 'nullable|string|max:255',
+        'LieuNaissancePL' => 'nullable|string|max:255',
+        'DateNaissancePL' => 'nullable|date',
+        'ObservationPL' => 'nullable|string|max:255',
+        'StatutUT' => 'nullable|string|max:255',
     ];
 
     protected static function getMatriculePrefix()
@@ -43,59 +57,55 @@ class EtudiantController extends Controller
         return 'ET';
     }
 
-    // Override store method to create both User and Etudiant
     public function store(Request $request): \Illuminate\Http\JsonResponse
     {
         try {
             DB::beginTransaction();
 
-            // Validate request data
             $validatedData = $this->validateRequest($request, $this->validationRules);
 
-            // Create User first with generated matricule
             $user = new User([
-                'nameUt' => $validatedData['name'],
-                'emailUt' => $validatedData['emailEt'],
-                'phoneUt' => $validatedData['phoneEt'],
-                'passwordUt' => bcrypt($validatedData['password']),
-                'roleUt' => $validatedData['roleUt'],
-                'ProfileFileNamePl' => $validatedData['ProfileFileNamePl'],
-                'NomPl' => $validatedData['NomEt'],
-                'PrenomPl' => $validatedData['PrenomEt'],
-                'genrePl' => $validatedData['genreEt'],
-                'adressPl' => $validatedData['adressEt'],
-                'villePl' => $validatedData['villeEt'],
-                'codePostalPl' => $validatedData['codePostalEt'],
-                'paysPl' => $validatedData['paysEt'],
-                'nationalitePl' => $validatedData['nationaliteEt'],
-                'lieuNaissancePl' => $validatedData['lieuNaissanceEt'],
-                'dateNaissancePl' => $validatedData['dateNaissanceEt'],
-                'ObservationPl' => $validatedData['ObservationEt'],
-                'statutUt' => $validatedData['statutUt'],
+                'UserNameUT' => $validatedData['UserNameUT'],
+                'EmailUT' => $validatedData['EmailUT'],
+                'PhoneUT' => $validatedData['PhoneET'] ?? null,
+                'PasswordUT' => bcrypt($validatedData['PasswordUT']),
+                'RoleUT' => $validatedData['RoleUT'],
+                'ProfileFileNamePL' => $validatedData['ProfileFileNamePL'] ?? null,
+                'NomPL' => $validatedData['NomPL'],
+                'PrenomPL' => $validatedData['PrenomPL'],
+                'GenrePL' => $validatedData['GenrePL'] ?? null,
+                'AdressPL' => $validatedData['AdressPL'] ?? null,
+                'VillePL' => $validatedData['VillePL'] ?? null,
+                'CodePostalPL' => $validatedData['CodePostalPL'] ?? null,
+                'PaysPL' => $validatedData['PaysPL'] ?? null,
+                'NationalitePL' => $validatedData['NationalitePL'] ?? null,
+                'LieuNaissancePL' => $validatedData['LieuNaissancePL'] ?? null,
+                'DateNaissancePL' => $validatedData['DateNaissancePL'] ?? null,
+                'ObservationPL' => $validatedData['ObservationPL'] ?? null,
+                'StatutUT' => $validatedData['StatutUT'] ?? 'offline',
+                'CodeVerificationUT' => uniqid('verif_'),
             ]);
-            $user->save(); // This will trigger the GeneratesMatricule trait to create matriculeUt
+            $user->save();
 
-            // Create Etudiant with user reference
             $etudiant = new Etudiant([
-                'emailEt' => $validatedData['emailEt'],
-                'phoneEt' => $validatedData['phoneEt'],
-                'lienParenteTr' => $validatedData['lienParenteTr'],
-                'professionTr' => $validatedData['professionTr'],
-                'NomTr' => $validatedData['NomTr'],
-                'PrenomTr' => $validatedData['PrenomTr'],
-                'Phone1Tr' => $validatedData['Phone1Tr'],
-                'Phone2Tr' => $validatedData['Phone2Tr'],
-                'EmailTr' => $validatedData['EmailTr'],
-                'ObservationTr' => $validatedData['ObservationTr'],
-                'matriculeUt' => $user->matriculeUt,
-                'matriculeGp' => $validatedData['matriculeGp']
+                'EmailET' => $validatedData['EmailET'],
+                'PhoneET' => $validatedData['PhoneET'] ?? null,
+                'LienParenteTR' => $validatedData['LienParenteTR'] ?? null,
+                'ProfessionTR' => $validatedData['ProfessionTR'] ?? null,
+                'NomTR' => $validatedData['NomTR'] ?? null,
+                'PrenomTR' => $validatedData['PrenomTR'] ?? null,
+                'Phone1TR' => $validatedData['Phone1TR'] ?? null,
+                'Phone2TR' => $validatedData['Phone2TR'] ?? null,
+                'EmailTR' => $validatedData['EmailTR'] ?? null,
+                'ObservationTR' => $validatedData['ObservationTR'] ?? null,
+                'MatriculeUT' => $user->MatriculeUT,
+                'MatriculeGP' => $validatedData['MatriculeGP'],
             ]);
-            $etudiant->save(); // This will trigger the GeneratesMatricule trait to create matriculeEt
+            $etudiant->save();
 
             DB::commit();
-
-            // Load the user relationship and return combined data
             $etudiant->load('user');
+
             return $this->successResponse($etudiant, 'created');
 
         } catch (\Exception $e) {
@@ -104,75 +114,59 @@ class EtudiantController extends Controller
         }
     }
 
-    // Override update method to handle both User and Etudiant
     public function update(Request $request, $matricule): \Illuminate\Http\JsonResponse
     {
         try {
             DB::beginTransaction();
 
-            // Find the Etudiant
-            $etudiant = Etudiant::where('matriculeEt', $matricule)->first();
-            if (!$etudiant) {
-                return $this->notFoundResponse($this->getResourceName());
-            }
+            $etudiant = Etudiant::where('MatriculeET', $matricule)->first();
+            if (!$etudiant) return $this->notFoundResponse($this->getResourceName());
 
-            // Get the associated User
-            $user = User::where('matriculeUt', $etudiant->matriculeUt)->first();
-            if (!$user) {
-                return $this->notFoundResponse('User');
-            }
+            $user = User::where('MatriculeUT', $etudiant->MatriculeUT)->first();
+            if (!$user) return $this->notFoundResponse('User');
 
-            // Modify validation rules for update
             $rules = $this->validationRules;
-            $rules['email'] = 'required|email|max:255|unique:users,email,' . $user->id;
-            $rules['emailEt'] = 'required|email|max:255|unique:etudiants,emailEt,' . $etudiant->matriculeEt . ',matriculeEt';
-            $rules['password'] = 'nullable|string|min:8';
+            $rules['EmailUT'] = 'required|email|max:255|unique:users,EmailUT,' . $user->MatriculeUT . ',MatriculeUT';
+            $rules['EmailET'] = 'required|email|max:255|unique:etudiants,EmailET,' . $etudiant->MatriculeET . ',MatriculeET';
+            $rules['PasswordUT'] = 'nullable|string|min:8';
 
-            // Validate request data
             $validatedData = $this->validateRequest($request, $rules);
 
-            // Update User
-            $userData = [
-                'nameUt' => $validatedData['name'],
-                'emailUt' => $validatedData['emailEt'],
-                'phoneUt' => $validatedData['phoneEt'],
-                'ProfileFileNamePl' => $validatedData['ProfileFileNamePl'],
-                'NomPl' => $validatedData['NomEt'],
-                'PrenomPl' => $validatedData['PrenomEt'],
-                'genrePl' => $validatedData['genreEt'],
-                'adressPl' => $validatedData['adressEt'],
-                'villePl' => $validatedData['villeEt'],
-                'codePostalPl' => $validatedData['codePostalEt'],
-                'paysPl' => $validatedData['paysEt'],
-                'nationalitePl' => $validatedData['nationaliteEt'],
-                'lieuNaissancePl' => $validatedData['lieuNaissanceEt'],
-                'dateNaissancePl' => $validatedData['dateNaissanceEt'],
-                'ObservationPl' => $validatedData['ObservationEt'],
-                'statutUt' => $validatedData['statutUt'],
-            ];
-            if (!empty($validatedData['password'])) {
-                $userData['passwordUt'] = bcrypt($validatedData['password']);
-            }
-            $user->update($userData);
+            $user->update([
+                'UserNameUT' => $validatedData['UserNameUT'],
+                'EmailUT' => $validatedData['EmailUT'],
+                'PhoneUT' => $validatedData['PhoneET'] ?? null,
+                'ProfileFileNamePL' => $validatedData['ProfileFileNamePL'] ?? null,
+                'NomPL' => $validatedData['NomPL'],
+                'PrenomPL' => $validatedData['PrenomPL'],
+                'GenrePL' => $validatedData['GenrePL'] ?? null,
+                'AdressPL' => $validatedData['AdressPL'] ?? null,
+                'VillePL' => $validatedData['VillePL'] ?? null,
+                'CodePostalPL' => $validatedData['CodePostalPL'] ?? null,
+                'PaysPL' => $validatedData['PaysPL'] ?? null,
+                'NationalitePL' => $validatedData['NationalitePL'] ?? null,
+                'LieuNaissancePL' => $validatedData['LieuNaissancePL'] ?? null,
+                'DateNaissancePL' => $validatedData['DateNaissancePL'] ?? null,
+                'ObservationPL' => $validatedData['ObservationPL'] ?? null,
+                'StatutUT' => $validatedData['StatutUT'] ?? 'offline',
+                'PasswordUT' => !empty($validatedData['PasswordUT']) ? bcrypt($validatedData['PasswordUT']) : $user->PasswordUT,
+            ]);
 
-            // Update Etudiant
             $etudiant->update([
-                'emailEt' => $validatedData['emailEt'],
-                'phoneEt' => $validatedData['phoneEt'],
-                'lienParenteTr' => $validatedData['lienParenteTr'],
-                'professionTr' => $validatedData['professionTr'],
-                'NomTr' => $validatedData['NomTr'],
-                'PrenomTr' => $validatedData['PrenomTr'],
-                'Phone1Tr' => $validatedData['Phone1Tr'],
-                'Phone2Tr' => $validatedData['Phone2Tr'],
-                'EmailTr' => $validatedData['EmailTr'],
-                'ObservationTr' => $validatedData['ObservationTr'],
-                'matriculeGp' => $validatedData['matriculeGp']
+                'EmailET' => $validatedData['EmailET'],
+                'PhoneET' => $validatedData['PhoneET'] ?? null,
+                'LienParenteTR' => $validatedData['LienParenteTR'] ?? null,
+                'ProfessionTR' => $validatedData['ProfessionTR'] ?? null,
+                'NomTR' => $validatedData['NomTR'] ?? null,
+                'PrenomTR' => $validatedData['PrenomTR'] ?? null,
+                'Phone1TR' => $validatedData['Phone1TR'] ?? null,
+                'Phone2TR' => $validatedData['Phone2TR'] ?? null,
+                'EmailTR' => $validatedData['EmailTR'] ?? null,
+                'ObservationTR' => $validatedData['ObservationTR'] ?? null,
+                'MatriculeGP' => $validatedData['MatriculeGP'],
             ]);
 
             DB::commit();
-
-            // Load the user relationship and return combined data
             $etudiant->load('user');
             return $this->successResponse($etudiant, 'updated');
 
@@ -182,24 +176,17 @@ class EtudiantController extends Controller
         }
     }
 
-    // Override destroy method to delete both User and Etudiant
     public function destroy($matricule): \Illuminate\Http\JsonResponse
     {
         try {
             DB::beginTransaction();
 
-            $etudiant = Etudiant::where('matriculeEt', $matricule)->first();
-            if (!$etudiant) {
-                return $this->notFoundResponse($this->getResourceName());
-            }
+            $etudiant = Etudiant::where('MatriculeET', $matricule)->first();
+            if (!$etudiant) return $this->notFoundResponse($this->getResourceName());
 
-            // Delete associated user
-            $user = User::where('matriculeUt', $etudiant->matriculeUt)->first();
-            if ($user) {
-                $user->delete();
-            }
+            $user = User::where('MatriculeUT', $etudiant->MatriculeUT)->first();
+            if ($user) $user->delete();
 
-            // Delete etudiant
             $etudiant->delete();
 
             DB::commit();
@@ -211,26 +198,23 @@ class EtudiantController extends Controller
         }
     }
 
-    // Override index method to include user data
     public function index(): \Illuminate\Http\JsonResponse
     {
         try {
             $records = $this->model::with('user')->get();
-            $total = $this->model::count();
             return $this->successResponse([
                 'data' => $records,
-                'total' => $total
+                'total' => $records->count()
             ]);
         } catch (\Exception $e) {
             return $this->handleException($e);
         }
     }
 
-    // Override show method to include user data
     public function show($matricule): \Illuminate\Http\JsonResponse
     {
         try {
-            $etudiant = $this->model::with('user')->where('matriculeEt', $matricule)->firstOrFail();
+            $etudiant = $this->model::with('user')->where('MatriculeET', $matricule)->firstOrFail();
             return $this->successResponse($etudiant);
         } catch (\Exception $e) {
             return $this->handleException($e);

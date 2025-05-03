@@ -10,7 +10,7 @@ class Salle extends Model
 {
     use HasFactory, GeneratesMatricule;
 
-    protected $primaryKey = 'matriculeSl';
+    protected $primaryKey = 'MatriculeSL';
     public $incrementing = false;
     protected $keyType = 'string';
 
@@ -22,26 +22,26 @@ class Salle extends Model
     protected $table = 'salles';
 
     protected $fillable = [
-        'matriculeSl',
-        'NameSl',
-        'CapacitySl',
-        'LocationSl',
-        'ressourcesSl',
-        'typeSl',
-        'statusSl',
-        'floorSl',
-        'observationSl',
+        'MatriculeSL',
+        'NameSL',
+        'CapacitySL',
+        'LocationSL',
+        'RessourcesSL',
+        'TypeSL',
+        'StatusSL',
+        'FloorSL',
+        'ObservationSL',
     ];
 
     protected $casts = [
-        'CapacitySl' => 'integer',
+        'CapacitySL' => 'integer',
     ];
 
     // Relationships
 
     public function regularTimeTables()
     {
-        return $this->hasMany(RegularTimeTable::class, 'matriculeSl', 'matriculeSl');
+        return $this->hasMany(RegularTimeTable::class, 'MatriculeSL', 'MatriculeSL');
     }
 
     // Required method for GeneratesMatricule trait

@@ -13,7 +13,7 @@ export const getFormStepsMt = () => {
             Fields: [
                 generateField({
                     type: TEXT,
-                    label: "nameMt",
+                    label: "NameMT",
                     propsType: "text",
                     propsLabel: "Nom",
                     enablePlaceholder: true,
@@ -29,7 +29,7 @@ export const getFormStepsMt = () => {
                   }), 
                 generateField({
                     type: TEXT,
-                    label: "codeMt",
+                    label: "CodeMT",
                     propsType: "text",
                     propsLabel: "Code",
                     enablePlaceholder: true,
@@ -45,7 +45,7 @@ export const getFormStepsMt = () => {
                   }), 
                   generateField({
                     type: TEXT,
-                    label: "coefficientMt",
+                    label: "CoefficientMT",
                     propsType: "number",
                     propsLabel: "Coefficient",
                     enablePlaceholder: true,
@@ -59,19 +59,19 @@ export const getFormStepsMt = () => {
                   }), 
                   generateField({
                     type: SELECT,
-                    label: 'matriculeNv',
+                    label: 'MatriculeNV',
                     propsLabel: "Niveaux",
                     options: (isLoading || error || !data || data?.data?.length === 0
                       ? [] // Fallback to empty array if data is not ready
                       : data?.data.map((niveau) => ({
-                          value: niveau.matriculeNv,
-                          label: niveau.NomNv+(niveau.parent?.NomNv ? ` (${niveau.parent?.NomNv})` : ""),
+                          value: niveau.MatriculeNV,
+                          label: niveau.NomNV+(niveau.parent?.NomNV ? ` (${niveau.parent?.NomNV})` : ""),
                       }))),
                     validation: commonValidations.required("Niveaux")
                   }),
                 generateField({
                     type: TEXTAREA,
-                    label: "descriptionMt",
+                    label: "DescriptionMT",
                     propsType: "text",
                     propsLabel: "Description",
                     enablePlaceholder: true,

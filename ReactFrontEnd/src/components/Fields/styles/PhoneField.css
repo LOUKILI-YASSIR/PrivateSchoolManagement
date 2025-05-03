@@ -32,3 +32,44 @@
     border: none !important;
     outline: 1px solid red !important;
 }
+.react-tel-input.dark-mode.is-login .special-label{
+    background: #1e1e1e !important;
+    color:rgba(255,255,255,0.7) !important;
+    margin-left: -15px;
+    font-size: smaller;
+}
+.react-tel-input.is-login:not(.dark-mode) .special-label{
+    font-size: smaller;
+    margin-left: -15px;
+    color: #1e1e1e !important;
+}
+.react-tel-input.dark-mode.is-login .form-control{
+    height: 58px !important;
+    border: 1px solid rgba(255,255,255,0.3) !important;   
+    margin-block:15px;
+}
+.react-tel-input.is-login .form-control{
+    height: 58px !important;
+    margin-block:15px;
+}
+.react-tel-input.dark-mode.is-login .form-control:hover{
+    border: 1px solid rgba(106, 95, 201, 1) !important;   
+}
+.react-tel-input.is-login .form-control:focus ~ .flag-dropdown {
+    transform: scale(1.2) !important;
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)' !important;
+}
+.react-tel-input.dark-mode.is-login .form-control:focus {
+    border: 1px solid rgba(106, 95, 201, 1) !important; 
+    box-shadow: 0 0 0 1px rgba(106, 95, 201, 1) !important;
+}
+.react-tel-input.is-login .form-control:focus {
+    border: 1px solid rgba(42, 33, 133, 1) !important; 
+    box-shadow: 0 0 0 1px rgba(42, 33, 133, 1) !important;
+}
+.react-tel-input.is-login .form-control:hover{
+    border: 1px solid rgba(42, 33, 133, 1) !important;   
+}
+.react-tel-input.is-login  .form-control:focus+div:before{
+    color: rgba(42, 33, 133, 1) !important;
+}

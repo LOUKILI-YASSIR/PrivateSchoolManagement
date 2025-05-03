@@ -14,11 +14,11 @@ class SpecialDayScheduleController extends Controller
     protected string $model = SpecialDaySchedule::class;
 
     protected array $validationRules = [
-        'dateSS' => 'required|date',
-        'isFulldaySS' => 'sometimes|boolean',
-        'matriculeTs' => 'required|string|exists:time_slots,matriculeTs',
-        'locationSS' => 'nullable|string|max:255',
-        'activityNameSS' => 'nullable|string|max:255',
+        'DateSS' => 'required|date',
+        'IsFullDaySS' => 'sometimes|boolean',
+        'MatriculeTS' => 'required|string|exists:time_slots,MatriculeTS',
+        'LocationSS' => 'nullable|string|max:255',
+        'ActivityNameSS' => 'nullable|string|max:255',
     ];
 
     // Define resource name for messages

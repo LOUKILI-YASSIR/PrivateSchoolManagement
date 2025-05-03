@@ -25,11 +25,11 @@ class TeacherVocationFactory extends Factory
         $endDate = Carbon::instance($startDate)->addDays($duration - 1);
 
         return [
-            // 'matriculeTv' handled by trait
-            'matriculePr' => Professeur::factory(),
-            'startDatetv' => $startDate->format('Y-m-d'),
-            'approvedTv' => $this->faker->boolean(80), // 80% chance approved
-            'endDatetv' => $endDate->format('Y-m-d'),
+            // 'MatriculeTV' handled by trait
+            'MatriculePR' => Professeur::factory(),
+            'StartDatetV' => $startDate->format('Y-m-d'),
+            'ApprovedTV' => $this->faker->boolean(80), // 80% chance approved
+            'EndDatetV' => $endDate->format('Y-m-d'),
         ];
     }
 
@@ -39,7 +39,7 @@ class TeacherVocationFactory extends Factory
     public function forProfesseur(string $professeurMatricule): static
     {
         return $this->state(fn (array $attributes) => [
-            'matriculePr' => $professeurMatricule,
+            'MatriculePR' => $professeurMatricule,
         ]);
     }
 }

@@ -10,7 +10,7 @@ class Group extends Model
 {
     use HasFactory, GeneratesMatricule;
 
-    protected $primaryKey = 'matriculeGp';
+    protected $primaryKey = 'MatriculeGP';
     public $incrementing = false;
     protected $keyType = 'string';
 
@@ -22,28 +22,28 @@ class Group extends Model
     protected $table = 'groups';
 
     protected $fillable = [
-        'matriculeGp',
-        'NameGp',
-        'descriptionGp',
-        'statusGp',
-        'matriculeNv',
+        'MatriculeGP',
+        'NameGP',
+        'DescriptionGp',
+        'StatusGP',
+        'MatriculeNV',
     ];
 
     // Relationships
 
     public function niveau()
     {
-        return $this->belongsTo(Niveau::class, 'matriculeNv', 'matriculeNv');
+        return $this->belongsTo(Niveau::class, 'MatriculeNV', 'MatriculeNV');
     }
 
     public function etudiants()
     {
-        return $this->hasMany(Etudiant::class, 'matriculeGp', 'matriculeGp');
+        return $this->hasMany(Etudiant::class, 'MatriculeGP', 'MatriculeGP');
     }
 
     public function regularTimeTables()
     {
-        return $this->hasMany(RegularTimeTable::class, 'matriculeGp', 'matriculeGp');
+        return $this->hasMany(RegularTimeTable::class, 'MatriculeGP', 'MatriculeGP');
     }
 
     // Required method for GeneratesMatricule trait

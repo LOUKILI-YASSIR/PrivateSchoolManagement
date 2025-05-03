@@ -12,15 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('holidays', function (Blueprint $table) {
-            $table->string('matriculeHd')->primary();
-            $table->date('startdateHd');
-            $table->date('endDateHd');
-            $table->string('nameHd');
-            $table->string('descriptionHd')->nullable();
-            $table->string('matriculeYR');
+            $table->string('MatriculeHd')->primary();
+            $table->date('StartdateHd');
+            $table->date('EndDateHd');
+            $table->string('NameHd');
+            $table->string('DescriptionHd')->nullable();
+            $table->string('MatriculeYR');
             $table->timestamps();
 
-            $table->foreign('matriculeYR')->references('matriculeYR')->on('academic_years')->onDelete('cascade');
+            $table->foreign('MatriculeYR')->references('MatriculeYR')->on('academic_years')->onDelete('cascade');
         });
     }
 

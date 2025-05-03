@@ -23,7 +23,7 @@ class SchoolEventSeeder extends Seeder
         if (!$timeSlots->isEmpty()) {
             for ($i = 0; $i < 10; $i++) {
                 SchoolEvent::factory()
-                    ->forTimeSlot($timeSlots->random()->matriculeTs)
+                    ->forTimeSlot($timeSlots->random()->MatriculeTS)
                     ->create();
             }
         } else {

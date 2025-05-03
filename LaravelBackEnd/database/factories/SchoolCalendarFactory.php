@@ -20,10 +20,10 @@ class SchoolCalendarFactory extends Factory
     public function definition(): array
     {
         return [
-            // 'matriculeSc' handled by trait
-            'calendarDateSc' => $this->faker->date(),
-            'dayTypeSc' => 'School Day', // Default type
-            'matriculeYR' => AcademicYear::factory(),
+            // 'MatriculeSC' handled by trait
+            'CalendarDateSC' => $this->faker->date(),
+            'DayTypeSC' => 'School Day', // Default type
+            'MatriculeYR' => AcademicYear::factory(),
         ];
     }
 
@@ -33,7 +33,7 @@ class SchoolCalendarFactory extends Factory
     public function forYear(string $yearMatricule): static
     {
         return $this->state(fn (array $attributes) => [
-            'matriculeYR' => $yearMatricule,
+            'MatriculeYR' => $yearMatricule,
         ]);
     }
 }

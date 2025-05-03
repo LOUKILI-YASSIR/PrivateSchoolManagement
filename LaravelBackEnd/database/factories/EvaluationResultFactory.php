@@ -22,14 +22,14 @@ class EvaluationResultFactory extends Factory
     {
         // Get an existing evaluation to determine max grade
         $evaluation = Evaluation::factory()->create(); // Create one if none passed
-        $maxGrade = $evaluation->evaluationType->max_gradeEp ?? 20; // Default max 20
+        $maxGrade = $evaluation->evaluationType->MaxGradeEP ?? 20; // Default max 20
 
         return [
-            // 'matriculeER' handled by trait
-            'matriculeEt' => Etudiant::factory(),
-            'matriculeEv' => $evaluation->matriculeEv,
+            // 'MatriculeER' handled by trait
+            'MatriculeET' => Etudiant::factory(),
+            'MatriculeEV' => $evaluation->MatriculeEV,
             'GradeER' => $this->faker->randomFloat(2, 0, $maxGrade), // Grade based on evaluation type max
-            'commentaireER' => $this->faker->optional()->sentence(),
+            'CommentaireER' => $this->faker->optional()->sentence(),
         ];
     }
 
@@ -39,7 +39,7 @@ class EvaluationResultFactory extends Factory
     public function forEtudiant(string $etudiantMatricule): static
     {
         return $this->state(fn (array $attributes) => [
-            'matriculeEt' => $etudiantMatricule,
+            'MatriculeET' => $etudiantMatricule,
         ]);
     }
 
@@ -49,10 +49,10 @@ class EvaluationResultFactory extends Factory
     public function forEvaluation(string $evaluationMatricule): static
     {
         $evaluation = Evaluation::find($evaluationMatricule);
-        $maxGrade = $evaluation?->evaluationType?->max_gradeEp ?? 20;
+        $maxGrade = $evaluation?->evaluationType?->MaxGradeEP ?? 20;
 
         return $this->state(fn (array $attributes) => [
-            'matriculeEv' => $evaluationMatricule,
+            'MatriculeEV' => $evaluationMatricule,
             'GradeER' => $this->faker->randomFloat(2, 0, $maxGrade),
         ]);
     }

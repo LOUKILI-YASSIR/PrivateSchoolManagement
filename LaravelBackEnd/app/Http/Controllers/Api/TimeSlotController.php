@@ -15,8 +15,8 @@ class TimeSlotController extends Controller
 
     protected array $validationRules = [
         // Assuming HH:MM:SS format
-        'startTimeTs' => 'required|date_format:H:i:s',
-        'endTimeTs' => 'required|date_format:H:i:s|after:startTimeTs',
+        'StartTimeTS' => 'required|date_format:H:i:s',
+        'EndTimeTS' => 'required|date_format:H:i:s|after:StartTimeTS',
     ];
 
     // Define resource name for messages

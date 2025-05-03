@@ -19,12 +19,12 @@ class EvaluationTypeFactory extends Factory
     public function definition(): array
     {
         return [
-            // 'matriculeEp' is handled by the GeneratesMatricule trait
-            'nameEp' => $this->faker->randomElement(['Quiz', 'Midterm Exam', 'Final Exam', 'Project', 'Homework', 'Participation']),
-            'max_gradeEp' => $this->faker->randomElement([10, 20, 50, 100]),
-            'descriptionEp' => $this->faker->optional()->sentence(),
-            'porsentageEp' => $this->faker->randomFloat(2, 5, 50), // Percentage between 5 and 50
-            'codeEp' => $this->faker->bothify('EVT-???###'),
+            // 'MatriculeEP' is handled by the GeneratesMatricule trait
+            'NameEP' => $this->faker->randomElement(['Quiz', 'Midterm Exam', 'Final Exam', 'Project', 'Homework', 'Participation']),
+            'MaxGradeEP' => $this->faker->randomElement([10, 20, 50, 100]),
+            'DescriptionEP' => $this->faker->optional()->sentence(),
+            'PorsentageEP' => $this->faker->randomFloat(2, 5, 50), // Percentage between 5 and 50
+            'CodeEP' => $this->faker->bothify('EVT-???###'),
         ];
     }
 }

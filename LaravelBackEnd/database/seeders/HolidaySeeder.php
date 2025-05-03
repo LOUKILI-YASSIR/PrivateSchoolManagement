@@ -17,7 +17,7 @@ class HolidaySeeder extends Seeder
      */
     public function run(): void
     {
-        $currentYear = AcademicYear::where('isCurrentYR', true)->first();
+        $currentYear = AcademicYear::where('IsCurrentYR', true)->first();
 
         if (!$currentYear) {
             $this->command->warn('Current AcademicYear not found. Skipping HolidaySeeder.');
@@ -27,48 +27,48 @@ class HolidaySeeder extends Seeder
         // Define some common holidays (adjust dates as needed for the year)
         $holidaysData = [
             [
-                'nameHd' => 'New Year Break',
-                'startdateHd' => $currentYear->startDateYR->year . '-01-01',
-                'endDateHd' => $currentYear->startDateYR->year . '-01-02',
-                'descriptionHd' => 'New Year Holiday'
+                'NameHD' => 'New Year Break',
+                'StartDateHD' => $currentYear->StartDateYR->year . '-01-01',
+                'EndDateHD' => $currentYear->StartDateYR->year . '-01-02',
+                'DescriptionHD' => 'New Year Holiday'
             ],
             [
-                'nameHd' => 'Spring Break',
-                'startdateHd' => $currentYear->endDateYR->year . '-04-10',
-                'endDateHd' => $currentYear->endDateYR->year . '-04-17',
-                'descriptionHd' => 'Spring Vacation'
+                'NameHD' => 'Spring Break',
+                'StartDateHD' => $currentYear->EndDateYR->year . '-04-10',
+                'EndDateHD' => $currentYear->EndDateYR->year . '-04-17',
+                'DescriptionHD' => 'Spring Vacation'
             ],
             [
-                'nameHd' => 'Summer Break',
-                'startdateHd' => $currentYear->endDateYR->year . '-07-01',
-                'endDateHd' => $currentYear->endDateYR->year . '-08-31',
-                'descriptionHd' => 'Summer Vacation'
+                'NameHD' => 'Summer Break',
+                'StartDateHD' => $currentYear->EndDateYR->year . '-07-01',
+                'EndDateHD' => $currentYear->EndDateYR->year . '-08-31',
+                'DescriptionHD' => 'Summer Vacation'
             ],
             [
-                'nameHd' => 'Winter Break',
-                'startdateHd' => $currentYear->startDateYR->year . '-12-23',
-                'endDateHd' => ($currentYear->startDateYR->year + 1) . '-01-03', // Spans year end
-                'descriptionHd' => 'Winter Vacation'
+                'NameHD' => 'Winter Break',
+                'StartDateHD' => $currentYear->StartDateYR->year . '-12-23',
+                'EndDateHD' => ($currentYear->StartDateYR->year + 1) . '-01-03', // Spans year end
+                'DescriptionHD' => 'Winter Vacation'
             ],
         ];
 
         foreach ($holidaysData as $data) {
             // Create the holiday record
             $holiday = Holiday::factory()
-                        ->forYear($currentYear->matriculeYR)
+                        ->forYear($currentYear->MatriculeYR)
                         ->create($data);
 
             // Update SchoolCalendar entries for the holiday period
-            $holidayPeriod = CarbonPeriod::create($holiday->startdateHd, $holiday->endDateHd);
+            $holidayPeriod = CarbonPeriod::create($holiday->StartDateHD, $holiday->EndDateHD);
             $datesToUpdate = [];
             foreach($holidayPeriod as $date) {
                 $datesToUpdate[] = $date->format('Y-m-d');
             }
 
             if (!empty($datesToUpdate)) {
-                SchoolCalendar::where('matriculeYR', $currentYear->matriculeYR)
-                              ->whereIn('calendarDateSc', $datesToUpdate)
-                              ->update(['dayTypeSc' => 'Holiday']);
+                SchoolCalendar::where('MatriculeYR', $currentYear->MatriculeYR)
+                              ->whereIn('CalendarDateSC', $datesToUpdate)
+                              ->update(['DayTypeSC' => 'Holiday']);
             }
         }
 

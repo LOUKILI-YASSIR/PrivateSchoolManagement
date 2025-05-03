@@ -3,13 +3,13 @@ import React from "react";
 export const niveauxColumns = (Traduction, FilterModeOptions) => [
   {
     header: Traduction("Data.matricule"),
-    accessorKey: "matriculeNv",
+    accessorKey: "MatriculeNV",
     filterFn: "equals",
     columnFilterModeOptions: [...FilterModeOptions["equality"]],
   },
   {
     header: Traduction("Data.code"),
-    accessorKey: "codeNv",
+    accessorKey: "CodeNV",
     filterFn: "fuzzy",
     columnFilterModeOptions: [
       ...FilterModeOptions["text"],
@@ -18,7 +18,7 @@ export const niveauxColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.name"),
-    accessorKey: "NomNv",
+    accessorKey: "NomNV",
     filterFn: "fuzzy",
     columnFilterModeOptions: [
       ...FilterModeOptions["text"],
@@ -27,7 +27,7 @@ export const niveauxColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.type"),
-    accessorKey: "typeNv",
+    accessorKey: "TypeNV",
     filterFn: "equals",
     filterVariant: "select",
     filterSelectOptions: ["primary", "secondary", "college", "other"],
@@ -35,7 +35,7 @@ export const niveauxColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.description"),
-    accessorKey: "descriptionNv",
+    accessorKey: "DescriptionNV",
     filterFn: "fuzzy",
     columnFilterModeOptions: [
       ...FilterModeOptions["text"],
@@ -44,7 +44,7 @@ export const niveauxColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.status"),
-    accessorKey: "statusNv",
+    accessorKey: "StatusNV",
     filterFn: "equals",
     filterVariant: "select",
     filterSelectOptions: ["active", "inactive"],
@@ -52,7 +52,7 @@ export const niveauxColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.parent"),
-    accessorFn: (row) => row.parent?.NomNv || '-',
+    accessorFn: (row) => row.parent?.NomNV || '-',
     id: 'parentNomNv',
     filterFn: "fuzzy",
     columnFilterModeOptions: [
@@ -61,7 +61,7 @@ export const niveauxColumns = (Traduction, FilterModeOptions) => [
     ],
     Cell: ({ row }) => {
       const parent = row.original.parent;
-      return parent ? parent.NomNv : "-";
+      return parent ? parent.NomNV : "-";
     },
   },
   {

@@ -14,13 +14,13 @@ class DayWeekController extends Controller
     protected string $model = DayWeek::class;
 
     protected array $validationRules = [
-        'dayNameDW' => 'required|string|max:255|unique:day_weeks,dayNameDW',
+        'DayNameDW' => 'required|string|max:255|unique:day_weeks,DayNameDW',
     ];
 
     protected function getUpdateValidationRules($id): array
     {
         $rules = $this->validationRules;
-        $rules['dayNameDW'] = 'required|string|max:255|unique:day_weeks,dayNameDW,' . $id . ',matriculeDW';
+        $rules['DayNameDW'] = 'required|string|max:255|unique:day_weeks,DayNameDW,' . $id . ',MatriculeDW';
         return $rules;
     }
 

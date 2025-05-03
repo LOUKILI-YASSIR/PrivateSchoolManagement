@@ -11,7 +11,7 @@ export const getFormStepsSl = () => {
             Fields: [
                 generateField({
                     type: TEXT,
-                    label: "NameSl",
+                    label: "NameSL",
                     propsType: "text",
                     propsLabel: "Nom",
                     enablePlaceholder: true,
@@ -27,7 +27,7 @@ export const getFormStepsSl = () => {
                   }), 
                 generateField({
                     type: TEXT,
-                    label: "LocationSl",
+                    label: "LocationSL",
                     propsType: "text",
                     propsLabel: "Localisation",
                     enablePlaceholder: true,
@@ -43,7 +43,7 @@ export const getFormStepsSl = () => {
                   }), 
                 generateField({
                     type: TEXT,
-                    label: "typeSl",
+                    label: "TypeSL",
                     propsType: "text",
                     propsLabel: "Type",
                     enablePlaceholder: true,
@@ -59,7 +59,7 @@ export const getFormStepsSl = () => {
                   }), 
                 generateField({
                     type: TEXT,
-                    label: "CapacitySl",
+                    label: "CapacitySL",
                     propsType: "number",
                     propsLabel: "Capacity",
                     enablePlaceholder: true,
@@ -73,7 +73,7 @@ export const getFormStepsSl = () => {
                   }), 
                 generateField({
                     type: TEXT,
-                    label: "floorSl",
+                    label: "FloorSL",
                     propsType: "text",
                     propsLabel: "Floor",
                     enablePlaceholder: true,
@@ -90,7 +90,7 @@ export const getFormStepsSl = () => {
                   generateField({
                     type: TEXTAREA,
                     propsLabel: 'Ressources',
-                    label: "ressourcesSl",
+                    label: "RessourcesSL",
                     enablePlaceholder: true,
                     extraProps: { maxLength: 321, rows: 3 },
                     validation: commonValidations.combine(
@@ -102,7 +102,7 @@ export const getFormStepsSl = () => {
                   generateField({
                     type: TEXTAREA,
                     propsLabel: 'Observation',
-                    label: "observationSl",
+                    label: "ObservationSL",
                     enablePlaceholder: true,
                     extraProps: { maxLength: 321, rows: 3 },
                     validation: commonValidations.combine(

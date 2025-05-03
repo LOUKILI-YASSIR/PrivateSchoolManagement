@@ -12,16 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('school_events', function (Blueprint $table) {
-            $table->string('matriculeSe')->primary();
-            $table->string('nameSe');
-            $table->string('descriptionSe')->nullable();
-            $table->boolean('isFulldaySe')->default(false);
-            $table->string('locationSe')->nullable();
-            $table->date('dateSe');
-            $table->string('matriculeTs')->nullable();
+            $table->string('MatriculeSE')->primary();
+            $table->string('NameSE');
+            $table->string('DescriptionSE')->nullable();
+            $table->boolean('IsFulldaySE')->default(false);
+            $table->string('LocationSE')->nullable();
+            $table->date('DateSE');
+            $table->string('MatriculeTS')->nullable();
             $table->timestamps();
 
-            $table->foreign('matriculeTs')->references('matriculeTs')->on('time_slots')->onDelete('cascade');
+            $table->foreign('MatriculeTS')->references('MatriculeTS')->on('time_slots')->onDelete('cascade');
         });
     }
 
@@ -33,9 +33,9 @@ return new class extends Migration
         Schema::table('school_events', function (Blueprint $table) {
             $foreignKeys = collect(Schema::getConnection()->getDoctrineSchemaManager()->listTableForeignKeys('school_events'));
             if ($foreignKeys->contains(function ($fk) {
-                return $fk->getColumns() === ['matriculeTs'] && $fk->getForeignTableName() === 'time_slots';
+                return $fk->getColumns() === ['MatriculeTS'] && $fk->getForeignTableName() === 'time_slots';
             })) {
-                $table->dropForeign(['matriculeTs']);
+                $table->dropForeign(['MatriculeTS']);
             }
         });
         Schema::dropIfExists('school_events');

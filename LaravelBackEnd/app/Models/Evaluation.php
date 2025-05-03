@@ -10,7 +10,7 @@ class Evaluation extends Model
 {
     use HasFactory, GeneratesMatricule;
 
-    protected $primaryKey = 'matriculeEv';
+    protected $primaryKey = 'MatriculeEV';
     public $incrementing = false;
     protected $keyType = 'string';
 
@@ -22,31 +22,31 @@ class Evaluation extends Model
     protected $table = 'evaluations';
 
     protected $fillable = [
-        'matriculeEv',
-        'matriculeMt',
-        'matriculeEp',
-        'nbrEv',
+        'MatriculeEV',
+        'MatriculeMT',
+        'MatriculeEP',
+        'NbrEV',
     ];
 
     protected $casts = [
-        'nbrEv' => 'integer',
+        'NbrEV' => 'integer',
     ];
 
     // Relationships
 
     public function matiere()
     {
-        return $this->belongsTo(Matiere::class, 'matriculeMt', 'matriculeMt');
+        return $this->belongsTo(Matiere::class, 'MatriculeMT', 'MatriculeMT');
     }
 
     public function evaluationType()
     {
-        return $this->belongsTo(EvaluationType::class, 'matriculeEp', 'matriculeEp');
+        return $this->belongsTo(EvaluationType::class, 'MatriculeEP', 'MatriculeEP');
     }
 
     public function evaluationResults()
     {
-        return $this->hasMany(EvaluationResult::class, 'matriculeEv', 'matriculeEv');
+        return $this->hasMany(EvaluationResult::class, 'MatriculeEV', 'MatriculeEV');
     }
 
     // Required method for GeneratesMatricule trait

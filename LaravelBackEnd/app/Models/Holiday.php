@@ -10,7 +10,7 @@ class Holiday extends Model
 {
     use HasFactory, GeneratesMatricule;
 
-    protected $primaryKey = 'matriculeHd';
+    protected $primaryKey = 'MatriculeHD';
     public $incrementing = false;
     protected $keyType = 'string';
 
@@ -22,24 +22,24 @@ class Holiday extends Model
     protected $table = 'holidays';
 
     protected $fillable = [
-        'matriculeHd',
-        'startdateHd',
-        'endDateHd',
-        'nameHd',
-        'descriptionHd',
-        'matriculeYR',
+        'MatriculeHD',
+        'StartDateHD',
+        'EndDateHD',
+        'NameHD',
+        'DescriptionHD',
+        'MatriculeYR',
     ];
 
     protected $casts = [
-        'startdateHd' => 'date',
-        'endDateHd' => 'date',
+        'StartDateHD' => 'date',
+        'EndDateHD' => 'date',
     ];
 
     // Relationships
 
     public function academicYear()
     {
-        return $this->belongsTo(AcademicYear::class, 'matriculeYR', 'matriculeYR');
+        return $this->belongsTo(AcademicYear::class, 'MatriculeYR', 'MatriculeYR');
     }
 
     // Required method for GeneratesMatricule trait

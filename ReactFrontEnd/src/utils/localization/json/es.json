@@ -31,19 +31,20 @@
     "rememberMeTooltip": "Cuando está activado, tus credenciales de inicio de sesión se guardarán de forma segura. Permanecerás conectado en este dispositivo incluso después de reiniciar el navegador.",
     "loggingIn": "Iniciando sesión...",
     "error": {
-      "invalidCredentials": "Nombre de usuario o contraseña inválidos",
-      "serverError": "Error del servidor. Por favor, inténtalo más tarde",
-      "usernameRequired": "El nombre de usuario es obligatorio",
-      "emailRequired": "El correo electrónico es obligatorio",
-      "phoneRequired": "El número de teléfono es obligatorio",
-      "passwordRequired": "La contraseña es obligatoria",
-      "invalidEmail": "Por favor, introduzca una dirección de correo electrónico válida",
-      "invalidPhone": "Por favor, introduzca un número de teléfono válido",
-      "tooManyAttempts": "Demasiados intentos de inicio de sesión. Por favor, inténtalo más tarde",
-      "userNotFound": "Usuario no encontrado",
-      "invalidPassword": "Contraseña inválida",
-      "noToken": "Inicio de sesión exitoso pero no se recibió ningún token",
-      "general": "Ocurrió un error durante el inicio de sesión. Por favor, inténtalo más tarde"
+      "usernameRequired": "Se requiere nombre de usuario",
+      "emailRequired": "Se requiere correo electrónico",
+      "phoneRequired": "Se requiere número de teléfono",
+      "passwordRequired": "Se requiere contraseña",
+      "invalidUserName": "Nombre de usuario no válido.",
+      "invalidEmail": "Correo electrónico inválido",
+      "invalidPhone": "Número de teléfono inválido",
+      "invalidUsernamePassword": "Nombre de usuario o contraseña inválidos",
+      "invalidEmailPassword": "Correo electrónico o contraseña inválidos",
+      "invalidPhonePassword": "Número de teléfono o contraseña inválidos",
+      "invalidCredentials": "Credenciales inválidas",
+      "invalidInput": "Entrada inválida",
+      "tooManyAttempts": "Demasiados intentos de inicio de sesión. Inténtalo de nuevo más tarde.",
+      "general": "Ocurrió un error. Inténtalo de nuevo."
     }
   },
   "dashboard": {
@@ -213,5 +214,21 @@
       "phoneExists": "Este número de teléfono ya existe. Por favor, utilice otro número.",
       "registrationFailed": "Error en el registro. Por favor, inténtelo de nuevo."
     }
+  },
+  "resetPassword": {
+    "error": {
+      "general": "Se produjo un error al restablecer su contraseña. Por favor, inténtelo de nuevo."
+    },
+    "success": {
+      "linkSent": "Se ha enviado un enlace de restablecimiento a su dirección de correo electrónico."
+    },
+    "loading": "Cargando…",
+    "requestTitle": "Restablecer contraseña",
+    "validationCode": "Código de validación",
+    "requestSubtitle": "Introduzca su dirección de correo electrónico, nombre de usuario o número de teléfono para recibir un enlace de restablecimiento.",
+    "returnToLogin": "Volver al inicio de sesión",
+    "sending": "Enviando…",
+    "sendLink": "Enviar enlace de restablecimiento"
   }
+
 }

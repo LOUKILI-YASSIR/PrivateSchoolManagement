@@ -10,7 +10,7 @@ class RegularTimeTable extends Model
 {
     use HasFactory, GeneratesMatricule;
 
-    protected $primaryKey = 'matriculeRt';
+    protected $primaryKey = 'MatriculeRT';
     public $incrementing = false;
     protected $keyType = 'string';
 
@@ -22,13 +22,13 @@ class RegularTimeTable extends Model
     protected $table = 'regular_time_tables';
 
     protected $fillable = [
-        'matriculeRt',
-        'matriculeDW',
-        'matriculeTs',
-        'matriculeGp',
-        'matriculeMt',
-        'matriculePr',
-        'matriculeSl',
+        'MatriculeRT',
+        'MatriculeDW',
+        'MatriculeTS',
+        'MatriculeGP',
+        'MatriculeMT',
+        'MatriculePR',
+        'MatriculeSL',
     ];
 
     // No casts needed for this model
@@ -37,32 +37,32 @@ class RegularTimeTable extends Model
 
     public function dayWeek()
     {
-        return $this->belongsTo(DayWeek::class, 'matriculeDW', 'matriculeDW');
+        return $this->belongsTo(DayWeek::class, 'MatriculeDW', 'MatriculeDW');
     }
 
     public function timeSlot()
     {
-        return $this->belongsTo(TimeSlot::class, 'matriculeTs', 'matriculeTs');
+        return $this->belongsTo(TimeSlot::class, 'MatriculeTS', 'MatriculeTS');
     }
 
     public function group()
     {
-        return $this->belongsTo(Group::class, 'matriculeGp', 'matriculeGp');
+        return $this->belongsTo(Group::class, 'MatriculeGP', 'MatriculeGP');
     }
 
     public function matiere()
     {
-        return $this->belongsTo(Matiere::class, 'matriculeMt', 'matriculeMt');
+        return $this->belongsTo(Matiere::class, 'MatriculeMT', 'MatriculeMT');
     }
 
     public function professeur()
     {
-        return $this->belongsTo(Professeur::class, 'matriculePr', 'matriculePr');
+        return $this->belongsTo(Professeur::class, 'MatriculePR', 'MatriculePR');
     }
 
     public function salle()
     {
-        return $this->belongsTo(Salle::class, 'matriculeSl', 'matriculeSl');
+        return $this->belongsTo(Salle::class, 'MatriculeSL', 'MatriculeSL');
     }
     // Required method for GeneratesMatricule trait
     protected static function getMatriculePrefix()

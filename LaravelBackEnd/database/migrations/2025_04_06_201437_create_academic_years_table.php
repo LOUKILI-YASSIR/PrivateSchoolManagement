@@ -12,18 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('academic_years', function (Blueprint $table) {
-            $table->string('matriculeYR')->primary();
-            $table->string('statusYR');
+            $table->string('MatriculeYR')->primary();
+            $table->string('StatusYR');
             $table->string('NameYR');
-            $table->string('descriptionYR')->nullable();
-            $table->date('startDateYR');
-            $table->date('endDateYR');
+            $table->string('DescriptionYR')->nullable();
+            $table->date('StartDateYR');
+            $table->date('EndDateYR');
             $table->date('ArchivedDateYR')->nullable();
-            $table->boolean('isCurrentYR')->default(false);
-            $table->string('matriculeUt'); // FK to users
+            $table->boolean('IsCurrentYR')->default(false);
+            $table->string('MatriculeUT'); // FK to users
             $table->timestamps();
 
-            $table->foreign('matriculeUt')->references('matriculeUt')->on('users')->onDelete('cascade');
+            $table->foreign('MatriculeUT')->references('MatriculeUT')->on('users')->onDelete('cascade');
         });
     }
 

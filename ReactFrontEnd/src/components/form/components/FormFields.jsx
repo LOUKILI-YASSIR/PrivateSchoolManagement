@@ -13,7 +13,7 @@ export default function FormFields({ steps }) {
     cityOptions,
     setCityOptions,
   } = useFormContext();
-  const currentCountry = watch('paysPl');
+  const currentCountry = watch('PaysPL');
   useEffect(() => {
     if (currentCountry) {
       (async () => {
@@ -36,11 +36,11 @@ export default function FormFields({ steps }) {
   
     console.log('handleChange:', { label, value }); // Debug
   
-    if (label === 'paysPl') {
+    if (label === 'PaysPL') {
       const options = await generateCityOptions(value);
       setCityOptions(options);
       if (options && options.length > 0) {
-        setValue('villePl', options[0].value, { shouldValidate: true });
+        setValue('VillePL', options[0].value, { shouldValidate: true });
       }
     }
     setValue(label, value, { shouldValidate: true });
@@ -61,7 +61,7 @@ export default function FormFields({ steps }) {
                   props: {
                     ...field.props,
                     options:
-                      field.label === 'villePl'
+                      field.label === 'VillePL'
                         ? cityOptions
                         : field.props.options,
                     onError: ()=>console.log("image error"), // Add error handler for images

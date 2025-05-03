@@ -24,14 +24,14 @@ class EtudiantSeeder extends Seeder
 
         // Create 50 Etudiants and assign them randomly to existing groups
         Etudiant::factory(50)->make()->each(function ($etudiant) use ($groups) {
-            $etudiant->matriculeGp = $groups->random()->matriculeGp;
+            $etudiant->MatriculeGP = $groups->random()->MatriculeGP;
             $etudiant->save(); // Save after associating group and letting factory create user
         });
 
         // Alternative: Create a specific number of students per group
         /*
         foreach ($groups as $group) {
-            Etudiant::factory(10)->forGroup($group->matriculeGp)->create();
+            Etudiant::factory(10)->forGroup($group->MatriculeGP)->create();
         }
         */
     }

@@ -2,13 +2,13 @@
 export const groupColumns = (Traduction, FilterModeOptions) => [
   {
     header: Traduction("Data.matricule"),
-    accessorKey: "matriculeGp",
+    accessorKey: "MatriculeGP",
     filterFn: "equals",
     columnFilterModeOptions: [...FilterModeOptions["equality"]],
   },
   {
     header: Traduction("Data.name"),
-    accessorKey: "NameGp",
+    accessorKey: "NameGP",
     filterFn: "fuzzy",
     columnFilterModeOptions: [
       ...FilterModeOptions["text"],
@@ -17,7 +17,7 @@ export const groupColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.description"),
-    accessorKey: "descriptionGp",
+    accessorKey: "DescriptionGp",
     filterFn: "fuzzy",
     columnFilterModeOptions: [
       ...FilterModeOptions["text"],
@@ -26,7 +26,7 @@ export const groupColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.status"),
-    accessorKey: "statusGp",
+    accessorKey: "StatusGP",
     filterFn: "equals",
     filterVariant: "select",
     filterSelectOptions: ["active", "inactive"],
@@ -34,7 +34,7 @@ export const groupColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.niveau"),
-    accessorKey: "niveau.NomNv",
+    accessorKey: "niveau.NomNV",
     filterFn: "fuzzy",
     columnFilterModeOptions: [
       ...FilterModeOptions["text"],

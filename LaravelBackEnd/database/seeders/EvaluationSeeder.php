@@ -28,12 +28,12 @@ class EvaluationSeeder extends Seeder
             $typesToUse = $evaluationTypes->random(rand(1, min(3, $evaluationTypes->count())));
             foreach ($typesToUse as $type) {
                 Evaluation::factory()
-                    ->forMatiere($matiere->matriculeMt)
-                    ->forEvaluationType($type->matriculeEp)
+                    ->forMatiere($matiere->MatriculeMT)
+                    ->forEvaluationType($type->MatriculeEP)
                     ->create([
                         // Assign a sequence number if multiple evaluations of the same type exist for a matiere
-                        // This simple version doesn't track that, assumes nbrEv is just informational
-                        'nbrEv' => rand(1, 3)
+                        // This simple version doesn't track that, assumes NbrEV is just informational
+                        'NbrEV' => rand(1, 3)
                     ]);
             }
         }

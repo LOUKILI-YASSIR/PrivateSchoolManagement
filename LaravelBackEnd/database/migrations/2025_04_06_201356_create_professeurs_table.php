@@ -13,19 +13,19 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('professeurs', function (Blueprint $table) {
-            $table->string('matriculePr')->primary();
-            $table->string('CINPr')->unique();
-            $table->string('civilitePr')->nullable();
-            $table->string('Phone1Pr')->nullable();
-            $table->string('Phone2Pr')->nullable();
-            $table->date('DateEmbauchePr')->nullable();
-            $table->float('SalairePr')->nullable();
-            $table->string('NomBanquePr')->nullable();
-            $table->string('RIBPr')->nullable();
-            $table->string('matriculeUt');
+            $table->string('MatriculePR')->primary();
+            $table->string('CINPR')->unique();
+            $table->string('CivilitePR')->nullable();
+            $table->string('Phone1PR')->nullable();
+            $table->string('Phone2PR')->nullable();
+            $table->date('DateEmbauchePR')->nullable();
+            $table->float('SalairePR')->nullable();
+            $table->string('NomBanquePR')->nullable();
+            $table->string('RIBPR')->nullable();
+            $table->string('MatriculeUT');
             $table->timestamps();
 
-            $table->foreign('matriculeUt')->references('matriculeUt')->on('users')->onDelete('cascade');
+            $table->foreign('MatriculeUT')->references('MatriculeUT')->on('users')->onDelete('cascade');
         });
     }
 

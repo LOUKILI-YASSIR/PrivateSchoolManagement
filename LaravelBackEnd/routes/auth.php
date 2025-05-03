@@ -16,9 +16,12 @@ use App\Http\Controllers\Api\AuthController;
 // Public authentication routes (Prefix with /auth if desired, e.g., /auth/login)
 Route::post('/register', [AuthController::class, 'register'])->name('api.register');
 Route::post('/login', [AuthController::class, 'login'])->name('api.login');
-Route::post('/forgot-password', [AuthController::class, 'sendPasswordResetLink'])->name('api.password.email');
+Route::post('/forgot-password-code-verivication', [AuthController::class, 'sendPasswordResetLink'])->name('api.password.email');
 Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('api.password.update');
-
+Route::post('/check-user', [AuthController::class, 'checkUserByIdentifier']);
+Route::post('/send-sms-code', [AuthController::class, 'sendCodeViaSms']);
+Route::post('/send-email-code', [AuthController::class, 'sendCodeViaEmail']);
+Route::post('/verify-code', [AuthController::class, 'verifyCode']);
 // Protected authentication routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('api.logout');

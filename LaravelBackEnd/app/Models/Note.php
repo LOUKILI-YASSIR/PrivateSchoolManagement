@@ -10,7 +10,7 @@ class Note extends Model
 {
     use HasFactory, GeneratesMatricule;
 
-    protected $primaryKey = 'matriculeNt';
+    protected $primaryKey = 'MatriculeNT';
     public $incrementing = false;
     protected $keyType = 'string';
 
@@ -22,27 +22,27 @@ class Note extends Model
     protected $table = 'notes';
 
     protected $fillable = [
-        'matriculeNt',
-        'matriculeEt',
-        'matriculeMt',
-        'gradeNt',
-        'commentaireNt',
+        'MatriculeNT',
+        'MatriculeET',
+        'MatriculeMT',
+        'GradeNT',
+        'CommentaireNT',
     ];
 
     protected $casts = [
-        'gradeNt' => 'float',
+        'GradeNT' => 'float',
     ];
 
     // Relationships
 
     public function etudiant()
     {
-        return $this->belongsTo(Etudiant::class, 'matriculeEt', 'matriculeEt');
+        return $this->belongsTo(Etudiant::class, 'MatriculeET', 'MatriculeET');
     }
 
     public function matiere()
     {
-        return $this->belongsTo(Matiere::class, 'matriculeMt', 'matriculeMt');
+        return $this->belongsTo(Matiere::class, 'MatriculeMT', 'MatriculeMT');
     }
 
     // Required method for GeneratesMatricule trait

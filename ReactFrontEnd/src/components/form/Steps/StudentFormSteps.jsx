@@ -57,7 +57,7 @@ export const getFormStepsEt = () => {
                 // Genre field
                 generateField({
                   type: SELECT,
-                  label: 'genrePl',
+                  label: 'GenrePL',
                   propsLabel: "Genre",
                   options: [
                     { value: 'Homme', label: 'Homme' },
@@ -73,12 +73,12 @@ export const getFormStepsEt = () => {
                 generateField({
                   type: IMAGE,
                   propsLabel: "Profile Picture",
-                  label : "profileFileNamePl",
+                  label : "ProfileFileNamePL",
                   validation: commonValidations.required('Profile picture is required')
                 }), 
                 generateField({
                     type: TEXT,
-                    label: "NomPl",
+                    label: "NomPL",
                     propsType: "text",
                     propsLabel: "Nom",
                     enablePlaceholder: true,
@@ -94,7 +94,7 @@ export const getFormStepsEt = () => {
                   }), 
                 generateField({
                     type: TEXT,
-                    label: "PrenomPl",
+                    label: "PrenomPL",
                     propsType: "text",
                     propsLabel: "Prenom",
                     enablePlaceholder: true,
@@ -110,7 +110,7 @@ export const getFormStepsEt = () => {
                   }), 
                 generateField({
                     type: TEXT,
-                    label: "lieuNaissancePl",
+                    label: "LieuNaissancePL",
                     propsType: "text",
                     propsLabel: "Lieu de Naissance",
                     enablePlaceholder: true,
@@ -128,7 +128,7 @@ export const getFormStepsEt = () => {
                   generateField({
                     type: DATE,
                     propsLabel: 'Date de Naissance',
-                    label: "dateNaissancePl",
+                    label: "DateNaissancePL",
                     enableShrink: true,
                     validation: commonValidations.combine(
                       commonValidations.required('Date de Naissance'),
@@ -154,7 +154,7 @@ export const getFormStepsEt = () => {
                   generateField({
                     type: SELECT,
                     propsLabel: "Nationalité",
-                    label: "nationalitePl",
+                    label: "NationalitePL",
                     options: generateCountryOptions(),
                     validation: commonValidations.combine(
                       commonValidations.required("Nationalité"),
@@ -168,7 +168,7 @@ export const getFormStepsEt = () => {
                   generateField({
                     type: SELECT,
                     propsLabel: "Pays",
-                    label: "paysPl",
+                    label: "PaysPL",
                     options: generateCountryOptions(),
                     validation: commonValidations.combine(
                       commonValidations.required("Pays"),
@@ -182,20 +182,20 @@ export const getFormStepsEt = () => {
                   generateField({
                     type: SELECT,
                     propsLabel: 'Ville',
-                    label: "villePl",
+                    label: "VillePL",
                     validation: commonValidations.required('Ville')
                   }),
                   generateField({
                     type: TEXT,
                     propsType: "text",
-                    label: "codePostalPl",
+                    label: "CodePostalPL",
                     propsLabel: "Code Postal",
                     enablePlaceholder: true,
                     validation: commonValidations.combine(
                         commonValidations.required("Code Postal"),
                         {
                             validate: (value, context) => {
-                              const countryCode = context?.paysPl || "";
+                              const countryCode = context?.PaysPL || "";
                               const validator = postalCodeValidators[countryCode.toUpperCase()];
                               if (!validator) {
                                 return "This country does not have any postal code validation";
@@ -209,7 +209,7 @@ export const getFormStepsEt = () => {
                   generateField({
                     type: EMAIL,
                     propsLabel: 'Email',
-                    label: "emailEt",
+                    label: "EmailET",
                     enablePlaceholder: true,
                     validation: commonValidations.combine(
                       commonValidations.required('Email'),
@@ -223,7 +223,7 @@ export const getFormStepsEt = () => {
                   generateField({
                     type: PHONE,
                     propsLabel: `Téléphone`,
-                    label: "phoneEt",
+                    label: "PhoneET",
                     validation: commonValidations.combine(
                       { 
                         validate: (value, context) => 
@@ -235,7 +235,7 @@ export const getFormStepsEt = () => {
                   generateField({
                     type: TEXTAREA,
                     propsLabel: 'Adresse',
-                    label: "adressPl",
+                    label: "AdressPL",
                     enablePlaceholder: true,
                     extraProps: { maxLength: 321, rows: 3 },
                     validation: commonValidations.combine(
@@ -247,7 +247,7 @@ export const getFormStepsEt = () => {
                   generateField({
                     type: TEXTAREA,
                     propsLabel: 'Observation',
-                    label: "ObservationPl",
+                    label: "ObservationPL",
                     enablePlaceholder: true,
                     extraProps: { maxLength: 321, rows: 3 },
                     validation: commonValidations.combine(
@@ -265,7 +265,7 @@ export const getFormStepsEt = () => {
                 generateField({
                     type: SELECT,
                     propsLabel: "Lien de Parenté",
-                    label: "lienParenteTr",
+                    label: "LienParenteTR",
                     options: lienParenteOptions.map(value => ({
                         value,
                         label: value,
@@ -278,7 +278,7 @@ export const getFormStepsEt = () => {
                   generateField({
                     type: TEXT,
                     propsType: "text",
-                    label: "NomTr",
+                    label: "NomTR",
                     propsLabel: "Nom",
                     enablePlaceholder: true,
                     validation: commonValidations.combine(
@@ -294,7 +294,7 @@ export const getFormStepsEt = () => {
                 generateField({
                     type: TEXT,
                     propsType: "text",
-                    label: "PrenomTr",
+                    label: "PrenomTR",
                     propsLabel: "Prenom",
                     enablePlaceholder: true,
                     validation: commonValidations.combine(
@@ -311,7 +311,7 @@ export const getFormStepsEt = () => {
                     type: TEXT,
                     propsType: "text",
                     propsLabel: "Profession",
-                    label: "professionTr",
+                    label: "ProfessionTR",
                     value:"",
                     enablePlaceholder: true,
                     validation: { 
@@ -325,7 +325,7 @@ export const getFormStepsEt = () => {
                 generateField({
                     type: PHONE,
                     propsLabel: `Téléphone N°1`,
-                    label: "Phone1Tr",
+                    label: "Phone1TR",
                     validation: commonValidations.combine(
                       { 
                         validate: (value, context) => 
@@ -337,7 +337,7 @@ export const getFormStepsEt = () => {
                   generateField({
                     type: PHONE,
                     propsLabel: `Téléphone N°2`,
-                    label: "Phone2Tr",
+                    label: "Phone2TR",
                     validation: commonValidations.combine(
                       { 
                         validate: (value, context) => 
@@ -348,7 +348,7 @@ export const getFormStepsEt = () => {
                   generateField({
                     type: EMAIL,
                     propsLabel: 'Email',
-                    label: "EmailTr",
+                    label: "EmailTR",
                     enablePlaceholder: true,
                     validation: commonValidations.combine(
                       commonValidations.required('Email'),
@@ -362,7 +362,7 @@ export const getFormStepsEt = () => {
                   generateField({
                     type: TEXTAREA,
                     propsLabel: 'Observation',
-                    label: "ObservationTr",
+                    label: "ObservationTR",
                     enablePlaceholder: true,
                     extraProps: { maxLength: 321, rows: 3 },
                     validation: commonValidations.combine(
@@ -377,13 +377,13 @@ export const getFormStepsEt = () => {
             Fields: [
               generateField({
                 type: SELECT,
-                label: 'matriculeNv',
+                label: 'MatriculeNV',
                 propsLabel: "Niveaux",
                 options: (isLoading || error || !data || data?.data?.length === 0
                   ? [] // Fallback to empty array if data is not ready
                   : data?.data.map((niveau) => ({
-                      value: niveau.matriculeNv,
-                      label: niveau.NomNv+(niveau.parent?.NomNv ? ` (${niveau.parent?.NomNv})` : ""),
+                      value: niveau.MatriculeNV,
+                      label: niveau.NomNV+(niveau.parent?.NomNV ? ` (${niveau.parent?.NomNV})` : ""),
                   }))),
                 validation: commonValidations.required("Niveaux")
               }),

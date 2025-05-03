@@ -5,6 +5,11 @@ import DashBoard from "../pages/DashBoard";
 import ErrorPage from "../components/errors/Errors";
 import Login from "../components/Auth/Login";
 import { Navigate } from "react-router-dom";
+import ResetPasswordRequest from "../components/Auth/ResetPasswordRequest";
+import ResetPassword from "../components/Auth/ResetPassword";
+import SelectResetPasswordType from "../components/Auth/SelectResetPasswordType";
+import EmailSmsResetPassword from "../components/Auth/EmailSmsResetPassword";
+import CheckUserResetPassword from "../components/Auth/CheckUserResetPassword";
 
 const routes = [
   {
@@ -64,6 +69,30 @@ const routes = [
   {
     path: "/YLSchool/error",
     element: <ErrorPage />
+  },
+  {
+    path: "/YLSchool/reset-password-request",
+    element: <ResetPasswordRequest />
+  },
+  {
+    path: "/YLSchool/reset-password",
+    element: <ResetPassword />
+  },
+  {
+    path: "/YLSchool/select-reset-password",
+    element: <SelectResetPasswordType />
+  },
+  {
+    path: "/YLSchool/reset-password-request-sms",
+    element: <EmailSmsResetPassword type="sms" />
+  },
+  {
+    path: "/YLSchool/reset-password-request-email",
+    element: <EmailSmsResetPassword type="email" />
+  },
+  {
+    path: "/YLSchool/check-user-reset-password",
+    element: <CheckUserResetPassword />
   },
   {
     path: "/",

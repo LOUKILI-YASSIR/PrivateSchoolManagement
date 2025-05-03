@@ -10,7 +10,7 @@ class SpecialDaySchedule extends Model
 {
     use HasFactory, GeneratesMatricule;
 
-    protected $primaryKey = 'matriculeSS';
+    protected $primaryKey = 'MatriculeSS';
     public $incrementing = false;
     protected $keyType = 'string';
 
@@ -23,24 +23,24 @@ class SpecialDaySchedule extends Model
 
     // Added fillable
     protected $fillable = [
-        'matriculeSS',
-        'dateSS',
-        'isFulldaySS',
-        'matriculeTs',
-        'locationSS',
-        'activityNameSS',
+        'MatriculeSS',
+        'DateSS',
+        'IsFullDaySS',
+        'MatriculeTS',
+        'LocationSS',
+        'ActivityNameSS',
     ];
 
     // Added casts
     protected $casts = [
-        'dateSS' => 'date',
-        'isFulldaySS' => 'boolean',
+        'DateSS' => 'date',
+        'IsFullDaySS' => 'boolean',
     ];
 
     // Added relationships
     public function timeSlot()
     {
-        return $this->belongsTo(TimeSlot::class, 'matriculeTs', 'matriculeTs');
+        return $this->belongsTo(TimeSlot::class, 'MatriculeTS', 'MatriculeTS');
     }
 
     // Required method for GeneratesMatricule trait

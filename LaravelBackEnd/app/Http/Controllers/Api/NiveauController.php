@@ -14,12 +14,12 @@ class NiveauController extends Controller
     protected string $model = Niveau::class;
 
     protected array $validationRules = [
-        'codeNv' => 'required|string|max:255',
-        'NomNv' => 'required|string|max:255',
-        'parent_matriculeNv' => 'nullable|string|exists:niveaux,matriculeNv',
-        'typeNv' => 'required|string|max:255',
-        'descriptionNv' => 'nullable|string',
-        'statusNv' => 'nullable|string|max:255',
+        'CodeNV' => 'required|string|max:255',
+        'NomNV' => 'required|string|max:255',
+        'SubMatriculeNV' => 'nullable|string|exists:niveaux,MatriculeNV',
+        'TypeNV' => 'required|string|max:255',
+        'DescriptionNV' => 'nullable|string',
+        'StatusNV' => 'nullable|string|max:255',
     ];
 
     // Define resource name for messages

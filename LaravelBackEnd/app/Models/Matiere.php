@@ -10,7 +10,7 @@ class Matiere extends Model
 {
     use HasFactory, GeneratesMatricule;
 
-    protected $primaryKey = 'matriculeMt';
+    protected $primaryKey = 'MatriculeMT';
     public $incrementing = false;
     protected $keyType = 'string';
 
@@ -22,44 +22,44 @@ class Matiere extends Model
     protected $table = 'matieres';
 
     protected $fillable = [
-        'matriculeMt',
-        'nameMt',
-        'codeMt',
-        'descriptionMt',
-        'coefficientMt',
-        'matriculeNv',
-        'matriculePr',
+        'MatriculeMT',
+        'NameMT',
+        'CodeMT',
+        'DescriptionMT',
+        'CoefficientMT',
+        'MatriculeNV',
+        'MatriculePR',
     ];
 
     protected $casts = [
-        'coefficientMt' => 'float',
+        'CoefficientMT' => 'float',
     ];
 
     // Relationships
 
     public function niveau()
     {
-        return $this->belongsTo(Niveau::class, 'matriculeNv', 'matriculeNv');
+        return $this->belongsTo(Niveau::class, 'MatriculeNV', 'MatriculeNV');
     }
 
     public function professeur()
     {
-        return $this->belongsTo(Professeur::class, 'matriculePr', 'matriculePr');
+        return $this->belongsTo(Professeur::class, 'MatriculePR', 'MatriculePR');
     }
 
     public function evaluations()
     {
-        return $this->hasMany(Evaluation::class, 'matriculeMt', 'matriculeMt');
+        return $this->hasMany(Evaluation::class, 'MatriculeMT', 'MatriculeMT');
     }
 
     public function notes()
     {
-        return $this->hasMany(Note::class, 'matriculeMt', 'matriculeMt');
+        return $this->hasMany(Note::class, 'MatriculeMT', 'MatriculeMT');
     }
 
     public function regularTimeTables()
     {
-        return $this->hasMany(RegularTimeTable::class, 'matriculeMt', 'matriculeMt');
+        return $this->hasMany(RegularTimeTable::class, 'MatriculeMT', 'MatriculeMT');
     }
 
     // Required method for GeneratesMatricule trait

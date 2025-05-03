@@ -10,7 +10,7 @@ class AcademicYear extends Model
 {
     use HasFactory, GeneratesMatricule;
 
-    protected $primaryKey = 'matriculeYR';
+    protected $primaryKey = 'MatriculeYR';
     public $incrementing = false;
     protected $keyType = 'string';
 
@@ -22,39 +22,39 @@ class AcademicYear extends Model
     protected $table = 'academic_years';
 
     protected $fillable = [
-        'matriculeYR',
-        'statusYR',
+        'MatriculeYR',
+        'StatusYR',
         'NameYR',
-        'descriptionYR',
-        'startDateYR',
-        'endDateYR',
+        'DescriptionYR',
+        'StartDateYR',
+        'EndDateYR',
         'ArchivedDateYR',
-        'isCurrentYR',
-        'matriculeUt',
+        'IsCurrentYR',
+        'MatriculeUT',
     ];
 
     protected $casts = [
-        'startDateYR' => 'date',
-        'endDateYR' => 'date',
+        'StartDateYR' => 'date',
+        'EndDateYR' => 'date',
         'ArchivedDateYR' => 'date',
-        'isCurrentYR' => 'boolean',
+        'IsCurrentYR' => 'boolean',
     ];
 
     // Relationships
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'matriculeUt', 'matriculeUt');
+        return $this->belongsTo(User::class, 'MatriculeUT', 'MatriculeUT');
     }
 
     public function schoolCalendars()
     {
-        return $this->hasMany(SchoolCalendar::class, 'matriculeYR', 'matriculeYR');
+        return $this->hasMany(SchoolCalendar::class, 'MatriculeYR', 'MatriculeYR');
     }
 
     public function holidays()
     {
-        return $this->hasMany(Holiday::class, 'matriculeYR', 'matriculeYR');
+        return $this->hasMany(Holiday::class, 'MatriculeYR', 'MatriculeYR');
     }
 
     // Required method for GeneratesMatricule trait

@@ -25,15 +25,15 @@ class AcademicYearFactory extends Factory
         $endDate = $startDate->copy()->addYear()->subDay(); // End of Aug next year
 
         return [
-            // 'matriculeYR' handled by trait
-            'statusYR' => 'Planned',
+            // 'MatriculeYR' handled by trait
+            'StatusYR' => 'Planned',
             'NameYR' => $startYear . '-' . ($startYear + 1),
-            'descriptionYR' => $this->faker->optional()->sentence(),
-            'startDateYR' => $startDate->format('Y-m-d'),
-            'endDateYR' => $endDate->format('Y-m-d'),
+            'DescriptionYR' => $this->faker->optional()->sentence(),
+            'StartDateYR' => $startDate->format('Y-m-d'),
+            'EndDateYR' => $endDate->format('Y-m-d'),
             'ArchivedDateYR' => null,
-            'isCurrentYR' => false,
-            'matriculeUt' => User::factory()->admin(), // Default to creating an admin user
+            'IsCurrentYR' => false,
+            'MatriculeUT' => User::factory()->admin(), // Default to creating an admin user
         ];
     }
 
@@ -43,8 +43,8 @@ class AcademicYearFactory extends Factory
     public function current(): static
     {
         return $this->state(fn (array $attributes) => [
-            'isCurrentYR' => true,
-            'statusYR' => 'Active',
+            'IsCurrentYR' => true,
+            'StatusYR' => 'Active',
         ]);
     }
 
@@ -54,7 +54,7 @@ class AcademicYearFactory extends Factory
     public function createdBy(string $userMatricule): static
     {
         return $this->state(fn (array $attributes) => [
-            'matriculeUt' => $userMatricule,
+            'MatriculeUT' => $userMatricule,
         ]);
     }
 }

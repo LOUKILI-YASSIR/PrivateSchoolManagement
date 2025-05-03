@@ -14,14 +14,14 @@ class AcademicYearController extends Controller
     protected string $model = AcademicYear::class;
 
     protected array $validationRules = [
-        'statusYR' => 'required|string|max:255',
+        'StatusYR' => 'required|string|max:255',
         'NameYR' => 'required|string|max:255',
-        'descriptionYR' => 'nullable|string',
-        'startDateYR' => 'required|date',
-        'endDateYR' => 'required|date|after_or_equal:startDateYR',
+        'DescriptionYR' => 'nullable|string',
+        'StartDateYR' => 'required|date',
+        'EndDateYR' => 'required|date|after_or_equal:StartDateYR',
         'ArchivedDateYR' => 'nullable|date',
-        'isCurrentYR' => 'sometimes|boolean',
-        'matriculeUt' => 'required|string|exists:users,matriculeUt',
+        'IsCurrentYR' => 'sometimes|boolean',
+        'MatriculeUT' => 'required|string|exists:users,MatriculeUT',
     ];
 
     // Define resource name for messages

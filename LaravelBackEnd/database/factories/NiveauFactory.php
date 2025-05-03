@@ -19,13 +19,13 @@ class NiveauFactory extends Factory
     public function definition(): array
     {
         return [
-            // 'matriculeNv' is handled by the GeneratesMatricule trait
-            'codeNv' => $this->faker->bothify('NIV-??##'),
-            'NomNv' => $this->faker->word() . ' ' . $this->faker->randomDigitNotNull(),
-            'parent_matriculeNv' => null, // Default to null, set in seeder if needed
-            'typeNv' => $this->faker->randomElement(['Primary', 'Secondary', 'Higher Education', 'Department']),
-            'descriptionNv' => $this->faker->optional()->sentence(),
-            'statusNv' => $this->faker->randomElement(['Active', 'Inactive', 'Planned']),
+            // 'MatriculeNV' is handled by the GeneratesMatricule trait
+            'CodeNV' => $this->faker->bothify('NIV-??##'),
+            'NomNV' => $this->faker->word() . ' ' . $this->faker->randomDigitNotNull(),
+            'SubMatriculeNV' => null, // Default to null, set in seeder if needed
+            'TypeNV' => $this->faker->randomElement(['Primary', 'Secondary', 'Higher Education', 'Department']),
+            'DescriptionNV' => $this->faker->optional()->sentence(),
+            'StatusNV' => $this->faker->randomElement(['Active', 'Inactive', 'Planned']),
         ];
     }
 
@@ -38,7 +38,7 @@ class NiveauFactory extends Factory
     public function childOf(string $parentMatricule): static
     {
         return $this->state(fn (array $attributes) => [
-            'parent_matriculeNv' => $parentMatricule,
+            'SubMatriculeNV' => $parentMatricule,
         ]);
     }
 }

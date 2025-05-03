@@ -1,8 +1,8 @@
 export const NIVEAU = {
-    codeNv: 'Abc',
-    NomNv: 'Niveau primary',
-    parent_matriculeNv: '',
-    typeNv: 'Niveau',
-    descriptionNv: 'this Niveaux for ......',
+    CodeNV: 'Abc',
+    NomNV: 'Niveau primary',
+    SubMatriculeNV: '',
+    TypeNV: 'Niveau',
+    DescriptionNV: 'this Niveaux for ......',
 };
 

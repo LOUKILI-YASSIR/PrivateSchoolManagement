@@ -12,14 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('groups', function (Blueprint $table) {
-            $table->string('matriculeGp')->primary();
-            $table->string('NameGp');
-            $table->string('descriptionGp')->nullable();
-            $table->string('statusGp')->nullable();
-            $table->string('matriculeNv');
+            $table->string('MatriculeGP')->primary();
+            $table->string('NameGP');
+            $table->string('DescriptionGP')->nullable();
+            $table->string('StatusGP')->nullable();
+            $table->string('MatriculeNV');
             $table->timestamps();
 
-            $table->foreign('matriculeNv')->references('matriculeNv')->on('niveaux')->onDelete('cascade');
+            $table->foreign('MatriculeNV')->references('MatriculeNV')->on('niveaux')->onDelete('cascade');
         });
     }
 

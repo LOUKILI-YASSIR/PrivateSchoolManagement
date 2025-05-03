@@ -21,10 +21,10 @@ class EvaluationFactory extends Factory
     public function definition(): array
     {
         return [
-            // 'matriculeEv' handled by trait
-            'matriculeMt' => Matiere::factory(),
-            'matriculeEp' => EvaluationType::factory(),
-            'nbrEv' => $this->faker->numberBetween(1, 5), // e.g., Evaluation #1, #2 etc.
+            // 'MatriculeEV' handled by trait
+            'MatriculeMT' => Matiere::factory(),
+            'MatriculeEP' => EvaluationType::factory(),
+            'NbrEV' => $this->faker->numberBetween(1, 5), // e.g., Evaluation #1, #2 etc.
         ];
     }
 
@@ -34,7 +34,7 @@ class EvaluationFactory extends Factory
     public function forMatiere(string $matiereMatricule): static
     {
         return $this->state(fn (array $attributes) => [
-            'matriculeMt' => $matiereMatricule,
+            'MatriculeMT' => $matiereMatricule,
         ]);
     }
 
@@ -44,7 +44,7 @@ class EvaluationFactory extends Factory
     public function forEvaluationType(string $typeMatricule): static
     {
         return $this->state(fn (array $attributes) => [
-            'matriculeEp' => $typeMatricule,
+            'MatriculeEP' => $typeMatricule,
         ]);
     }
 }

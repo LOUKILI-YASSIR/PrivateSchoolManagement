@@ -439,3 +439,7 @@ input.error {
   color: inherit !important;
   text-shadow: none !important;
 }
+
+.login-link:hover{
+  text-decoration: 'underline'
+}

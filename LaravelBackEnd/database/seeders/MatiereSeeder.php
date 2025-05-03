@@ -27,8 +27,8 @@ class MatiereSeeder extends Seeder
         foreach ($niveaux as $niveau) {
             for ($i = 0; $i < 3; $i++) {
                 Matiere::factory()
-                    ->forNiveau($niveau->matriculeNv)
-                    ->forProfesseur($professeurs->random()->matriculePr)
+                    ->forNiveau($niveau->MatriculeNV)
+                    ->forProfesseur($professeurs->random()->MatriculePR)
                     ->create();
             }
         }

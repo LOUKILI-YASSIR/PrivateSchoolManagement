@@ -42,10 +42,10 @@ class EvaluationResultSeeder extends Seeder
 
             foreach ($relevantEtudiants as $etudiant) {
                 // Avoid creating duplicate results for the same student/evaluation pair
-                if (!EvaluationResult::where('matriculeEt', $etudiant->matriculeEt)->where('matriculeEv', $evaluation->matriculeEv)->exists()) {
+                if (!EvaluationResult::where('MatriculeET', $etudiant->MatriculeET)->where('MatriculeEV', $evaluation->MatriculeEV)->exists()) {
                     EvaluationResult::factory()
-                        ->forEtudiant($etudiant->matriculeEt)
-                        ->forEvaluation($evaluation->matriculeEv)
+                        ->forEtudiant($etudiant->MatriculeET)
+                        ->forEvaluation($evaluation->MatriculeEV)
                         ->create();
                 }
             }

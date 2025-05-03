@@ -10,7 +10,7 @@ class DayWeek extends Model
 {
     use HasFactory, GeneratesMatricule;
 
-    protected $primaryKey = 'matriculeDW';
+    protected $primaryKey = 'MatriculeDW';
     public $incrementing = false;
     protected $keyType = 'string';
 
@@ -22,8 +22,8 @@ class DayWeek extends Model
     protected $table = 'day_weeks';
 
     protected $fillable = [
-        'matriculeDW',
-        'dayNameDW',
+        'MatriculeDW',
+        'DayNameDW',
     ];
 
     // No casts needed for this model
@@ -32,7 +32,7 @@ class DayWeek extends Model
 
     public function regularTimeTables()
     {
-        return $this->hasMany(RegularTimeTable::class, 'matriculeDW', 'matriculeDW');
+        return $this->hasMany(RegularTimeTable::class, 'MatriculeDW', 'MatriculeDW');
     }
 
     // Required method for GeneratesMatricule trait

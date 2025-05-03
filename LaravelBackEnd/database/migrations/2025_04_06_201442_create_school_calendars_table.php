@@ -12,13 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('school_calendars', function (Blueprint $table) {
-            $table->string('matriculeSc')->primary();
-            $table->date('calendarDateSc');
-            $table->string('dayTypeSc');
-            $table->string('matriculeYR');
+            $table->string('MatriculeSC')->primary();
+            $table->date('CalendarDateSC');
+            $table->string('DayTypeSC');
+            $table->string('MatriculeYR');
             $table->timestamps();
 
-            $table->foreign('matriculeYR')->references('matriculeYR')->on('academic_years')->onDelete('cascade');
+            $table->foreign('MatriculeYR')->references('MatriculeYR')->on('academic_years')->onDelete('cascade');
         });
     }
 

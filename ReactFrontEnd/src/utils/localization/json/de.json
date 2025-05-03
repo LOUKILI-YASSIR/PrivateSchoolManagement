@@ -31,19 +31,20 @@
     "rememberMeTooltip": "Wenn aktiviert, werden Ihre Anmeldedaten sicher gespeichert. Sie bleiben auf diesem Gerät angemeldet, auch nach dem Neustart des Browsers.",
     "loggingIn": "Anmeldung läuft...",
     "error": {
-      "invalidCredentials": "Ungültiger Benutzername oder Passwort",
-      "serverError": "Serverfehler. Bitte versuchen Sie es später erneut",
       "usernameRequired": "Benutzername ist erforderlich",
       "emailRequired": "E-Mail ist erforderlich",
       "phoneRequired": "Telefonnummer ist erforderlich",
       "passwordRequired": "Passwort ist erforderlich",
-      "invalidEmail": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
-      "invalidPhone": "Bitte geben Sie eine gültige Telefonnummer ein",
-      "tooManyAttempts": "Zu viele Anmeldeversuche. Bitte versuchen Sie es später erneut",
-      "userNotFound": "Benutzer nicht gefunden",
-      "invalidPassword": "Ungültiges Passwort",
-      "noToken": "Anmeldung erfolgreich, aber kein Token erhalten",
-      "general": "Bei der Anmeldung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
+      "invalidUserName": "Ungültiger Benutzername.",
+      "invalidEmail": "Ungültige E-Mail",
+      "invalidPhone": "Ungültige Telefonnummer",
+      "invalidUsernamePassword": "Ungültiger Benutzername oder Passwort",
+      "invalidEmailPassword": "Ungültige E-Mail oder Passwort",
+      "invalidPhonePassword": "Ungültige Telefonnummer oder Passwort",
+      "invalidCredentials": "Ungültige Anmeldedaten",
+      "invalidInput": "Ungültige Eingabe",
+      "tooManyAttempts": "Zu viele Anmeldeversuche. Bitte versuchen Sie es später erneut.",
+      "general": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
     }
   },
   "auth": {
@@ -206,5 +207,20 @@
       "phoneExists": "Diese Telefonnummer existiert bereits. Bitte verwenden Sie eine andere Nummer.",
       "registrationFailed": "Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut."
     }
+  },
+  "resetPassword": {
+    "error": {
+      "general": "Beim Zurücksetzen Ihres Passworts ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
+    },
+    "success": {
+      "linkSent": "Ein Link zum Zurücksetzen des Passworts wurde an Ihre E-Mail-Adresse gesendet."
+    },
+    "loading": "Wird geladen…",
+    "requestTitle": "Passwort zurücksetzen",
+    "validationCode": "Validierungscode",
+    "requestSubtitle": "Geben Sie Ihre E-Mail-Adresse, Ihren Benutzernamen oder Ihre Telefonnummer ein, um einen Link zum Zurücksetzen zu erhalten.",
+    "returnToLogin": "Zurück zur Anmeldung",
+    "sending": "Wird gesendet…",
+    "sendLink": "Reset-Link senden"
   }
 }

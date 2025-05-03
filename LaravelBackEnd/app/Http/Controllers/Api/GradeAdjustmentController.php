@@ -14,11 +14,11 @@ class GradeAdjustmentController extends Controller
     protected string $model = GradeAdjustment::class;
 
     protected array $validationRules = [
-        'typeGA' => 'required|string|max:255',
-        'valueGA' => 'required|numeric',
-        'reasonGA' => 'nullable|string',
-        'DateGa' => 'required|date',
-        'matriculeER' => 'required|string|exists:evaluation_results,matriculeER',
+        'TypeGA' => 'required|string|max:255',
+        'ValueGA' => 'required|numeric',
+        'ReasonGA' => 'nullable|string',
+        'DateGA' => 'required|date',
+        'MatriculeER' => 'required|string|exists:evaluation_results,MatriculeER',
     ];
 
     // Define resource name for messages

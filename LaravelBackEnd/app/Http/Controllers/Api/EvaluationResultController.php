@@ -14,10 +14,10 @@ class EvaluationResultController extends Controller
     protected string $model = EvaluationResult::class;
 
     protected array $validationRules = [
-        'matriculeEt' => 'required|string|exists:etudiants,matriculeEt',
-        'matriculeEv' => 'required|string|exists:evaluations,matriculeEv',
+        'MatriculeET' => 'required|string|exists:etudiants,MatriculeET',
+        'MatriculeEV' => 'required|string|exists:evaluations,MatriculeEV',
         'GradeER' => 'required|numeric|min:0',
-        'commentaireER' => 'nullable|string|max:255',
+        'CommentaireER' => 'nullable|string|max:255',
     ];
 
     // Define resource name for messages

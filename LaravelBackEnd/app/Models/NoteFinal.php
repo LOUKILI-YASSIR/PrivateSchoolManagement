@@ -10,7 +10,7 @@ class NoteFinal extends Model
 {
     use HasFactory, GeneratesMatricule;
 
-    protected $primaryKey = 'matriculeNf';
+    protected $primaryKey = 'matriculeNF';
     public $incrementing = false;
     protected $keyType = 'string';
 
@@ -22,21 +22,21 @@ class NoteFinal extends Model
     protected $table = 'note_finals';
 
     protected $fillable = [
-        'matriculeNf',
-        'matriculeEt',
-        'gradeNf',
-        'commentaireNf',
+        'matriculeNF',
+        'MatriculeET',
+        'GradeNF',
+        'CommentaireNF',
     ];
 
     protected $casts = [
-        'gradeNf' => 'float',
+        'GradeNF' => 'float',
     ];
 
     // Relationships
 
     public function etudiant()
     {
-        return $this->belongsTo(Etudiant::class, 'matriculeEt', 'matriculeEt');
+        return $this->belongsTo(Etudiant::class, 'MatriculeET', 'MatriculeET');
     }
 
     // Required method for GeneratesMatricule trait

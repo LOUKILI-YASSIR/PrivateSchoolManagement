@@ -10,7 +10,7 @@ class TimeTableException extends Model
 {
     use HasFactory, GeneratesMatricule;
 
-    protected $primaryKey = 'matriculeTe';
+    protected $primaryKey = 'MatriculeTE';
     public $incrementing = false;
     protected $keyType = 'string';
 
@@ -22,28 +22,28 @@ class TimeTableException extends Model
     protected $table = 'time_table_exceptions';
 
     protected $fillable = [
-        'matriculeTe',
-        'exceptionTypeTe',
-        'exceptionDateTe',
-        'isFulldayTe',
-        'matriculeTs',
-        'reasonTe',
-        'newMatriculeTs',
+        'MatriculeTE',
+        'ExceptionTypeTE',
+        'ExceptionDateTE',
+        'IsFulldayTE',
+        'MatriculeTS',
+        'ReasonTE',
+        'NewMatriculeTS',
     ];
 
     protected $casts = [
-        'exceptionDateTe' => 'date',
-        'isFulldayTe' => 'boolean',
+        'ExceptionDateTE' => 'date',
+        'IsFulldayTE' => 'boolean',
     ];
 
     public function timeSlot()
     {
-        return $this->belongsTo(TimeSlot::class, 'matriculeTs', 'matriculeTs');
+        return $this->belongsTo(TimeSlot::class, 'MatriculeTS', 'MatriculeTS');
     }
 
     public function newTimeSlot()
     {
-        return $this->belongsTo(TimeSlot::class, 'newMatriculeTs', 'matriculeTs')->withDefault();
+        return $this->belongsTo(TimeSlot::class, 'NewMatriculeTS', 'MatriculeTS')->withDefault();
     }
 
     protected static function getMatriculePrefix()

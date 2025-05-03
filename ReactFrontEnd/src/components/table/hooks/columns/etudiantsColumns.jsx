@@ -36,7 +36,7 @@ export const etudiantsColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.matricule"),
-    accessorKey: "matriculeEt",
+    accessorKey: "MatriculeET",
     filterFn: "equals",
     columnFilterModeOptions: [...FilterModeOptions["equality"]],
   },
@@ -48,7 +48,7 @@ export const etudiantsColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.nom"),
-    accessorKey: "user.NomPl",
+    accessorKey: "user.NomPL",
     filterFn: "fuzzy",
     columnFilterModeOptions: [
       ...FilterModeOptions["text"],
@@ -117,7 +117,7 @@ export const etudiantsColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.email"),
-    accessorKey: "emailEt",
+    accessorKey: "EmailET",
     filterFn: "contains",
     columnFilterModeOptions: [
       ...FilterModeOptions["text"],
@@ -126,7 +126,7 @@ export const etudiantsColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.telephone"),
-    accessorKey: "phoneEt",
+    accessorKey: "PhoneET",
     filterFn: "contains",
     columnFilterModeOptions: [
       ...FilterModeOptions["text"],
@@ -184,7 +184,7 @@ export const etudiantsColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.tuteur"),
-    accessorKey: "NomTr",
+    accessorKey: "NomTR",
     filterFn: "contains",
     columnFilterModeOptions: [
       ...FilterModeOptions["text"],
@@ -193,7 +193,7 @@ export const etudiantsColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.tuteurPhone"),
-    accessorKey: "Phone1Tr",
+    accessorKey: "Phone1TR",
     filterFn: "contains",
     columnFilterModeOptions: [
       ...FilterModeOptions["text"],
@@ -202,7 +202,7 @@ export const etudiantsColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.tuteurPhone"),
-    accessorKey: "Phone2Tr",
+    accessorKey: "Phone2TR",
     filterFn: "contains",
     columnFilterModeOptions: [
       ...FilterModeOptions["text"],
@@ -211,7 +211,7 @@ export const etudiantsColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.status"),
-    accessorKey: "user.statutUt",
+    accessorKey: "user.StatutUT",
     filterFn: "equals",
     filterVariant: "select",
     filterSelectOptions: ["active", "inactive"],

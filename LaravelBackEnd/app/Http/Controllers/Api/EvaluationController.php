@@ -14,9 +14,9 @@ class EvaluationController extends Controller
     protected string $model = Evaluation::class;
 
     protected array $validationRules = [
-        'matriculeMt' => 'required|string|exists:matieres,matriculeMt',
-        'matriculeEp' => 'required|string|exists:evaluation_types,matriculeEp',
-        'nbrEv' => 'nullable|integer|min:0',
+        'MatriculeMT' => 'required|string|exists:matieres,MatriculeMT',
+        'MatriculeEP' => 'required|string|exists:evaluation_types,MatriculeEP',
+        'NbrEV' => 'nullable|integer|min:0',
     ];
 
     // Define resource name for messages

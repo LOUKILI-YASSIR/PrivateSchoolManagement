@@ -35,7 +35,7 @@ export const professeursColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.matricule"),
-    accessorKey: "matriculePr",
+    accessorKey: "MatriculePR",
     filterFn: "equals",
     columnFilterModeOptions: [...FilterModeOptions["equality"]],
   },
@@ -47,7 +47,7 @@ export const professeursColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.nom"),
-    accessorKey: "user.NomPl",
+    accessorKey: "user.NomPL",
     filterFn: "fuzzy",
     columnFilterModeOptions: [
       ...FilterModeOptions["text"],
@@ -116,7 +116,7 @@ export const professeursColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.email"),
-    accessorKey: "user.emailUt",
+    accessorKey: "user.EmailUT",
     filterFn: "contains",
     columnFilterModeOptions: [
       ...FilterModeOptions["text"],
@@ -126,7 +126,7 @@ export const professeursColumns = (Traduction, FilterModeOptions) => [
   {
     id: "phone1",
     header: Traduction("Data.telephone") + " 1",
-    accessorKey: "Phone1Pr",
+    accessorKey: "Phone1PR",
     filterFn: "contains",
     columnFilterModeOptions: [
       ...FilterModeOptions["text"],
@@ -136,7 +136,7 @@ export const professeursColumns = (Traduction, FilterModeOptions) => [
   {
     id: "phone2",
     header: Traduction("Data.telephone") + " 2",
-    accessorKey: "Phone2Pr",
+    accessorKey: "Phone2PR",
     filterFn: "contains",
     columnFilterModeOptions: [
       ...FilterModeOptions["text"],
@@ -194,7 +194,7 @@ export const professeursColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.salaire"),
-    accessorKey: "SalairePr",
+    accessorKey: "SalairePR",
     filterFn: "contains",
     columnFilterModeOptions: [
       ...FilterModeOptions["comparison"],
@@ -204,7 +204,7 @@ export const professeursColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.cin"),
-    accessorKey: "CINPr",
+    accessorKey: "CINPR",
     filterFn: "contains",
     columnFilterModeOptions: [
       ...FilterModeOptions["text"],
@@ -214,7 +214,7 @@ export const professeursColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.dateEmbauche"),
-    accessorKey: "DateEmbauchePr",
+    accessorKey: "DateEmbauchePR",
     filterFn: "greaterThanOrEqualTo",
     filterVariant: "date",
     columnFilterModeOptions: [
@@ -224,7 +224,7 @@ export const professeursColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.ProfPhone1"),
-    accessorKey: "Phone1Pr",
+    accessorKey: "Phone1PR",
     filterFn: "contains",
     columnFilterModeOptions: [
       ...FilterModeOptions["text"],
@@ -233,7 +233,7 @@ export const professeursColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.ProfPhone2"),
-    accessorKey: "Phone2Pr",
+    accessorKey: "Phone2PR",
     filterFn: "contains",
     columnFilterModeOptions: [
       ...FilterModeOptions["text"],
@@ -242,7 +242,7 @@ export const professeursColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.status"),
-    accessorKey: "user.statutUt",
+    accessorKey: "user.StatutUT",
     filterFn: "equals",
     filterVariant: "select",
     filterSelectOptions: ["active", "inactive"],

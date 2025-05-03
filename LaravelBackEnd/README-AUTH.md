@@ -58,7 +58,7 @@ Content-Type: application/json
 
 {
   "nomUt": "username",
-  "passwordUt": "password123"
+  "PasswordUT": "password123"
 }
 ```
 

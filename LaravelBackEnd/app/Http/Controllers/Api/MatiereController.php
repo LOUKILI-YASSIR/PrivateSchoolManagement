@@ -16,12 +16,12 @@ class MatiereController extends Controller
     protected string $model = Matiere::class;
 
     protected array $validationRules = [
-        'nameMt' => 'required|string|max:255',
-        'codeMt' => 'required|string|max:255',
-        'descriptionMt' => 'nullable|string|max:255',
-        'coefficientMt' => 'nullable|numeric',
-        'matriculeNv' => 'required|string|exists:niveaux,matriculeNv',
-        'matriculePr' => 'required|string|exists:professeurs,matriculePr',
+        'NameMT' => 'required|string|max:255',
+        'CodeMT' => 'required|string|max:255',
+        'DescriptionMT' => 'nullable|string|max:255',
+        'CoefficientMT' => 'nullable|numeric',
+        'MatriculeNV' => 'required|string|exists:niveaux,MatriculeNV',
+        'MatriculePR' => 'required|string|exists:professeurs,MatriculePR',
     ];
 
     /**
@@ -33,8 +33,8 @@ class MatiereController extends Controller
     {
         try {
             $records = $this->getModelClass()::with([
-                'niveau:matriculeNv,NomNv',
-                'professeur.user:matriculeUt,NomPl,PrenomPl',
+                'niveau:MatriculeNV,NomNV',
+                'professeur.user:MatriculeUT,NomPL,PrenomPL',
                 'evaluations'
             ])->get();
 

@@ -25,16 +25,16 @@ class AttendanceFactory extends Factory
         $isJustified = ($status === 'Absent' || $status === 'Excused') ? $this->faker->boolean(70) : false;
 
         return [
-            // 'matriculeAt' handled by trait
-            'statusAt' => $status,
-            'isJustifAt' => $isJustified,
-            'justifAt' => $isJustified ? $this->faker->sentence() : null,
-            'DateAt' => $this->faker->dateTimeThisMonth()->format('Y-m-d'),
+            // 'MatriculeAT' handled by trait
+            'StatusAT' => $status,
+            'IsJustifAT' => $isJustified,
+            'JustifAT' => $isJustified ? $this->faker->sentence() : null,
+            'DateAT' => $this->faker->dateTimeThisMonth()->format('Y-m-d'),
             // We need to link EITHER Etudiant OR Professeur, not both usually.
             // The seeder should handle assigning the correct one.
-            'matriculeUt' => User::factory(), // Associated user (can be derived from Etudiant/Professeur)
-            'matriculeEt' => null,
-            'matriculePr' => null,
+            'MatriculeUT' => User::factory(), // Associated user (can be derived from Etudiant/Professeur)
+            'MatriculeET' => null,
+            'MatriculePR' => null,
         ];
     }
 
@@ -45,9 +45,9 @@ class AttendanceFactory extends Factory
     {
         $etudiant = Etudiant::find($etudiantMatricule);
         return $this->state(fn (array $attributes) => [
-            'matriculeEt' => $etudiantMatricule,
-            'matriculePr' => null,
-            'matriculeUt' => $etudiant?->matriculeUt, // Link the student's user account
+            'MatriculeET' => $etudiantMatricule,
+            'MatriculePR' => null,
+            'MatriculeUT' => $etudiant?->MatriculeUT, // Link the student's user account
         ]);
     }
 
@@ -58,9 +58,9 @@ class AttendanceFactory extends Factory
     {
         $professeur = Professeur::find($professeurMatricule);
         return $this->state(fn (array $attributes) => [
-            'matriculePr' => $professeurMatricule,
-            'matriculeEt' => null,
-            'matriculeUt' => $professeur?->matriculeUt, // Link the professor's user account
+            'MatriculePR' => $professeurMatricule,
+            'MatriculeET' => null,
+            'MatriculeUT' => $professeur?->MatriculeUT, // Link the professor's user account
         ]);
     }
 }

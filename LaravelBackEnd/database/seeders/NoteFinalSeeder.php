@@ -24,9 +24,9 @@ class NoteFinalSeeder extends Seeder
         // Create one NoteFinal for each Etudiant
         foreach ($etudiants as $etudiant) {
              // Avoid creating duplicate final notes
-            if (!NoteFinal::where('matriculeEt', $etudiant->matriculeEt)->exists()) {
+            if (!NoteFinal::where('MatriculeET', $etudiant->MatriculeET)->exists()) {
                 NoteFinal::factory()
-                    ->forEtudiant($etudiant->matriculeEt)
+                    ->forEtudiant($etudiant->MatriculeET)
                     ->create();
             }
         }

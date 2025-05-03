@@ -1,202 +1,148 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../utils/contexts/AuthContext';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import apiServices from '../../api/apiServices';
 import LoadingSpinner from '../common/LoadingSpinner';
-import { useActionMenu } from '../Menu/hooks/useActionMenu';
+import DarkModeToggle from '../common/DarkModeToggle';
+import MenuCart from '../menu/CartMenu';
 import { 
   TextField, 
   Button, 
   Typography, 
   Box, 
-  FormControlLabel, 
-  Checkbox,
-  Alert,
-  Paper,
+  Paper, 
+  Alert, 
+  InputAdornment,
   Tabs,
   Tab,
-  InputAdornment, 
   IconButton,
+  FormControlLabel,
   Tooltip,
+  Checkbox,
 } from '@mui/material';
-import SchoolIcon from '@mui/icons-material/School';
 import EmailIcon from '@mui/icons-material/Email';
 import PersonIcon from '@mui/icons-material/Person';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import PhoneIcon from '@mui/icons-material/Phone';
+import SchoolIcon from '@mui/icons-material/School';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import LockIcon from '@mui/icons-material/Lock';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleDarkMode } from '../../Store/Slices/ThemeSlice';
-import DarkModeToggle from '../common/DarkModeToggle';
-import MenuCart from '../menu/CartMenu';
 import PHONE from '../Fields/PhoneField';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 
-const Login = () => {
-  const [loginMethod, setLoginMethod] = useState(0); // 0: username, 1: email, 2: phone
+const CheckUserResetPassword = () => {
   const [loginValue, setLoginValue] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
-  const [error, setError] = useState('');
-  const [languageMenuAnchor, setLanguageMenuAnchor] = useState(null);
+  const [loginMethod, setLoginMethod] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [autoLogin, setAutoLogin] = useState(true);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [focusedField, setFocusedField] = useState(null);
-  const { login } = useAuth();
-  const { t, i18n } = useTranslation();
-  const langMenuAction = useActionMenu();
-  
+  const { t } = useTranslation();
+  const nav = useNavigate();
+
   // Dark mode from Redux
   const isDarkMode = useSelector((state) => state?.theme?.darkMode || false);
   const dispatch = useDispatch();
-  
-  // Get theme color based on dark mode rgba(42, 33, 133, 1)
+
   const getThemeColor = (alpha = 1) => 
     isDarkMode ? `rgba(106, 95, 201, ${alpha})` : `rgba(42, 33, 133, ${alpha})`;
-  
+
   const languages = [
     { code: 'fr', flag: '/Locales/fr.png' },
     { code: 'en', flag: '/Locales/en.png' },
     { code: 'es', flag: '/Locales/es.png' },
     { code: 'de', flag: '/Locales/de.png' },
   ];
-
-  const handleLanguageMenuOpen = (event) => {
-    setLanguageMenuAnchor(event.currentTarget);
-  };
-
-  const handleLanguageMenuClose = () => {
-    setLanguageMenuAnchor(null);
-  };
-
-  const changeLanguage = (code) => {
-    i18n.changeLanguage(code);
-    handleLanguageMenuClose();
-  };
-  
-  const handleToggleDarkMode = () => {
-    dispatch(toggleDarkMode());
-  };
-  
   const handleTabChange = (event, newValue) => {
     setLoginMethod(newValue);
     setLoginValue('');
-    setPassword('');
     setError('');
   };
-
-  const handleTogglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
+  const getLoginLabel = () => {
+    switch (loginMethod) {
+      case 0:
+        return t('login.username');
+      case 1:
+        return t('login.email');
+      case 2:
+        return t('login.phone');
+      default:
+        return t('login.username');
+    }
   };
-
-// Persist only identifier if rememberMe; never store password
-const storeIdentifier = id => localStorage.setItem('identifier', id);
-const clearIdentifier = () => localStorage.removeItem('identifier');
-
-useEffect(() => {
-  const storedId = localStorage.getItem('identifier');
-  if (storedId) {
-    setRememberMe(true);
-    setLoginValue(storedId);
-    if (storedId.includes('@')) setLoginMethod(1);
-    else if (/^\+?[0-9]{10,15}$/.test(storedId)) setLoginMethod(2);
-  }
-}, []);
-
-const validateInput = () => {
-  if (!loginValue.trim()) {
-    setError([
-      'login.error.usernameRequired',
-      'login.error.emailRequired',
-      'login.error.phoneRequired'
-    ][loginMethod]);
-    return false;
-  }
-  if (!password) {
-    setError('login.error.passwordRequired');
-    return false;
-  }
-  if (loginMethod === 0 && !/^[A-Za-z0-9_]{3,}$/.test(loginValue)) {
-    setError('login.error.invalidUserName');
-    return false;
-  }
-  if (loginMethod === 1 && !/\S+@\S+\.\S+/.test(loginValue)) {
-    setError('login.error.invalidEmail');
-    return false;
-  }
-  if (loginMethod === 2 && !/^\+?[0-9]{10,15}$/.test(loginValue)) {
-    setError('login.error.invalidPhone');
-    return false;
-  }
-  return true;
-};
-
-const handleSubmit = async e => {
-  e.preventDefault();
-  setError('');
-  if (!validateInput()) return;
-
-  setIsLoading(true);
-  try {
-    const payload = { identifier: loginValue, PasswordUT: password };
-    const response = await apiServices.postData('/login', payload);
-    const data = response;
-    console.log(data)
-    if (data?.data?.access_token) {
-      // optionally persist identifier for UX
-      rememberMe ? storeIdentifier(loginValue) : clearIdentifier();
-      const token = data.data.access_token;
-      const role = data.data.role;
-      if (data.message === 'must_change_password') {
-        login(token,role, true,{user:{UserNameUT:data.data.UserNameUT,CodeVerificationUT:data.data.CodeVerificationUT}});
-      }else{
-        login(token, role);
+    const getLoginIcon = () => {
+      switch (loginMethod) {
+        case 0:
+          return <PersonIcon />;
+        case 1:
+          return <EmailIcon />;
+        case 2:
+          return <PhoneIcon />;
+        default:
+          return <PersonIcon />;
       }
-    } else if (data.status === 401) {
+    };
+    const validateInput = () => {
+    if (!loginValue.trim()) {
       setError([
-        'login.error.invalidUsernamePassword',
-        'login.error.invalidEmailPassword',
-        'login.error.invalidPhonePassword'
+        'login.error.usernameRequired',
+        'login.error.emailRequired',
+        'login.error.phoneRequired'
       ][loginMethod]);
-    } else {
-      setError('login.error.general');
     }
-  } catch (err) {
-    const statusCode = err?.response?.status;
-    if (statusCode === 422) {
-      const msgs = err.response.data.errors || {};
-      setError(Object.values(msgs).flat()[0] || 'login.error.invalidInput');
-    } else if (statusCode === 429) {
-      setError('login.error.tooManyAttempts');
-    } else {
-      setError('login.error.general');
+
+    if (loginMethod === 0 && !/\b([A-Z][a-z]*)([ -][A-Z][a-z]*)*\b/.test(loginValue)) {
+      setError('login.error.invalidUserName');
+      return false;
     }
-  } finally {
-    setIsLoading(false);
-  }
-};
 
-  const getLoginLabel = () => 
-    t([
-      'login.username',
-      'login.email',
-      'login.phone'][loginMethod]
-    );
+    if (loginMethod === 1 && !/\S+@\S+\.\S+/.test(loginValue)) {
+      setError('login.error.invalidEmail');
+      return false;
+    }
 
-  const getLoginIcon = () => [
-    <PersonIcon />,
-    <EmailIcon />,
-    <PhoneIcon />][loginMethod];
+    if (loginMethod === 2 && !/^\+?[0-9]{10,15}$/.test(loginValue)) {
+      setError('login.error.invalidPhone');
+      return false;
+    }
 
-  const getCurrentLanguageFlag = () => {
-    const currentLang = languages.find(lang => lang.code === i18n.language) || languages[0];
-    return currentLang.flag;
+    return true;
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+    if (!validateInput()) {
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+  
+      const loginData = {
+        identifier: loginValue,
+      };
+      const response = await apiServices.postData('/check-user', loginData);
+
+      if (response.status === 'success') {
+        nav(`/YLSchool/select-reset-password`, { state: { user: {...response.data} } });
+        setSuccess('resetPassword.success.linkSent');
+      } else {
+        setError('resetPassword.error.general');
+      }
+    } catch (error) {
+      setError('resetPassword.error.general');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <>
-      {isLoading && <LoadingSpinner message={t('login.loggingIn')} />}
+      {isLoading && <LoadingSpinner message={t('resetPassword.loading')} />}
       <Box
         sx={{
           minHeight: '100vh',
@@ -222,7 +168,6 @@ const handleSubmit = async e => {
             zIndex: 1
           }}
         >
-          {/* Language Selector */}
           <MenuCart
             margin="5px 50px"
             menuType="language"
@@ -240,20 +185,33 @@ const handleSubmit = async e => {
                     mr: 1,
                   }}
                 >
-                  <img src={getCurrentLanguageFlag()} alt="Lang Flag" style={{ width: '100%', borderRadius: '50%' }} />
+                  <img src={languages.find(lang => lang.code === t('language'))?.flag || languages[0].flag} alt="Lang Flag" style={{ width: '100%', borderRadius: '50%' }} />
                 </Box>
-                <Typography>{t('login.selectLanguage') || 'Select Language'}</Typography>
+                <Typography>{t('login.selectLanguage')}</Typography>
               </Box>
             }
           />
-
-          {/* Dark Mode Toggle */}
           <DarkModeToggle 
             isDarkMode={isDarkMode} 
-            toggleDarkMode={handleToggleDarkMode}
+            toggleDarkMode={() => dispatch(toggleDarkMode())}
           />
         </Box>
-
+        {/* Back Button */}
+        <IconButton
+          component={Link}
+          to="/YLSchool/Login"
+          sx={{
+            position: 'absolute',
+            top: 20,
+            left: 20,
+            color: getThemeColor(),
+            '&:hover': {
+              bgcolor: isDarkMode ? 'rgba(106, 95, 201, 0.1)' : 'rgba(42, 33, 133, 0.1)',
+            }
+          }}
+        >
+          <ArrowBackIcon />
+        </IconButton>
         <Paper
           elevation={3} 
           sx={{
@@ -289,9 +247,9 @@ const handleSubmit = async e => {
               textShadow: isDarkMode ? '0 0 8px rgba(106, 95, 201, 0.5)' : 'none'
             }}
           >
-            {t('login.title')}
+            {t('resetPassword.requestTitle')}
           </Typography>
-          <Typography 
+          <Typography
             variant="subtitle1" 
             align="center" 
             sx={{
@@ -303,9 +261,9 @@ const handleSubmit = async e => {
               justifyContent: 'center'
             }}
           >
-            {t('login.subtitle')}
+            {t('resetPassword.requestSubtitle')}
           </Typography>
-            
+
           <Tabs
             value={loginMethod}
             onChange={handleTabChange}
@@ -337,6 +295,11 @@ const handleSubmit = async e => {
           {error && (
             <Alert severity="error" sx={{ width: '100%', mb: 2 }}>
               {t(error)}
+            </Alert>
+          )}
+          {success && (
+            <Alert severity="success" sx={{ width: '100%', mb: 2 }}>
+              {t(success)}
             </Alert>
           )}
 
@@ -407,118 +370,14 @@ const handleSubmit = async e => {
                 />
               )
             }
-
-            <TextField
-              fullWidth
-              label={t('login.password')}
-              type={showPassword ? 'text' : 'password'}
-              margin="normal"
-              variant="outlined"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              disabled={isLoading}
-              onFocus={() => setFocusedField('password')}
-              onBlur={() => setFocusedField(null)}
-              sx={{ 
-                mb: 2,
-                '& .MuiOutlinedInput-root': {
-                  '& fieldset': {
-                    borderColor: isDarkMode ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.23)',
-                  },
-                  '&:hover fieldset': {
-                    borderColor: getThemeColor(),
-                  },
-                  '&.Mui-focused fieldset': {
-                    borderColor: getThemeColor(),
-                  },
-                },
-                '& .MuiInputLabel-root': {
-                  color: isDarkMode ? 'rgba(255,255,255,0.7)' : 'inherit',
-                },
-                '& .MuiInputLabel-root.Mui-focused': {
-                  color: isDarkMode ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.87)',
-                },
-                '& .MuiOutlinedInput-input': {
-                  color: isDarkMode ? 'white' : 'inherit',
-                },
-                '& .MuiInputAdornment-root': {
-                  color: isDarkMode ? 'rgba(255,255,255,0.7)' : 'inherit',
-                },
-              }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Box sx={{ 
-                      transform: focusedField === 'password' ? 'scale(1.2)' : 'scale(1)',
-                      color: focusedField === 'password' ? getThemeColor() : 'inherit',
-                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                    }}>
-                      <LockIcon />
-                    </Box>
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      onClick={handleTogglePasswordVisibility}
-                      edge="end"
-                      disabled={isLoading}
-                      sx={{ 
-                        color: focusedField === 'password' 
-                          ? getThemeColor() 
-                          : isDarkMode ? 'rgba(255,255,255,0.7)' : 'inherit',
-                        transform: focusedField === 'password' ? 'scale(1.1)' : 'scale(1)',
-                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-                      }}
-                    >
-                      {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-              <FormControlLabel
-                control={
-                  <Tooltip 
-                    title={t('login.rememberMeTooltip') || "Saves your login information securely. You will stay logged in on this device."}
-                    placement="bottom-start"
-                    arrow
-                  >
-                    <Checkbox
-                      checked={rememberMe}
-                      onChange={(e) => setRememberMe(e.target.checked)}
-                      disabled={isLoading}
-                      sx={{
-                        color: isDarkMode ? 'rgba(255,255,255,0.5)' : getThemeColor(0.7),
-                        '&.Mui-checked': {
-                          color: getThemeColor(),
-                        },
-                      }}
-                    />
-                  </Tooltip>
-                }
-                label={
-                  <Tooltip 
-                    title={t('login.rememberMeTooltip') || "Saves your login information securely. You will stay logged in on this device."}
-                    placement="bottom"
-                    arrow
-                  >
-                    <Typography 
-                      sx={{ 
-                        color: isDarkMode ? 'rgba(255,255,255,0.7)' : 'inherit',
-                        cursor: 'help'
-                      }}
-                    >
-                      {t('login.rememberMe')}
-                    </Typography>
-                  </Tooltip>
-                }
-              />
               <Link 
-                to="/YLSchool/check-user-reset-password"
+                to="/YLSchool/Login"
                 className='login-link'
                 style={{
+                  textAlign: "right",
+                  width: "100%",
+                  marginBlock: "0.5rem",
                   textDecoration: 'none',
                   fontWeight: isDarkMode ? 'bold' : 'normal',
                   color: getThemeColor(), 
@@ -526,7 +385,7 @@ const handleSubmit = async e => {
                   opacity: isLoading ? 0.7 : 1
                 }} 
               >
-                {t('login.forgotPassword')}
+                {t('resetPassword.returnToLogin')}
               </Link>
             </Box>
             <Button
@@ -550,7 +409,7 @@ const handleSubmit = async e => {
                 position: 'relative'
               }}
             >
-              {t('login.submit')}
+              {isLoading ? t('resetPassword.sending') : t('resetPassword.sendLink')}
             </Button>
           </form>
         </Paper>
@@ -559,4 +418,4 @@ const handleSubmit = async e => {
   );
 };
 
-export default Login;
+export default CheckUserResetPassword;

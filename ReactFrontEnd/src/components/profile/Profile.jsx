@@ -35,7 +35,7 @@ const Profile = () => {
     personal: false,
     password: false
   });
-  const ImgPathUploads = userData?.roleUt ? `/uploads/${userData.roleUt}` : '';
+  const ImgPathUploads = userData?.RoleUT ? `/uploads/${userData.RoleUT}` : '';
   const handleAvatarChange = (uploadedFilename) => {
     const newAvatarUrl = uploadedFilename!=="" ? `${ImgPathUploads}/${uploadedFilename}` : "";
     setUserData({
@@ -79,9 +79,9 @@ const Profile = () => {
 
           // Map backend fields to frontend state
           setAccountData({
-            name: `${fetchedUser?.NomPl || ''} ${fetchedUser?.PrenomPl || ''}`.trim(), 
-            email: fetchedUser?.emailUt || '',
-            phone: fetchedUser?.phoneUt || ''
+            name: `${fetchedUser?.NomPL || ''} ${fetchedUser?.PrenomPL || ''}`.trim(), 
+            email: fetchedUser?.EmailUT || '',
+            phone: fetchedUser?.PhoneUT || ''
           });
 
           setPersonalData({
@@ -144,13 +144,13 @@ const Profile = () => {
 
     // Prepare API payload based on section
     if (section === 'account') {
-      // Split name back into NomPl and PrenomPl if needed by backend
+      // Split name back into NomPL and PrenomPL if needed by backend
       const nameParts = dataToSave.name.split(' ');
       apiPayload = {
-        NomPl: nameParts[0] || '',
-        PrenomPl: nameParts.slice(1).join(' ') || '',
-        emailUt: dataToSave.email,
-        phoneUt: dataToSave.phone,
+        NomPL: nameParts[0] || '',
+        PrenomPL: nameParts.slice(1).join(' ') || '',
+        EmailUT: dataToSave.email,
+        PhoneUT: dataToSave.phone,
       };
       updatedLocalData = { ...dataToSave };
     } else if (section === 'personal') {
@@ -351,10 +351,10 @@ const Profile = () => {
             </Grid>
             <Grid item xs={12} sm={6}>
               <Typography variant="subtitle2" className="secondary-text">
-                {t('profile.roleUt') || 'roleUt'}
+                {t('profile.RoleUT') || 'RoleUT'}
               </Typography>
               <Typography variant="body1">
-                {userData.roleUt.charAt(0).toUpperCase() + userData.roleUt.slice(1)}
+                {userData.RoleUT.charAt(0).toUpperCase() + userData.RoleUT.slice(1)}
               </Typography>
             </Grid>
           </Grid>

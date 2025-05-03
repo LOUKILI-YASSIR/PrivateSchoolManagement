@@ -21,12 +21,12 @@ class TimeTableExceptionFactory extends Factory
     {
         return [
             // 'matriculeTe' handled by trait
-            'exceptionTypeTe' => $this->faker->randomElement(['Cancellation', 'Reschedule', 'Room Change']),
-            'exceptionDateTe' => $this->faker->dateTimeBetween('now', '+1 month')->format('Y-m-d'),
-            'isFulldayTe' => $this->faker->boolean(10), // 10% chance of being full day
-            'matriculeTs' => TimeSlot::factory(), // The original timeslot affected
-            'reasonTe' => $this->faker->optional()->sentence(),
-            'newMatriculeTs' => null, // Default to null (cancellation)
+            'ExceptionTypeTE' => $this->faker->randomElement(['Cancellation', 'Reschedule', 'Room Change']),
+            'ExceptionDateTE' => $this->faker->dateTimeBetween('now', '+1 month')->format('Y-m-d'),
+            'IsFulldayTE' => $this->faker->boolean(10), // 10% chance of being full day
+            'MatriculeTS' => TimeSlot::factory(), // The original timeslot affected
+            'ReasonTE' => $this->faker->optional()->sentence(),
+            'NewMatriculeTS' => null, // Default to null (cancellation)
         ];
     }
 
@@ -36,9 +36,9 @@ class TimeTableExceptionFactory extends Factory
     public function reschedule(?string $newTimeSlotMatricule = null): static
     {
         return $this->state(fn (array $attributes) => [
-            'exceptionTypeTe' => 'Reschedule',
+            'ExceptionTypeTE' => 'Reschedule',
             // If no specific new slot is given, try to find another existing one or create one
-            'newMatriculeTs' => $newTimeSlotMatricule ?? TimeSlot::inRandomOrder()->first()?->matriculeTs ?? TimeSlot::factory(),
+            'NewMatriculeTS' => $newTimeSlotMatricule ?? TimeSlot::inRandomOrder()->first()?->MatriculeTS ?? TimeSlot::factory(),
         ]);
     }
 
@@ -48,7 +48,7 @@ class TimeTableExceptionFactory extends Factory
     public function forTimeSlot(string $timeSlotMatricule): static
     {
         return $this->state(fn (array $attributes) => [
-            'matriculeTs' => $timeSlotMatricule,
+            'MatriculeTS' => $timeSlotMatricule,
         ]);
     }
 }

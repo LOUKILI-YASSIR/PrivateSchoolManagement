@@ -12,15 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('evaluation_results', function (Blueprint $table) {
-            $table->string('matriculeER')->primary();
-            $table->string('matriculeEt');
-            $table->string('matriculeEv');
+            $table->string('MatriculeER')->primary();
+            $table->string('MatriculeET');
+            $table->string('MatriculeEV');
             $table->float('GradeER');
-            $table->string('commentaireER')->nullable();
+            $table->string('CommentaireER')->nullable();
             $table->timestamps();
 
-            $table->foreign('matriculeEt')->references('matriculeEt')->on('etudiants')->onDelete('cascade');
-            $table->foreign('matriculeEv')->references('matriculeEv')->on('evaluations')->onDelete('cascade');
+            $table->foreign('MatriculeET')->references('MatriculeET')->on('etudiants')->onDelete('cascade');
+            $table->foreign('MatriculeEV')->references('MatriculeEV')->on('evaluations')->onDelete('cascade');
         });
     }
 

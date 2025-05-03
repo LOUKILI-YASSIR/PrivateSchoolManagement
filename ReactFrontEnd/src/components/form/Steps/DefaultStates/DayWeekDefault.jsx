@@ -1,5 +1,5 @@
 export const DAYWEEK = {
-    matriculeDW: '',
-    dayNameDW: ''
+    MatriculeDW: '',
+    DayNameDW: ''
 };
 

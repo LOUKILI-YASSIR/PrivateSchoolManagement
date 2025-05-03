@@ -1,10 +1,10 @@
 export const REGULARTIMETABLE = {
-    matriculeRt: '',
-    matriculeDW: '',
-    matriculeTs: '',
-    matriculeGp: '',
-    matriculeMt: '',
-    matriculePr: '',
-    matriculeSl: ''
+    MatriculeRT: '',
+    MatriculeDW: '',
+    MatriculeTS: '',
+    MatriculeGP: '',
+    MatriculeMT: '',
+    MatriculePR: '',
+    MatriculeSL: ''
 };
 

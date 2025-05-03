@@ -14,12 +14,12 @@ class RegularTimeTableController extends Controller
     protected string $model = RegularTimeTable::class;
 
     protected array $validationRules = [
-        'matriculeDW' => 'required|string|exists:day_weeks,matriculeDW',
-        'matriculeTs' => 'required|string|exists:time_slots,matriculeTs',
-        'matriculeGp' => 'required|string|exists:groups,matriculeGp',
-        'matriculeMt' => 'required|string|exists:matieres,matriculeMt',
-        'matriculePr' => 'required|string|exists:professeurs,matriculePr',
-        'matriculeSl' => 'required|string|exists:salles,matriculeSl',
+        'MatriculeDW' => 'required|string|exists:day_weeks,MatriculeDW',
+        'MatriculeTS' => 'required|string|exists:time_slots,MatriculeTS',
+        'MatriculeGP' => 'required|string|exists:groups,MatriculeGP',
+        'MatriculeMT' => 'required|string|exists:matieres,MatriculeMT',
+        'MatriculePR' => 'required|string|exists:professeurs,MatriculePR',
+        'MatriculeSL' => 'required|string|exists:salles,MatriculeSL',
         // Add unique composite key validation? (e.g., unique for DW+TS+GP)
     ];
 

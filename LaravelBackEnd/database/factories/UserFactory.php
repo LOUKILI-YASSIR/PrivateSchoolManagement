@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -38,28 +39,31 @@ class UserFactory extends Factory
         // Randomly select a country and its cities
         $countryCode = $this->faker->randomElement(array_keys($countries));
         $cities = $countries[$countryCode];
-
+        $plainCode = Str::random(27);
+        $encryptedCode = Crypt::encryptString($plainCode);
+        
+        
         return [
-            // 'matriculeUt' is handled by GeneratesMatricule trait
-            'NomPl' => $this->faker->lastName(),
-            'PrenomPl' => $this->faker->firstName(),
-            'usernameUt' => $username, // Use the generated username
-            'emailUt' => "{$username}@ylschool-et.com", // Default email for etudiant
-            'phoneUt' => $this->faker->optional()->phoneNumber(),
-            'passwordUt' => Hash::make($defaultPassword), // Hash the default password
-            'roleUt' => 'etudiant', // Default role is etudiant
-            'statutUt' => 'offline', // Default status is offline
-            'genrePl' => $this->faker->randomElement(['Homme', 'Femelle']),
-            'adressPl' => $this->faker->optional()->address(),
-            'villePl' => $this->faker->randomElement($cities),
-            'codePostalPl' => $this->faker->optional()->postcode(),
-            'paysPl' => $countryCode,
-            'nationalitePl' => $countryCode,
-            'lieuNaissancePl' => $this->faker->randomElement($cities),
-            'dateNaissancePl' => $this->faker->optional()->date(),
-            'ObservationPl' => $this->faker->optional()->paragraph(),
-            'profileFileNamePl' => null, // Default to null
-            'email_verified_at' => now(), // Assuming users are verified by default for seeding
+            // 'MatriculeUT' is handled by GeneratesMatricule trait
+            'NomPL' => $this->faker->lastName(),
+            'PrenomPL' => $this->faker->firstName(),
+            'UserNameUT' => $username, // Use the generated username
+            'EmailUT' => "{$username}@ylschool-et.com", // Default email for etudiant
+            'PhoneUT' => $this->faker->optional()->phoneNumber(),
+            'PasswordUT' => Hash::make($defaultPassword), // Hash the default password
+            'RoleUT' => 'etudiant', // Default role is etudiant
+            'CodeVerificationUT' => $encryptedCode, // Random verification code
+            'StatutUT' => 'offline', // Default status is offline
+            'GenrePL' => $this->faker->randomElement(['Homme', 'Femelle']),
+            'AdressPL' => $this->faker->optional()->address(),
+            'VillePL' => $this->faker->randomElement($cities),
+            'CodePostalPL' => $this->faker->optional()->postcode(),
+            'PaysPL' => $countryCode,
+            'NationalitePL' => $countryCode,
+            'LieuNaissancePL' => $this->faker->randomElement($cities),
+            'DateNaissancePL' => $this->faker->optional()->date(),
+            'ObservationPL' => $this->faker->optional()->paragraph(),
+            'ProfileFileNamePL' => null, // Default to null
             'remember_token' => Str::random(10),
         ];
     }
@@ -70,9 +74,9 @@ class UserFactory extends Factory
     public function admin(): static
     {
         return $this->state(fn (array $attributes) => [
-            'roleUt' => 'admin', // Corrected: Set roleUt to admin
+            'RoleUT' => 'admin', // Corrected: Set RoleUT to admin
             // Override email domain for admin
-            'emailUt' => "{$attributes['usernameUt']}@ylschool.com",
+            'EmailUT' => "{$attributes['UserNameUT']}@ylschool.com",
         ]);
     }
 
@@ -82,9 +86,9 @@ class UserFactory extends Factory
     public function professeur(): static
     {
         return $this->state(fn (array $attributes) => [
-            'roleUt' => 'professeur', // Corrected: Set roleUt to professeur
+            'RoleUT' => 'professeur', // Corrected: Set RoleUT to professeur
             // Override email domain for professeur
-            'emailUt' => "{$attributes['usernameUt']}@ylschool-pr.com",
+            'EmailUT' => "{$attributes['UserNameUT']}@ylschool-pr.com",
         ]);
     }
 
@@ -94,17 +98,7 @@ class UserFactory extends Factory
     public function etudiant(): static
     {
         return $this->state(fn (array $attributes) => [
-            'roleUt' => 'etudiant', // Corrected: Set roleUt to etudiant
-        ]);
-    }
-
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
-    public function unverified(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
+            'RoleUT' => 'etudiant', // Corrected: Set RoleUT to etudiant
         ]);
     }
 }

@@ -12,17 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('time_table_exceptions', function (Blueprint $table) {
-            $table->string('matriculeTe')->primary();
-            $table->string('exceptionTypeTe');
-            $table->date('exceptionDateTe');
-            $table->boolean('isFulldayTe')->default(false);
-            $table->string('matriculeTs'); // FK to time_slots
-            $table->string('reasonTe')->nullable();
-            $table->string('newMatriculeTs')->nullable(); // Potentially FK to time_slots if replacement
+            $table->string('MatriculeTE')->primary();
+            $table->string('ExceptionTypeTE');
+            $table->date('ExceptionDateTE');
+            $table->boolean('IsFullDayTE')->default(false);
+            $table->string('MatriculeTS'); // FK to time_slots
+            $table->string('ReasonTE')->nullable();
+            $table->string('NewMatriculeTS')->nullable(); // Potentially FK to time_slots if replacement
             $table->timestamps();
 
-            $table->foreign('matriculeTs')->references('matriculeTs')->on('time_slots')->onDelete('cascade');
-            $table->foreign('newMatriculeTs')->references('matriculeTs')->on('time_slots')->onDelete('set null');
+            $table->foreign('MatriculeTS')->references('MatriculeTS')->on('time_slots')->onDelete('cascade');
+            $table->foreign('NewMatriculeTS')->references('MatriculeTS')->on('time_slots')->onDelete('set null');
         });
     }
 

@@ -25,7 +25,7 @@ class TeacherVocationSeeder extends Seeder
         foreach ($professeurs as $professeur) {
             $numberOfVocations = rand(1, 2);
             TeacherVocation::factory($numberOfVocations)
-                ->forProfesseur($professeur->matriculePr)
+                ->forProfesseur($professeur->MatriculePR)
                 ->create();
         }
     }

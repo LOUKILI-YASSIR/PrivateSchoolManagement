@@ -13,7 +13,7 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, GeneratesMatricule;
 
-    protected $primaryKey = 'matriculeUt';
+    protected $primaryKey = 'MatriculeUT';
     public $incrementing = false;
     protected $keyType = 'string';
 
@@ -30,25 +30,30 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'matriculeUt',
-        'usernameUt',
-        'emailUt',
-        'phoneUt',
-        'roleUt',
-        'passwordUt',
-        'statutUt',
-        'NomPl',
-        'PrenomPl',
-        'genrePl',
-        'adressPl',
-        'villePl',
-        'codePostalPl',
-        'paysPl',
-        'nationalitePl',
-        'lieuNaissancePl',
-        'dateNaissancePl',
-        'ObservationPl',
-        'profileFileNamePl',
+        'MatriculeUT',
+        'UserNameUT',
+        'EmailUT',
+        'PhoneUT',
+        'must_change_password',
+        'last_login_at',
+        'LanguagePageUT',
+        'ThemePageUT',
+        'CodeVerificationUT',
+        'RoleUT',
+        'PasswordUT',
+        'StatutUT',
+        'NomPL',
+        'PrenomPL',
+        'GenrePL',
+        'AdressPL',
+        'VillePL',
+        'CodePostalPL',
+        'PaysPL',
+        'NationalitePL',
+        'LieuNaissancePL',
+        'DateNaissancePL',
+        'ObservationPL',
+        'ProfileFileNamePL',
     ];
 
     /**
@@ -57,7 +62,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-        'passwordUt',
+        'PasswordUt',
         'remember_token',
     ];
 
@@ -67,31 +72,30 @@ class User extends Authenticatable
      * @var array<string, string>
      */
     protected $casts = [
-        'email_verified_at' => 'datetime', // Default Laravel cast
-        'dateNaissancePl' => 'date',
-        'passwordUt' => 'hashed', // Use the 'hashed' cast for automatic hashing
+        'DateNaissancePL' => 'date',
+        'PasswordUT' => 'hashed', // Use the 'hashed' cast for automatic hashing
     ];
 
     // Relationships
 
     public function professeur()
     {
-        return $this->hasOne(Professeur::class, 'matriculeUt', 'matriculeUt');
+        return $this->hasOne(Professeur::class, 'MatriculeUT', 'MatriculeUT');
     }
 
     public function etudiant()
     {
-        return $this->hasOne(Etudiant::class, 'matriculeUt', 'matriculeUt');
+        return $this->hasOne(Etudiant::class, 'MatriculeUT', 'MatriculeUT');
     }
 
     public function attendances()
     {
-        return $this->hasMany(Attendance::class, 'matriculeUt', 'matriculeUt');
+        return $this->hasMany(Attendance::class, 'MatriculeUT', 'MatriculeUT');
     }
 
     public function academicYears()
     {
-        return $this->hasMany(AcademicYear::class, 'matriculeUt', 'matriculeUt');
+        return $this->hasMany(AcademicYear::class, 'MatriculeUT', 'MatriculeUT');
     }
 
     // Required method for GeneratesMatricule trait

@@ -12,15 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('grade_adjustments', function (Blueprint $table) {
-            $table->string('matriculeGA')->primary();
-            $table->string('typeGA');
-            $table->float('valueGA');
-            $table->string('reasonGA')->nullable();
-            $table->date('DateGa');
-            $table->string('matriculeER'); // FK to evaluation_results
+            $table->string('MatriculeGA')->primary();
+            $table->string('TypeGA');
+            $table->float('ValueGA');
+            $table->string('ReasonGA')->nullable();
+            $table->date('DateGA');
+            $table->string('MatriculeER'); // FK to evaluation_results
             $table->timestamps();
 
-            $table->foreign('matriculeER')->references('matriculeER')->on('evaluation_results')->onDelete('cascade');
+            $table->foreign('MatriculeER')->references('MatriculeER')->on('evaluation_results')->onDelete('cascade');
         });
     }
 

@@ -10,7 +10,7 @@ class TimeSlot extends Model
 {
     use HasFactory, GeneratesMatricule;
 
-    protected $primaryKey = 'matriculeTs';
+    protected $primaryKey = 'MatriculeTS';
     public $incrementing = false;
     protected $keyType = 'string';
 
@@ -23,42 +23,42 @@ class TimeSlot extends Model
 
 
     protected $fillable = [
-        'matriculeTs',
-        'startTimeTs',
-        'endTimeTs',
+        'MatriculeTS',
+        'StartTimeTS',
+        'EndTimeTS',
     ];
 
     // Casts for time columns
     protected $casts = [
-        'startTimeTs' => 'datetime:H:i:s',
-        'endTimeTs' => 'datetime:H:i:s',
+        'StartTimeTS' => 'datetime:H:i:s',
+        'EndTimeTS' => 'datetime:H:i:s',
     ];
 
     // Relationships
 
     public function regularTimeTables()
     {
-        return $this->hasMany(RegularTimeTable::class, 'matriculeTs', 'matriculeTs');
+        return $this->hasMany(RegularTimeTable::class, 'MatriculeTS', 'MatriculeTS');
     }
 
     public function schoolEvents()
     {
-        return $this->hasMany(SchoolEvent::class, 'matriculeTs', 'matriculeTs');
+        return $this->hasMany(SchoolEvent::class, 'MatriculeTS', 'MatriculeTS');
     }
 
     public function specialDaySchedules()
     {
-        return $this->hasMany(SpecialDaySchedule::class, 'matriculeTs', 'matriculeTs');
+        return $this->hasMany(SpecialDaySchedule::class, 'MatriculeTS', 'MatriculeTS');
     }
 
     public function timeTableExceptions()
     {
-        return $this->hasMany(TimeTableException::class, 'matriculeTs', 'matriculeTs');
+        return $this->hasMany(TimeTableException::class, 'MatriculeTS', 'MatriculeTS');
     }
 
     public function replacingTimeTableExceptions()
     {
-        return $this->hasMany(TimeTableException::class, 'newMatriculeTs', 'matriculeTs');
+        return $this->hasMany(TimeTableException::class, 'NewMatriculeTs', 'MatriculeTS');
     }
 
     // Required method for GeneratesMatricule trait

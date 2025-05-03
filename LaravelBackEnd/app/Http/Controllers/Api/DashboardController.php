@@ -22,15 +22,15 @@ class DashboardController extends Controller
     {
         try {
             $stats = [
-                'total_students' => User::where('roleUt', 'etudiant')->count(),
-                'total_teachers' => User::where('roleUt', 'professeur')->count(),
+                'total_students' => User::where('RoleUT', 'etudiant')->count(),
+                'total_teachers' => User::where('RoleUT', 'professeur')->count(),
                 'total_subjects' => Matiere::count(),
-                'total_staff' => User::where('roleUt', 'admin')->count(),
+                'total_staff' => User::where('RoleUT', 'admin')->count(),
             ];
 
             $genderDistribution = [
-                'male' => User::where('roleUt', 'etudiant')->where('sexe', 'Homme')->count(),
-                'female' => User::where('roleUt', 'etudiant')->where('sexe', 'Femelle')->count(),
+                'male' => User::where('RoleUT', 'etudiant')->where('sexe', 'Homme')->count(),
+                'female' => User::where('RoleUT', 'etudiant')->where('sexe', 'Femelle')->count(),
             ];
 
             $recentActivities = [];
@@ -71,15 +71,15 @@ class DashboardController extends Controller
             
             // First, try to find by Etudiant matricule
             $student = Etudiant::with(['class', 'grades', 'attendances'])
-                ->where('matriculeEt', $studentId)
+                ->where('MatriculeET', $studentId)
                 ->first();
                 
             // If not found, try to find by User matricule
             if (!$student) {
-                $user = User::where('matriculeUt', $studentId)->first();
+                $user = User::where('MatriculeUT', $studentId)->first();
                 if ($user && $user->role === 'etudiant') {
                     $student = Etudiant::with(['class', 'grades', 'attendances'])
-                        ->where('matriculeUt', $user->id)
+                        ->where('MatriculeUT', $user->id)
                         ->first();
                 }
             }
@@ -128,13 +128,13 @@ class DashboardController extends Controller
             $professor = null;
             
             // First check if the user exists
-            $user = User::where('matriculeUt', $professorId)->first();
+            $user = User::where('MatriculeUT', $professorId)->first();
             if ($user) {
-                Log::info('User found with matriculeUt: ' . $professorId);
+                Log::info('User found with MatriculeUT: ' . $professorId);
                 if ($user->role === 'professeur') {
                     // Try to find professor record connected to this user
-                    $professor = Professeur::where('matriculeUt', $user->id)
-                        ->orWhere('matriculeUt', $user->id)
+                    $professor = Professeur::where('MatriculeUT', $user->id)
+                        ->orWhere('MatriculeUT', $user->id)
                         ->first();
                 }
             }
@@ -142,10 +142,10 @@ class DashboardController extends Controller
             // If still not found, try with professor matricule directly
             if (!$professor) {
                 $professor = Professeur::with(['subjects', 'classes'])
-                    ->where('matriculePr', $professorId)
+                    ->where('MatriculePR', $professorId)
                     ->first();
                 
-                Log::info('Attempted direct professor lookup with matriculePr: ' . $professorId . ', result: ' . ($professor ? 'found' : 'not found'));
+                Log::info('Attempted direct professor lookup with MatriculePR: ' . $professorId . ', result: ' . ($professor ? 'found' : 'not found'));
             }
             
             // If professor not found, return mock data instead of error
@@ -368,8 +368,8 @@ class DashboardController extends Controller
     {
         try {
             $validatedData = $this->validateRequest($request, [
-                'roleUt' => 'required|string|in:student,teacher',
-                'matriculeUt' => 'required',
+                'RoleUT' => 'required|string|in:student,teacher',
+                'MatriculeUT' => 'required',
                 'time_range' => 'nullable|string|in:month,year'
             ]);
 
@@ -377,9 +377,9 @@ class DashboardController extends Controller
             $startDate = now()->subMonths($timeRange === 'year' ? 12 : 1);
 
             $metrics = [
-                'attendance_rate' => $this->calculateUserAttendanceRate($validatedData['roleUt'], $validatedData['matriculeUt'], $startDate),
-                'average_grades' => $this->calculateUserAverageGrades($validatedData['roleUt'], $validatedData['matriculeUt'], $startDate),
-                'participation_rate' => $this->calculateParticipationRate($validatedData['roleUt'], $validatedData['matriculeUt'], $startDate),
+                'attendance_rate' => $this->calculateUserAttendanceRate($validatedData['RoleUT'], $validatedData['MatriculeUT'], $startDate),
+                'average_grades' => $this->calculateUserAverageGrades($validatedData['RoleUT'], $validatedData['MatriculeUT'], $startDate),
+                'participation_rate' => $this->calculateParticipationRate($validatedData['RoleUT'], $validatedData['MatriculeUT'], $startDate),
             ];
 
             return $this->successResponse($metrics, 'retrieved');

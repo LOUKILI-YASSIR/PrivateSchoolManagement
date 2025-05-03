@@ -25,12 +25,12 @@ class HolidayFactory extends Factory
         $endDate = Carbon::instance($startDate)->addDays($duration -1);
 
         return [
-            // 'matriculeHd' handled by trait
-            'startdateHd' => $startDate->format('Y-m-d'),
-            'endDateHd' => $endDate->format('Y-m-d'),
-            'nameHd' => $this->faker->words(3, true) . ' Holiday',
-            'descriptionHd' => $this->faker->optional()->sentence(),
-            'matriculeYR' => AcademicYear::factory(),
+            // 'MatriculeHD' handled by trait
+            'StartDateHD' => $startDate->format('Y-m-d'),
+            'EndDateHD' => $endDate->format('Y-m-d'),
+            'NameHD' => $this->faker->words(3, true) . ' Holiday',
+            'DescriptionHD' => $this->faker->optional()->sentence(),
+            'MatriculeYR' => AcademicYear::factory(),
         ];
     }
 
@@ -40,7 +40,7 @@ class HolidayFactory extends Factory
     public function forYear(string $yearMatricule): static
     {
         return $this->state(fn (array $attributes) => [
-            'matriculeYR' => $yearMatricule,
+            'MatriculeYR' => $yearMatricule,
         ]);
     }
 }

@@ -15,30 +15,30 @@ class AcademicYearSeeder extends Seeder
      */
     public function run(): void
     {
-        $admin = User::where('statutUt', 'admin')->first();
+        $admin = User::where('StatutUT', 'admin')->first();
         if (!$admin) {
             $this->command->warn('Admin user not found. Skipping AcademicYearSeeder. Please run UserSeeder first.');
             return;
         }
 
         // Ensure only one year is current
-        AcademicYear::query()->update(['isCurrentYR' => false]);
+        AcademicYear::query()->update(['IsCurrentYR' => false]);
 
         // Create the current academic year
         AcademicYear::factory()
             ->current()
-            ->createdBy($admin->matriculeUt)
+            ->createdBy($admin->MatriculeUT)
             ->create([
-                'startDateYR' => Carbon::now()->year . '-09-01',
-                'endDateYR' => (Carbon::now()->year + 1) . '-08-31',
+                'StartDateYR' => Carbon::now()->year . '-09-01',
+                'EndDateYR' => (Carbon::now()->year + 1) . '-08-31',
             ]);
 
         // Create a couple of past academic years
         AcademicYear::factory(2)
-            ->createdBy($admin->matriculeUt)
+            ->createdBy($admin->MatriculeUT)
             ->create([
-                'statusYR' => 'Archived',
-                'isCurrentYR' => false,
+                'StatusYR' => 'Archived',
+                'IsCurrentYR' => false,
                 // Factory definition handles date generation for past years
             ]);
     }

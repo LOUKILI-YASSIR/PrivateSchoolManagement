@@ -12,15 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('notes', function (Blueprint $table) {
-            $table->string('matriculeNt')->primary();
-            $table->string('matriculeEt');
-            $table->string('matriculeMt');
-            $table->float('gradeNt');
-            $table->string('commentaireNt')->nullable();
+            $table->string('MatriculeNT')->primary();
+            $table->string('MatriculeET');
+            $table->string('MatriculeMT');
+            $table->float('GradeNT');
+            $table->string('CommentaireNT')->nullable();
             $table->timestamps();
 
-            $table->foreign('matriculeEt')->references('matriculeEt')->on('etudiants')->onDelete('cascade');
-            $table->foreign('matriculeMt')->references('matriculeMt')->on('matieres')->onDelete('cascade');
+            $table->foreign('MatriculeET')->references('MatriculeET')->on('etudiants')->onDelete('cascade');
+            $table->foreign('MatriculeMT')->references('MatriculeMT')->on('matieres')->onDelete('cascade');
         });
     }
 

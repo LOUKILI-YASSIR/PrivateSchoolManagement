@@ -14,10 +14,10 @@ class NoteController extends Controller
     protected string $model = Note::class;
 
     protected array $validationRules = [
-        'matriculeEt' => 'required|string|exists:etudiants,matriculeEt',
-        'matriculeMt' => 'required|string|exists:matieres,matriculeMt',
-        'gradeNt' => 'required|numeric|min:0',
-        'commentaireNt' => 'nullable|string|max:255',
+        'MatriculeET' => 'required|string|exists:etudiants,MatriculeET',
+        'MatriculeMT' => 'required|string|exists:matieres,MatriculeMT',
+        'GradeNT' => 'required|numeric|min:0',
+        'CommentaireNT' => 'nullable|string|max:255',
     ];
 
     // Define resource name for messages

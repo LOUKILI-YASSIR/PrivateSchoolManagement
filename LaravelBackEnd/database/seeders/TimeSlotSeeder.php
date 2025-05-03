@@ -14,15 +14,15 @@ class TimeSlotSeeder extends Seeder
     public function run(): void
     {
         $slots = [
-            ['startTimeTs' => '08:00:00', 'endTimeTs' => '09:00:00'],
-            ['startTimeTs' => '09:00:00', 'endTimeTs' => '10:00:00'],
-            ['startTimeTs' => '10:00:00', 'endTimeTs' => '11:00:00'],
-            ['startTimeTs' => '11:00:00', 'endTimeTs' => '12:00:00'],
+            ['StartTimeTS' => '08:00:00', 'EndTimeTS' => '09:00:00'],
+            ['StartTimeTS' => '09:00:00', 'EndTimeTS' => '10:00:00'],
+            ['StartTimeTS' => '10:00:00', 'EndTimeTS' => '11:00:00'],
+            ['StartTimeTS' => '11:00:00', 'EndTimeTS' => '12:00:00'],
             // Lunch break - could be represented differently if needed
-            ['startTimeTs' => '13:00:00', 'endTimeTs' => '14:00:00'],
-            ['startTimeTs' => '14:00:00', 'endTimeTs' => '15:00:00'],
-            ['startTimeTs' => '15:00:00', 'endTimeTs' => '16:00:00'],
-            ['startTimeTs' => '16:00:00', 'endTimeTs' => '17:00:00'],
+            ['StartTimeTS' => '13:00:00', 'EndTimeTS' => '14:00:00'],
+            ['StartTimeTS' => '14:00:00', 'EndTimeTS' => '15:00:00'],
+            ['StartTimeTS' => '15:00:00', 'EndTimeTS' => '16:00:00'],
+            ['StartTimeTS' => '16:00:00', 'EndTimeTS' => '17:00:00'],
         ];
 
         foreach ($slots as $slot) {

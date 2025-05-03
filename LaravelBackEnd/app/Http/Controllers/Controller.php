@@ -12,6 +12,8 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use Symfony\Component\HttpFoundation\Response;
 use Carbon\Carbon;
+use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Support\Facades\Crypt;
 
 /**
  * Base Controller Class
@@ -345,4 +347,20 @@ class Controller extends BaseController
     {
         return $this->errorResponse('request', 'invalid_format', ['request' => $message], Response::HTTP_BAD_REQUEST);
     }
+    public function checkIfEncrypted($value)
+{
+    try {
+        $decrypted = Crypt::decryptString($value);
+        return [
+            'is_encrypted' => true,
+            'value' => $decrypted
+        ];
+    } catch (DecryptException $e) {
+        return [
+            'is_encrypted' => false,
+            'value' => $value
+        ];
+    }
+}
+
 }

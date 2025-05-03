@@ -26,9 +26,9 @@ class TimeSlotFactory extends Factory
         $endTime = $startTime->copy()->addHour();
 
         return [
-            // 'matriculeTs' handled by trait
-            'startTimeTs' => $startTime->format('H:i:s'),
-            'endTimeTs' => $endTime->format('H:i:s'),
+            // 'MatriculeTS' handled by trait
+            'StartTimeTS' => $startTime->format('H:i:s'),
+            'EndTimeTS' => $endTime->format('H:i:s'),
         ];
     }
 }

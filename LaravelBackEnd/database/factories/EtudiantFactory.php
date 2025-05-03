@@ -24,19 +24,19 @@ class EtudiantFactory extends Factory
         $user = User::factory()->etudiant()->create();
 
         return [
-            // 'matriculeEt' is handled by GeneratesMatricule trait
-            'matriculeUt' => $user->matriculeUt, // Assign the created user's ID
-            // 'matriculeGp' will be set in the Seeder or via state
-            'emailEt' => $user->emailUt, // Use the user's email by default
-            'phoneEt' => $user->phoneUt, // Use the user's phone by default
-            'lienParenteTr' => $this->faker->randomElement(['Father', 'Mother', 'Guardian', 'Sibling']),
-            'professionTr' => $this->faker->optional()->jobTitle(),
-            'NomTr' => $this->faker->lastName(),
-            'PrenomTr' => $this->faker->firstName(),
-            'Phone1Tr' => $this->faker->phoneNumber(),
-            'Phone2Tr' => $this->faker->optional()->phoneNumber(),
-            'EmailTr' => $this->faker->optional()->safeEmail(),
-            'ObservationTr' => $this->faker->optional()->paragraph(),
+            // 'MatriculeET' is handled by GeneratesMatricule trait
+            'MatriculeUT' => $user->MatriculeUT, // Assign the created user's ID
+            // 'MatriculeGP' will be set in the Seeder or via state
+            'EmailET' => $user->emailUT, // Use the user's email by default
+            'PhoneET' => $user->phoneUT, // Use the user's phone by default
+            'LienParenteTR' => $this->faker->randomElement(['Father', 'Mother', 'Guardian', 'Sibling']),
+            'ProfessionTR' => $this->faker->optional()->jobTitle(),
+            'NomTR' => $this->faker->lastName(),
+            'PrenomTR' => $this->faker->firstName(),
+            'Phone1TR' => $this->faker->phoneNumber(),
+            'Phone2TR' => $this->faker->optional()->phoneNumber(),
+            'EmailTR' => $this->faker->optional()->safeEmail(),
+            'ObservationTR' => $this->faker->optional()->paragraph(),
         ];
     }
 
@@ -49,7 +49,7 @@ class EtudiantFactory extends Factory
     public function forGroup(string $groupMatricule): static
     {
         return $this->state(fn (array $attributes) => [
-            'matriculeGp' => $groupMatricule,
+            'MatriculeGP' => $groupMatricule,
         ]);
     }
 }

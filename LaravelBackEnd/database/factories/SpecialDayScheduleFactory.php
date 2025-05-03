@@ -20,12 +20,12 @@ class SpecialDayScheduleFactory extends Factory
     public function definition(): array
     {
         return [
-            // 'matriculeSS' handled by trait
-            'dateSS' => $this->faker->dateTimeBetween('+1 day', '+2 months')->format('Y-m-d'),
-            'isFulldaySS' => $this->faker->boolean(20), // 20% chance of full day event
-            'matriculeTs' => TimeSlot::factory(), // Specific timeslot for the activity
-            'locationSS' => $this->faker->optional()->company() . ' Hall',
-            'activityNameSS' => $this->faker->catchPhrase(),
+            // 'MatriculeSS' handled by trait
+            'DateSS' => $this->faker->dateTimeBetween('+1 day', '+2 months')->format('Y-m-d'),
+            'IsFulldaySS' => $this->faker->boolean(20), // 20% chance of full day event
+            'MatriculeTS' => TimeSlot::factory(), // Specific timeslot for the activity
+            'LocationSS' => $this->faker->optional()->company() . ' Hall',
+            'ActivityNameSS' => $this->faker->catchPhrase(),
         ];
     }
 
@@ -35,8 +35,8 @@ class SpecialDayScheduleFactory extends Factory
     public function forTimeSlot(string $timeSlotMatricule): static
     {
         return $this->state(fn (array $attributes) => [
-            'matriculeTs' => $timeSlotMatricule,
-            'isFulldaySS' => false, // Cannot be full day if tied to specific slot
+            'MatriculeTS' => $timeSlotMatricule,
+            'IsFulldaySS' => false, // Cannot be full day if tied to specific slot
         ]);
     }
 
@@ -46,8 +46,8 @@ class SpecialDayScheduleFactory extends Factory
     public function fullDay(): static
     {
         return $this->state(fn (array $attributes) => [
-            'isFulldaySS' => true,
-            'matriculeTs' => null, // No specific timeslot for full day
+            'IsFulldaySS' => true,
+            'MatriculeTS' => null, // No specific timeslot for full day
         ]);
     }
 }

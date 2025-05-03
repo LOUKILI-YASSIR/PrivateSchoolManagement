@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 export const AcademicYearsColumns = (Traduction, FilterModeOptions) => [
   {
     header: Traduction("Data.matricule"),
-    accessorKey: "matriculeYR",
+    accessorKey: "MatriculeYR",
     filterFn: "equals",
     columnFilterModeOptions: [...FilterModeOptions["equality"]],
   },
@@ -18,7 +18,7 @@ export const AcademicYearsColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.description"),
-    accessorKey: "descriptionYR",
+    accessorKey: "DescriptionYR",
     filterFn: "fuzzy",
     columnFilterModeOptions: [
       ...FilterModeOptions["text"],
@@ -27,7 +27,7 @@ export const AcademicYearsColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.startDate"),
-    accessorKey: "startDateYR",
+    accessorKey: "StartDateYR",
     filterFn: "greaterThanOrEqualTo",
     filterVariant: "date",
     columnFilterModeOptions: [
@@ -41,7 +41,7 @@ export const AcademicYearsColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.endDate"),
-    accessorKey: "endDateYR",
+    accessorKey: "EndDateYR",
     filterFn: "greaterThanOrEqualTo",
     filterVariant: "date",
     columnFilterModeOptions: [
@@ -69,7 +69,7 @@ export const AcademicYearsColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.status"),
-    accessorKey: "statusYR",
+    accessorKey: "StatusYR",
     filterFn: "equals",
     filterVariant: "select",
     filterSelectOptions: ["active", "inactive", "archived"],
@@ -77,7 +77,7 @@ export const AcademicYearsColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.isCurrent"),
-    accessorKey: "isCurrentYR",
+    accessorKey: "IsCurrentYR",
     filterFn: "equals",
     filterVariant: "select",
     filterSelectOptions: [true, false],
@@ -88,7 +88,7 @@ export const AcademicYearsColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.createdBy"),
-    accessorKey: "user.usernameUt",
+    accessorKey: "user.UserNameUT",
     filterFn: "fuzzy",
     columnFilterModeOptions: [
       ...FilterModeOptions["text"],

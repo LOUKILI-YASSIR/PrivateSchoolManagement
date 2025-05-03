@@ -16,7 +16,7 @@ class SchoolCalendarSeeder extends Seeder
      */
     public function run(): void
     {
-        $currentYear = AcademicYear::where('isCurrentYR', true)->first();
+        $currentYear = AcademicYear::where('IsCurrentYR', true)->first();
 
         if (!$currentYear) {
             $this->command->warn('Current AcademicYear not found. Skipping SchoolCalendarSeeder.');
@@ -24,16 +24,16 @@ class SchoolCalendarSeeder extends Seeder
         }
 
         // Generate calendar entries for the current academic year
-        $period = CarbonPeriod::create($currentYear->startDateYR, $currentYear->endDateYR);
+        $period = CarbonPeriod::create($currentYear->StartDateYR, $currentYear->EndDateYR);
 
         $calendarEntries = [];
         foreach ($period as $date) {
             $dayType = $date->isWeekend() ? 'Weekend' : 'School Day'; // Simple weekend check
             $calendarEntries[] = [
-                // 'matriculeSc' handled by trait via create()
-                'calendarDateSc' => $date->format('Y-m-d'),
-                'dayTypeSc' => $dayType,
-                'matriculeYR' => $currentYear->matriculeYR,
+                // 'MatriculeSC' handled by trait via create()
+                'CalendarDateSC' => $date->format('Y-m-d'),
+                'DayTypeSC' => $dayType,
+                'MatriculeYR' => $currentYear->MatriculeYR,
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
@@ -45,7 +45,7 @@ class SchoolCalendarSeeder extends Seeder
         // Insert one by one to use the trait
         foreach ($calendarEntries as $entry) {
              // Check if entry already exists for this date and year
-            if (!SchoolCalendar::where('calendarDateSc', $entry['calendarDateSc'])->where('matriculeYR', $entry['matriculeYR'])->exists()) {
+            if (!SchoolCalendar::where('CalendarDateSC', $entry['CalendarDateSC'])->where('MatriculeYR', $entry['MatriculeYR'])->exists()) {
                 SchoolCalendar::create($entry);
             }
         }

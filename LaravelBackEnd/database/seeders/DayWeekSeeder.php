@@ -14,13 +14,13 @@ class DayWeekSeeder extends Seeder
     public function run(): void
     {
         $days = [
-            ['dayNameDW' => 'Monday'],
-            ['dayNameDW' => 'Tuesday'],
-            ['dayNameDW' => 'Wednesday'],
-            ['dayNameDW' => 'Thursday'],
-            ['dayNameDW' => 'Friday'],
-            ['dayNameDW' => 'Saturday'],
-            ['dayNameDW' => 'Sunday'],
+            ['DayNameDW' => 'Monday'],
+            ['DayNameDW' => 'Tuesday'],
+            ['DayNameDW' => 'Wednesday'],
+            ['DayNameDW' => 'Thursday'],
+            ['DayNameDW' => 'Friday'],
+            ['DayNameDW' => 'Saturday'],
+            ['DayNameDW' => 'Sunday'],
         ];
 
         foreach ($days as $day) {

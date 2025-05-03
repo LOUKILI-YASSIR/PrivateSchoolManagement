@@ -20,10 +20,10 @@ class NoteFinalFactory extends Factory
     public function definition(): array
     {
         return [
-            // 'matriculeNf' handled by trait
-            'matriculeEt' => Etudiant::factory(),
-            'gradeNf' => $this->faker->randomFloat(2, 5, 20), // Final grade, maybe slightly higher avg
-            'commentaireNf' => $this->faker->optional()->sentence(),
+            // 'matriculeNF' handled by trait
+            'MatriculeET' => Etudiant::factory(),
+            'GradeNF' => $this->faker->randomFloat(2, 5, 20), // Final grade, maybe slightly higher avg
+            'CommentaireNF' => $this->faker->optional()->sentence(),
         ];
     }
 
@@ -33,7 +33,7 @@ class NoteFinalFactory extends Factory
     public function forEtudiant(string $etudiantMatricule): static
     {
         return $this->state(fn (array $attributes) => [
-            'matriculeEt' => $etudiantMatricule,
+            'MatriculeET' => $etudiantMatricule,
         ]);
     }
 }

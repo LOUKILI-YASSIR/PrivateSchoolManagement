@@ -12,17 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('matieres', function (Blueprint $table) {
-            $table->string('matriculeMt')->primary();
-            $table->string('nameMt');
-            $table->string('codeMt');
-            $table->string('descriptionMt')->nullable();
-            $table->float('coefficientMt')->nullable();
-            $table->string('matriculeNv');
-            $table->string('matriculePr');
+            $table->string('MatriculeMT')->primary();
+            $table->string('NameMT');
+            $table->string('CodeMT');
+            $table->string('DescriptionMT')->nullable();
+            $table->float('CoefficientMT')->nullable();
+            $table->string('MatriculeNV');
+            $table->string('MatriculePR');
             $table->timestamps();
 
-            $table->foreign('matriculeNv')->references('matriculeNv')->on('niveaux')->onDelete('cascade');
-            $table->foreign('matriculePr')->references('matriculePr')->on('professeurs')->onDelete('cascade');
+            $table->foreign('MatriculeNV')->references('MatriculeNV')->on('niveaux')->onDelete('cascade');
+            $table->foreign('MatriculePR')->references('MatriculePR')->on('professeurs')->onDelete('cascade');
         });
     }
 

@@ -13,7 +13,7 @@ export const getFormStepsNv = () => {
             Fields: [
                 generateField({
                     type: TEXT,
-                    label: "NomNv",
+                    label: "NomNV",
                     propsType: "text",
                     propsLabel: "Nom",
                     enablePlaceholder: true,
@@ -29,7 +29,7 @@ export const getFormStepsNv = () => {
                   }), 
                 generateField({
                     type: TEXT,
-                    label: "codeNv",
+                    label: "CodeNV",
                     propsType: "text",
                     propsLabel: "Code",
                     enablePlaceholder: true,
@@ -45,7 +45,7 @@ export const getFormStepsNv = () => {
                   }), 
                 generateField({
                     type: SELECT,
-                    label: "typeNv",
+                    label: "TypeNV",
                     propsLabel: "Type",
                     options: [
                         { value: 'niveau', label: 'Niveau' },
@@ -58,19 +58,19 @@ export const getFormStepsNv = () => {
                   }), 
                   generateField({
                     type: SELECT,
-                    label: 'parent_matriculeNv',
+                    label: 'SubMatriculeNV',
                     propsLabel: "Niveaux",
                     options: (isLoading || error || !data || data?.data?.length === 0
                       ? [] // Fallback to empty array if data is not ready
-                      : data?.data.filter((niveau)=>niveau.NomNv && !niveau.parent?.NomNv).map((niveau) => ({
-                          value: niveau.matriculeNv,
-                          label: niveau.NomNv,
+                      : data?.data.filter((niveau)=>niveau.NomNV && !niveau.parent?.NomNV).map((niveau) => ({
+                          value: niveau.MatriculeNV,
+                          label: niveau.NomNV,
                       }))),
                     validation: commonValidations.required("Niveaux")
                   }),
                 generateField({
                     type: TEXTAREA,
-                    label: "descriptionNv",
+                    label: "DescriptionNV",
                     propsType: "text",
                     propsLabel: "Description",
                     enablePlaceholder: true,

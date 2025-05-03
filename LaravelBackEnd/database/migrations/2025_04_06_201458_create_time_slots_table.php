@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('time_slots', function (Blueprint $table) {
-            $table->string('matriculeTs')->primary();
-            $table->time('startTimeTs');
-            $table->time('endTimeTs');
+            $table->string('MatriculeTS')->primary();
+            $table->time('StartTimeTS');
+            $table->time('EndTimeTS');
             $table->timestamps();
         });
     }

@@ -10,7 +10,7 @@ class Professeur extends Model
 {
     use HasFactory, GeneratesMatricule;
 
-    protected $primaryKey = 'matriculePr';
+    protected $primaryKey = 'MatriculePR';
     public $incrementing = false;
     protected $keyType = 'string';
 
@@ -22,48 +22,48 @@ class Professeur extends Model
     protected $table = 'professeurs';
 
     protected $fillable = [
-        'matriculePr',
-        'CINPr',
-        'civilitePr',
-        'Phone1Pr',
-        'Phone2Pr',
-        'DateEmbauchePr',
-        'SalairePr',
-        'NomBanquePr',
-        'RIBPr',
-        'matriculeUt',
+        'MatriculePR',
+        'CINPR',
+        'CivilitePR',
+        'Phone1PR',
+        'Phone2PR',
+        'DateEmbauchePR',
+        'SalairePR',
+        'NomBanquePR',
+        'RIBPR',
+        'MatriculeUT',
     ];
 
     protected $casts = [
-        'DateEmbauchePr' => 'date',
-        'SalairePr' => 'float',
+        'DateEmbauchePR' => 'date',
+        'SalairePR' => 'float',
     ];
 
     // Relationships
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'matriculeUt', 'matriculeUt');
+        return $this->belongsTo(User::class, 'MatriculeUT', 'MatriculeUT');
     }
 
     public function matieres()
     {
-        return $this->hasMany(Matiere::class, 'matriculePr', 'matriculePr');
+        return $this->hasMany(Matiere::class, 'MatriculePR', 'MatriculePR');
     }
 
     public function attendances()
     {
-        return $this->hasMany(Attendance::class, 'matriculePr', 'matriculePr');
+        return $this->hasMany(Attendance::class, 'MatriculePR', 'MatriculePR');
     }
 
     public function teacherVocations()
     {
-        return $this->hasMany(TeacherVocation::class, 'matriculePr', 'matriculePr');
+        return $this->hasMany(TeacherVocation::class, 'MatriculePR', 'MatriculePR');
     }
 
     public function regularTimeTables()
     {
-        return $this->hasMany(RegularTimeTable::class, 'matriculePr', 'matriculePr');
+        return $this->hasMany(RegularTimeTable::class, 'MatriculePR', 'MatriculePR');
     }
 
     // Required method for GeneratesMatricule trait

@@ -10,7 +10,7 @@ class TeacherVocation extends Model
 {
     use HasFactory, GeneratesMatricule;
 
-    protected $primaryKey = 'matriculeTv';
+    protected $primaryKey = 'MatriculeTV';
     public $incrementing = false;
     protected $keyType = 'string';
 
@@ -22,24 +22,24 @@ class TeacherVocation extends Model
     protected $table = 'teacher_vocations';
 
     protected $fillable = [
-        'matriculeTv',
-        'matriculePr',
-        'startDatetv',
-        'approvedTv',
-        'endDatetv',
+        'MatriculeTV',
+        'MatriculePR',
+        'StartDateTV',
+        'ApprovedTV',
+        'EndDateTV',
     ];
 
     protected $casts = [
-        'startDatetv' => 'date',
-        'approvedTv' => 'boolean',
-        'endDatetv' => 'date',
+        'StartDateTV' => 'date',
+        'ApprovedTV' => 'boolean',
+        'EndDateTV' => 'date',
     ];
 
     // Relationships
 
     public function professeur()
     {
-        return $this->belongsTo(Professeur::class, 'matriculePr', 'matriculePr');
+        return $this->belongsTo(Professeur::class, 'MatriculePR', 'MatriculePR');
     }
 
     // Required method for GeneratesMatricule trait

@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('day_weeks', function (Blueprint $table) {
-            $table->string('matriculeDW')->primary();
-            $table->string('dayNameDW');
+            $table->string('MatriculeDW')->primary();
+            $table->string('DayNameDW');
             $table->timestamps();
         });
     }

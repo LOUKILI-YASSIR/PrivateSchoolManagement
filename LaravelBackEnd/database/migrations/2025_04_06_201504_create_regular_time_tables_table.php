@@ -12,21 +12,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('regular_time_tables', function (Blueprint $table) {
-            $table->string('matriculeRt')->primary();
-            $table->string('matriculeDW');
-            $table->string('matriculeTs');
-            $table->string('matriculeGp');
-            $table->string('matriculeMt');
-            $table->string('matriculePr');
-            $table->string('matriculeSl');
+            $table->string('MatriculeRt')->primary();
+            $table->string('MatriculeDW');
+            $table->string('MatriculeTS');
+            $table->string('MatriculeGP');
+            $table->string('MatriculeMT');
+            $table->string('MatriculePR');
+            $table->string('MatriculeSL');
             $table->timestamps();
 
-            $table->foreign('matriculeDW')->references('matriculeDW')->on('day_weeks')->onDelete('cascade');
-            $table->foreign('matriculeTs')->references('matriculeTs')->on('time_slots')->onDelete('cascade');
-            $table->foreign('matriculeGp')->references('matriculeGp')->on('groups')->onDelete('cascade');
-            $table->foreign('matriculeMt')->references('matriculeMt')->on('matieres')->onDelete('cascade');
-            $table->foreign('matriculePr')->references('matriculePr')->on('professeurs')->onDelete('cascade');
-            $table->foreign('matriculeSl')->references('matriculeSl')->on('salles')->onDelete('cascade');
+            $table->foreign('MatriculeDW')->references('MatriculeDW')->on('day_weeks')->onDelete('cascade');
+            $table->foreign('MatriculeTS')->references('MatriculeTS')->on('time_slots')->onDelete('cascade');
+            $table->foreign('MatriculeGP')->references('MatriculeGP')->on('groups')->onDelete('cascade');
+            $table->foreign('MatriculeMT')->references('MatriculeMT')->on('matieres')->onDelete('cascade');
+            $table->foreign('MatriculePR')->references('MatriculePR')->on('professeurs')->onDelete('cascade');
+            $table->foreign('MatriculeSL')->references('MatriculeSL')->on('salles')->onDelete('cascade');
         });
     }
 

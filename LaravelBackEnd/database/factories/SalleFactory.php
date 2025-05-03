@@ -19,15 +19,15 @@ class SalleFactory extends Factory
     public function definition(): array
     {
         return [
-            // 'matriculeSl' is handled by the GeneratesMatricule trait
-            'NameSl' => 'Salle ' . $this->faker->unique()->word() . ' ' . $this->faker->randomNumber(2),
-            'CapacitySl' => $this->faker->numberBetween(20, 100),
-            'LocationSl' => $this->faker->optional()->word(), // e.g., Building A, Block C
-            'ressourcesSl' => $this->faker->optional()->sentence(3),
-            'typeSl' => $this->faker->randomElement(['Classroom', 'Lab', 'Amphitheater', 'Meeting Room']),
-            'statusSl' => $this->faker->randomElement(['Available', 'Maintenance', 'Unavailable']),
-            'floorSl' => $this->faker->optional()->randomDigitNotNull(),
-            'observationSl' => $this->faker->optional()->paragraph(),
+            // 'MatriculeSL' is handled by the GeneratesMatricule trait
+            'NameSL' => 'Salle ' . $this->faker->unique()->word() . ' ' . $this->faker->randomNumber(2),
+            'CapacitySL' => $this->faker->numberBetween(20, 100),
+            'LocationSL' => $this->faker->optional()->word(), // e.g., Building A, Block C
+            'RessourcesSL' => $this->faker->optional()->sentence(3),
+            'TypeSL' => $this->faker->randomElement(['Classroom', 'Lab', 'Amphitheater', 'Meeting Room']),
+            'StatusSL' => $this->faker->randomElement(['Available', 'Maintenance', 'Unavailable']),
+            'FloorSL' => $this->faker->optional()->randomDigitNotNull(),
+            'ObservationSL' => $this->faker->optional()->paragraph(),
         ];
     }
 }

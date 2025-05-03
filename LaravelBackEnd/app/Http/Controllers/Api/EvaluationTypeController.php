@@ -14,11 +14,11 @@ class EvaluationTypeController extends Controller
     protected string $model = EvaluationType::class;
 
     protected array $validationRules = [
-        'nameEp' => 'required|string|max:255',
-        'max_gradeEp' => 'nullable|numeric',
-        'porsentageEp' => 'nullable|numeric',
-        'descriptionEp' => 'nullable|string',
-        'codeEp' => 'required|string|max:255',
+        'NameEP' => 'required|string|max:255',
+        'MaxGradeEP' => 'nullable|numeric',
+        'PorsentageEP' => 'nullable|numeric',
+        'DescriptionEP' => 'nullable|string',
+        'CodeEP' => 'required|string|max:255',
     ];
 
     // Define resource name for messages

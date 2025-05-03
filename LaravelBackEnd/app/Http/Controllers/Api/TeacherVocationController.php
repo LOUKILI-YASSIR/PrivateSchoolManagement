@@ -14,10 +14,10 @@ class TeacherVocationController extends Controller
     protected string $model = TeacherVocation::class;
 
     protected array $validationRules = [
-        'matriculePr' => 'required|string|exists:professeurs,matriculePr',
-        'startDatetv' => 'required|date',
-        'approvedTv' => 'sometimes|boolean',
-        'endDatetv' => 'nullable|date|after_or_equal:startDatetv',
+        'MatriculePR' => 'required|string|exists:professeurs,MatriculePR',
+        'StartDateTV' => 'required|date',
+        'ApprovedTV' => 'sometimes|boolean',
+        'EndDateTV' => 'nullable|date|after_or_equal:StartDateTV',
     ];
 
     // Define resource name for messages

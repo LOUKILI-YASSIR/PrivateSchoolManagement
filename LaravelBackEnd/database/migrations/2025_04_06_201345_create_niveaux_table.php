@@ -13,17 +13,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('niveaux', function (Blueprint $table) {
-            $table->string('matriculeNv')->primary();
-            $table->string('codeNv');
-            $table->string('NomNv');
-            $table->string('parent_matriculeNv')->nullable();
-            $table->string('typeNv');
-            $table->string('descriptionNv')->nullable();
-            $table->string('statusNv')->nullable();
+            $table->string('MatriculeNV')->primary();
+            $table->string('CodeNV');
+            $table->string('NomNV');
+            $table->string('SubMatriculeNV')->nullable();
+            $table->string('TypeNV');
+            $table->string('DescriptionNV')->nullable();
+            $table->string('StatusNV')->nullable();
             $table->timestamps();
 
             // Self-referencing foreign key for parent niveau
-            $table->foreign('parent_matriculeNv')->references('matriculeNv')->on('niveaux')->onDelete('set null');
+            $table->foreign('SubMatriculeNV')->references('MatriculeNV')->on('niveaux')->onDelete('set null');
         });
     }
 

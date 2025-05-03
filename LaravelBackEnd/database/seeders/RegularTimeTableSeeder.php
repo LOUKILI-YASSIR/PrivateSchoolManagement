@@ -41,20 +41,20 @@ class RegularTimeTableSeeder extends Seeder
         // Attempt to create some timetable entries for each group
         foreach ($groups as $group) {
             // Get matieres relevant to the group's niveau
-            $groupMatieres = $matieres->where('matriculeNv', $group->matriculeNv);
+            $groupMatieres = $matieres->where('MatriculeNV', $group->MatriculeNV);
             if($groupMatieres->isEmpty()) continue;
 
-            foreach ($days->whereNotIn('dayNameDW', ['Saturday', 'Sunday']) as $day) { // Weekdays only
+            foreach ($days->whereNotIn('DayNameDW', ['Saturday', 'Sunday']) as $day) { // Weekdays only
                 foreach ($timeSlots as $timeSlot) {
                     // Simple check: Assign only ~30% of slots randomly to avoid too dense schedule
                     if (rand(1, 10) > 3) continue;
 
-                    $key = $day->matriculeDW . '-' . $timeSlot->matriculeTs;
+                    $key = $day->MatriculeDW . '-' . $timeSlot->MatriculeTS;
 
                     // Basic clash detection (simplified)
-                    if (isset($assignedSlots[$key . '-gp-' . $group->matriculeGp]) ||
-                        isset($assignedSlots[$key . '-sl-' . $salles->random()->matriculeSl]) || // Random salle for simplicity
-                        isset($assignedSlots[$key . '-pr-' . $professeurs->random()->matriculePr])) { // Random prof for simplicity
+                    if (isset($assignedSlots[$key . '-gp-' . $group->MatriculeGP]) ||
+                        isset($assignedSlots[$key . '-sl-' . $salles->random()->MatriculeSL]) || // Random salle for simplicity
+                        isset($assignedSlots[$key . '-pr-' . $professeurs->random()->MatriculePR])) { // Random prof for simplicity
                         continue; // Skip if group, salle or prof seems busy (very basic check)
                     }
 
@@ -63,18 +63,18 @@ class RegularTimeTableSeeder extends Seeder
                     $salle = $salles->random();
 
                     RegularTimeTable::factory()->create([
-                        'matriculeDW' => $day->matriculeDW,
-                        'matriculeTs' => $timeSlot->matriculeTs,
-                        'matriculeGp' => $group->matriculeGp,
-                        'matriculeMt' => $matiere->matriculeMt,
-                        'matriculePr' => $professeur->matriculePr, // Use the matiere's prof if defined?
-                        'matriculeSl' => $salle->matriculeSl,
+                        'MatriculeDW' => $day->MatriculeDW,
+                        'MatriculeTS' => $timeSlot->MatriculeTS,
+                        'MatriculeGP' => $group->MatriculeGP,
+                        'MatriculeMT' => $matiere->MatriculeMT,
+                        'MatriculePR' => $professeur->MatriculePR, // Use the matiere's prof if defined?
+                        'MatriculeSL' => $salle->MatriculeSL,
                     ]);
 
                     // Mark slots as busy (basic)
-                    $assignedSlots[$key . '-gp-' . $group->matriculeGp] = true;
-                    $assignedSlots[$key . '-sl-' . $salle->matriculeSl] = true;
-                    $assignedSlots[$key . '-pr-' . $professeur->matriculePr] = true;
+                    $assignedSlots[$key . '-gp-' . $group->MatriculeGP] = true;
+                    $assignedSlots[$key . '-sl-' . $salle->MatriculeSL] = true;
+                    $assignedSlots[$key . '-pr-' . $professeur->MatriculePR] = true;
                 }
             }
         }

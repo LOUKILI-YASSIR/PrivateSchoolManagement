@@ -14,13 +14,13 @@ class AttendanceController extends Controller
     protected string $model = Attendance::class;
 
     protected array $validationRules = [
-        'statusAt' => 'required|string|max:255',
-        'isJustifAt' => 'sometimes|boolean',
-        'justifAt' => 'nullable|string',
-        'DateAt' => 'required|date',
-        'matriculeUt' => 'required|string|exists:users,matriculeUt',
-        'matriculeEt' => 'nullable|string|exists:etudiants,matriculeEt|required_without:matriculePr',
-        'matriculePr' => 'nullable|string|exists:professeurs,matriculePr|required_without:matriculeEt',
+        'StatusAT' => 'required|string|max:255',
+        'IsJustifAT' => 'sometimes|boolean',
+        'JustifAT' => 'nullable|string',
+        'DateAT' => 'required|date',
+        'MatriculeUT' => 'required|string|exists:users,MatriculeUT',
+        'MatriculeET' => 'nullable|string|exists:etudiants,MatriculeET|required_without:MatriculePR',
+        'MatriculePR' => 'nullable|string|exists:professeurs,MatriculePR|required_without:MatriculeET',
     ];
 
     // Define resource name for messages

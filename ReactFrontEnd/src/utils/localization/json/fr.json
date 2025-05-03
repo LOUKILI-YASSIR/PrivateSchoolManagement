@@ -31,15 +31,20 @@
     "rememberMeTooltip": "Lorsqu'activé, vos identifiants de connexion seront enregistrés en toute sécurité. Vous resterez connecté sur cet appareil même après redémarrage du navigateur.",
     "loggingIn": "Connexion en cours...",
     "error": {
-      "invalidCredentials": "Nom d'utilisateur ou mot de passe invalide",
-      "serverError": "Erreur serveur. Veuillez réessayer plus tard",
       "usernameRequired": "Le nom d'utilisateur est requis",
-      "emailRequired": "L'email est requis",
+      "emailRequired": "L'e-mail est requis",
       "phoneRequired": "Le numéro de téléphone est requis",
       "passwordRequired": "Le mot de passe est requis",
-      "invalidEmail": "Veuillez saisir une adresse email valide",
-      "invalidPhone": "Veuillez saisir un numéro de téléphone valide",
-      "tooManyAttempts": "Trop de tentatives de connexion. Veuillez réessayer plus tard"
+      "invalidUserName": "Nom d'utilisateur invalide.",
+      "invalidEmail": "E-mail invalide",
+      "invalidPhone": "Numéro de téléphone invalide",
+      "invalidUsernamePassword": "Nom d'utilisateur ou mot de passe invalide",
+      "invalidEmailPassword": "E-mail ou mot de passe invalide",
+      "invalidPhonePassword": "Numéro de téléphone ou mot de passe invalide",
+      "invalidCredentials": "Identifiants invalides",
+      "invalidInput": "Entrée invalide",
+      "tooManyAttempts": "Trop de tentatives de connexion. Veuillez réessayer plus tard.",
+      "general": "Une erreur s'est produite. Veuillez réessayer."
     }
   },
   "dashboard": {
@@ -264,5 +269,20 @@
     "next": "Suivant",
     "previous": "Précédent",
     "cancel": "Annuler"
+  },
+  "resetPassword": {
+    "error": {
+      "general": "Une erreur est survenue lors de la réinitialisation de votre mot de passe. Veuillez réessayer."
+    },
+    "success": {
+      "linkSent": "Un lien de réinitialisation a été envoyé à votre adresse e-mail."
+    },
+    "loading": "Chargement…",
+    "requestTitle": "Réinitialiser le mot de passe",
+    "validationCode": "Code de validation",
+    "requestSubtitle": "Entrez votre adresse e-mail, nom d’utilisateur ou numéro de téléphone pour recevoir un lien de réinitialisation.",
+    "returnToLogin": "Retour à la connexion",
+    "sending": "Envoi en cours…",
+    "sendLink": "Envoyer le lien de réinitialisation"
   }
 }

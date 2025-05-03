@@ -26,7 +26,7 @@ class NoteSeeder extends Seeder
         // Create one Note per Etudiant for a random selection of Matieres they might be taking
         foreach ($etudiants as $etudiant) {
             // Find matieres relevant to the student's group's niveau
-            $relevantMatieres = $matieres->where('matriculeNv', $etudiant->group?->matriculeNv);
+            $relevantMatieres = $matieres->where('MatriculeNV', $etudiant->group?->MatriculeNV);
             if($relevantMatieres->isEmpty()) continue;
 
             // Assign a note for ~50% of relevant matieres
@@ -34,10 +34,10 @@ class NoteSeeder extends Seeder
 
             foreach ($matieresToGrade as $matiere) {
                  // Avoid creating duplicate notes for the same student/matiere pair
-                if (!Note::where('matriculeEt', $etudiant->matriculeEt)->where('matriculeMt', $matiere->matriculeMt)->exists()) {
+                if (!Note::where('MatriculeET', $etudiant->MatriculeET)->where('MatriculeMT', $matiere->MatriculeMT)->exists()) {
                     Note::factory()
-                        ->forEtudiant($etudiant->matriculeEt)
-                        ->forMatiere($matiere->matriculeMt)
+                        ->forEtudiant($etudiant->MatriculeET)
+                        ->forMatiere($matiere->MatriculeMT)
                         ->create();
                 }
             }

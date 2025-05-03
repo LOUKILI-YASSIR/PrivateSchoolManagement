@@ -3,13 +3,13 @@ import React from "react";
 export const sallesColumns = (Traduction, FilterModeOptions) => [
   {
     header: Traduction("Data.matricule"),
-    accessorKey: "matriculeSl",
+    accessorKey: "MatriculeSL",
     filterFn: "equals",
     columnFilterModeOptions: [...FilterModeOptions["equality"]],
   },
   {
     header: Traduction("Data.name"),
-    accessorKey: "NameSl",
+    accessorKey: "NameSL",
     filterFn: "fuzzy",
     columnFilterModeOptions: [
       ...FilterModeOptions["text"],
@@ -18,7 +18,7 @@ export const sallesColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.capacity"),
-    accessorKey: "CapacitySl",
+    accessorKey: "CapacitySL",
     filterFn: "greaterThanOrEqualTo",
     columnFilterModeOptions: [
       ...FilterModeOptions["comparison"],
@@ -27,7 +27,7 @@ export const sallesColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.location"),
-    accessorKey: "LocationSl",
+    accessorKey: "LocationSL",
     filterFn: "fuzzy",
     columnFilterModeOptions: [
       ...FilterModeOptions["text"],
@@ -36,7 +36,7 @@ export const sallesColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.resources"),
-    accessorKey: "ressourcesSl",
+    accessorKey: "RessourcesSL",
     filterFn: "fuzzy",
     columnFilterModeOptions: [
       ...FilterModeOptions["text"],
@@ -45,7 +45,7 @@ export const sallesColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.type"),
-    accessorKey: "typeSl",
+    accessorKey: "TypeSL",
     filterFn: "equals",
     filterVariant: "select",
     filterSelectOptions: ["classroom", "lab", "auditorium", "other"],
@@ -53,7 +53,7 @@ export const sallesColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.status"),
-    accessorKey: "statusSl",
+    accessorKey: "StatusSL",
     filterFn: "equals",
     filterVariant: "select",
     filterSelectOptions: ["available", "occupied", "maintenance", "inactive"],
@@ -61,13 +61,13 @@ export const sallesColumns = (Traduction, FilterModeOptions) => [
   },
   {
     header: Traduction("Data.floor"),
-    accessorKey: "floorSl",
+    accessorKey: "FloorSL",
     filterFn: "equals",
     columnFilterModeOptions: [...FilterModeOptions["equality"]],
   },
   {
     header: Traduction("Data.observation"),
-    accessorKey: "observationSl",
+    accessorKey: "ObservationSL",
     filterFn: "fuzzy",
     columnFilterModeOptions: [
       ...FilterModeOptions["text"],
