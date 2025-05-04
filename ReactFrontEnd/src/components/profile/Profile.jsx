@@ -1,570 +1,582 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaPen, FaCamera, FaGlobe, FaShieldAlt, FaMoon, FaSun, FaExclamationTriangle } from 'react-icons/fa';
+import './Profile.css';
+import apiServices from '../../api/apiServices';
+import { useFetchData, usePostData, useUpdateData } from '../../api/queryHooks';
 import { useAuth } from '../../utils/contexts/AuthContext';
-import { useTranslation } from 'react-i18next';
-import {
-  Box,
-  Typography,
-  Paper,
-  Avatar,
-  Grid,
-  Button,
-  TextField,
-  Divider,
-  IconButton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions
-} from '@mui/material';
-import LoadingSpinner from '../common/LoadingSpinner';
-import EditIcon from '@mui/icons-material/Edit';
-import SaveIcon from '@mui/icons-material/Save';
-import CancelIcon from '@mui/icons-material/Cancel';
 import { useSelector } from 'react-redux';
-import './Profile.css'; // Import the CSS file
-import UserForm from "./hooks/UserFormHook"
-import apiServices from '../../api/apiServices'; // Ensure apiServices is imported
+import LoadingSpinner from '../common/LoadingSpinner';
 
 const Profile = () => {
-  const { userRole, logout } = useAuth();
-  const { t } = useTranslation();
-  const [isLoading, setIsLoading] = useState(true);
-  const [userData, setUserData] = useState(null);
-  const [editState, setEditState] = useState({
-    account: false,
-    personal: false,
-    password: false
-  });
-  const ImgPathUploads = userData?.RoleUT ? `/uploads/${userData.RoleUT}` : '';
-  const handleAvatarChange = (uploadedFilename) => {
-    const newAvatarUrl = uploadedFilename!=="" ? `${ImgPathUploads}/${uploadedFilename}` : "";
-    setUserData({
-      ...userData,
-      avatar: newAvatarUrl,
-    });
-  };
-  const [accountData, setAccountData] = useState({
-    name: '',
-    email: '',
-    phone: ''
-  });
+  const navigate = useNavigate();
+  const { isAuthenticated, logout } = useAuth();
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [activeTab, setActiveTab] = useState('personal');
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({});
+  
+  // Dark mode from Redux
+  const isDarkMode = useSelector((state) => state?.theme?.darkMode || false);
 
-  const [personalData, setPersonalData] = useState({
-    address: '',
-    city: '',
-    postalCode: '',
-    country: ''
-  });
-
-  const [passwordData, setPasswordData] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: ''
-  });
-
-  const darkMode = useSelector((state) => state?.theme?.darkMode || false);
+  const { mutateAsync: updateProfile } = useUpdateData('users/profile');
+  const { mutateAsync: uploadImage } = usePostData('users/upload-profile-image');
 
   useEffect(() => {
     const fetchUserData = async () => {
-      setIsLoading(true); // Start loading
       try {
-        // Fetch user data from the API
-        const response = await apiServices.getData('/user'); 
-        console.log('Fetched User Data Direct:', response); // Log the direct user object
-
-        // The response from /user is the user object directly
-        if (response) { 
-          const fetchedUser = response; // Assign direct response
-          setUserData(fetchedUser);
-
-          // Map backend fields to frontend state
-          setAccountData({
-            name: `${fetchedUser?.NomPL || ''} ${fetchedUser?.PrenomPL || ''}`.trim(), 
-            email: fetchedUser?.EmailUT || '',
-            phone: fetchedUser?.PhoneUT || ''
-          });
-
-          setPersonalData({
-            address: fetchedUser?.address || '', 
-            city: fetchedUser?.city || '',
-            postalCode: fetchedUser?.postalCode || '',
-            country: fetchedUser?.country || ''
-          });
-        } else {
-           // This else might indicate an actual API error handled by handleApiError
-           console.error('API service returned no user data:', response);
+        setLoading(true);
+        
+        if (!isAuthenticated) {
+          navigate('/YLSchool/Login');
+          return;
         }
 
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-        // Handle error state, maybe show a message to the user
-      } finally {
-        setIsLoading(false);
+        const response = await apiServices.getData('/users/profile');
+
+        if (response.error) {
+          // If we get a 401, token might be expired
+          if (response.status === 401) {
+            logout();
+            return;
+          }
+          setError(response.message || 'Failed to load profile data');
+        } else {
+          setUser(response.data || response);
+          setFormData(response.data || response);
+        }
+        setLoading(false);
+      } catch (err) {
+        setError('Failed to load profile data');
+        setLoading(false);
+        console.error('Error fetching profile data:', err);
       }
     };
+
     fetchUserData();
-  }, []); // Removed userRole dependency as we fetch based on auth token
+  }, [navigate, isAuthenticated, logout]);
 
-  const handleEditToggle = (section) => {
-    setEditState({
-      ...editState,
-      [section]: !editState[section]
-    });
-  };
-
-  const handleAccountChange = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setAccountData({
-      ...accountData,
+    setFormData(prev => ({
+      ...prev,
       [name]: value
-    });
+    }));
   };
 
-  const handlePersonalChange = (e) => {
-    const { name, value } = e.target;
-    setPersonalData({
-      ...personalData,
-      [name]: value
-    });
+  const handleCheckboxChange = (e) => {
+    const { name, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: checked
+    }));
   };
 
-  const handlePasswordChange = (e) => {
-    const { name, value } = e.target;
-    setPasswordData({
-      ...passwordData,
-      [name]: value
-    });
-  };
-
-  // Consolidated save handler
-  const handleSave = async (section, dataToSave) => {
-    setIsLoading(true);
-    let apiPayload = {};
-    let updatedLocalData = {};
-
-    // Prepare API payload based on section
-    if (section === 'account') {
-      // Split name back into NomPL and PrenomPL if needed by backend
-      const nameParts = dataToSave.name.split(' ');
-      apiPayload = {
-        NomPL: nameParts[0] || '',
-        PrenomPL: nameParts.slice(1).join(' ') || '',
-        EmailUT: dataToSave.email,
-        PhoneUT: dataToSave.phone,
-      };
-      updatedLocalData = { ...dataToSave };
-    } else if (section === 'personal') {
-      // Assuming backend expects these fields directly
-      apiPayload = { ...dataToSave }; 
-      updatedLocalData = { ...dataToSave };
-    } else if (section === 'password') {
-      if (dataToSave.newPassword !== dataToSave.confirmPassword) {
-        alert(t('profile.passwordMismatch') || 'Passwords do not match');
-        setIsLoading(false);
-        return; // Stop if passwords don't match
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const result = await updateProfile({ data: formData });
+      
+      if (!result.error) {
+        setUser(formData);
+        setIsEditing(false);
+      } else {
+        console.error('Error updating profile:', result.message);
       }
-      apiPayload = {
-        current_password: dataToSave.currentPassword,
-        new_password: dataToSave.newPassword,
-        new_password_confirmation: dataToSave.confirmPassword, // Often required by Laravel validation
-      };
-      // Don't store password data locally after save
-      updatedLocalData = {}; 
+    } catch (err) {
+      console.error('Error updating profile:', err);
     }
+  };
 
-    console.log(`Saving ${section} data:`, apiPayload); // Log before sending
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('profileImage', file);
 
     try {
-      const response = await apiServices.putData('/profile', apiPayload);
-      console.log(`Save ${section} response:`, response); // Log response
-
-      if (response && response.data) {
-        // Update the main userData state with the fresh data from backend
-        setUserData(prevData => ({ ...prevData, ...response.data })); 
-
-        // Update the specific section's state if needed (e.g., account, personal)
-        if (section === 'account') {
-            setAccountData(updatedLocalData);
-        } else if (section === 'personal') {
-            setPersonalData(updatedLocalData);
-        } else if (section === 'password') {
-             // Clear password fields after successful save
-            setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
-        }
-
-        // Close the edit mode for the saved section
-        setEditState({ ...editState, [section]: false });
-         // Optionally show a success message
-         alert(t(`profile.saveSuccess.${section}`) || `${section.charAt(0).toUpperCase() + section.slice(1)} data saved successfully!`);
-
+      const response = await uploadImage(formData);
+      
+      if (!response.error) {
+        setUser(prev => ({
+          ...prev,
+          ProfileFileNamePL: response.profileImage || response.data?.profileImage
+        }));
       } else {
-        console.error(`Failed to save ${section} data:`, response);
-        alert(t('profile.saveError') || 'Failed to save data. Please check the console.');
+        console.error('Error uploading image:', response.message);
       }
-
-    } catch (error) {
-      console.error(`Error saving ${section} data:`, error);
-      // Display specific validation errors if available
-      let errorMessage = t('profile.saveError');
-      if (error?.errors) {
-          errorMessage += '\n' + Object.values(error.errors).flat().join('\n');
-      }
-      alert(errorMessage);
-    } finally {
-      setIsLoading(false);
+    } catch (err) {
+      console.error('Error uploading image:', err);
     }
   };
 
-  // Update existing handlers to use the consolidated function
-  const handleAccountSave = () => handleSave('account', accountData);
-  const handlePersonalSave = () => handleSave('personal', personalData);
-  const handlePasswordSave = () => handleSave('password', passwordData);
-
-  const handleLogout = () => {
-    logout();
+  const handlePasswordChange = async (e) => {
+    e.preventDefault();
+    
+    // Only proceed if we're on the settings tab and editing
+    if (activeTab !== 'security' || !isEditing) return;
+    
+    try {
+      const passwordData = {
+        currentPassword: formData.currentPassword,
+        newPassword: formData.newPassword,
+        confirmPassword: formData.confirmPassword
+      };
+      
+      // Validate passwords match and are not empty
+      if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
+        console.error('All password fields are required');
+        return;
+      }
+      
+      if (passwordData.newPassword !== passwordData.confirmPassword) {
+        console.error('New passwords do not match');
+        return;
+      }
+      
+      const response = await apiServices.postData('/users/change-password', passwordData);
+      
+      if (!response.error) {
+        // Clear password fields after successful change
+        setFormData(prev => ({
+          ...prev,
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: ''
+        }));
+        
+        setIsEditing(false);
+        // Maybe show a success message here
+      } else {
+        console.error('Error changing password:', response.message);
+      }
+    } catch (err) {
+      console.error('Error changing password:', err);
+    }
   };
-
-  if (isLoading) {
-    return <LoadingSpinner message={t('profile.loading')} />;
+  
+  if (loading) {
+    return <LoadingSpinner message="Loading profile..." />;
   }
 
-  if (!userData) {
-    return <Typography>{t('profile.loadError') || 'Could not load profile data.'}</Typography>;
+  if (error) {
+    return (
+      <div className={`profile-error-container ${isDarkMode ? 'dark' : 'light'}`}>
+        <div className="profile-error-message">
+          <div className="error-icon">
+            <FaExclamationTriangle />
+          </div>
+          <h2>Oops! Something went wrong</h2>
+          <p>{error}</p>
+          <button 
+            className="retry-button"
+            onClick={() => window.location.reload()}
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <Box className={`profile-container ${darkMode ? 'dark' : 'light'}`}>
-    <Typography variant="h4" className="profile-title">
-      {t('profile.title') || 'My Profile'}
-    </Typography>
-
-    <Grid container spacing={3}>
-      {/* Profile Summary */}
-      <Grid item xs={12} md={4}>
-        <Paper className={`paper ${darkMode ? 'dark' : 'light'} profile-summary`}>
-          <UserForm {...{userData, ImgPathUploads, handleAvatarChange}} />
-          <Button
-            className="logout-button"
-            variant="contained"
-            color="primary"
-            onClick={handleLogout}
+    <div className={`profile-container ${isDarkMode ? 'dark' : 'light'}`}>
+      <div className="profile-header">
+        <div className="profile-cover-photo">
+          <div className="profile-image-container">
+            <div className="profile-avatar">
+              {user?.ProfileFileNamePL ? (
+                <img src={user.ProfileFileNamePL} alt={`${user.NomPL} ${user.PrenomPL}`} />
+              ) : (
+                <div className="profile-avatar-placeholder">
+                  {user?.PrenomPL ? user.PrenomPL.charAt(0) : ''}
+                  {user?.NomPL ? user.NomPL.charAt(0) : ''}
+                </div>
+              )}
+              {isEditing && (
+                <label className="profile-image-upload" htmlFor="profile-image-input">
+                  <FaCamera />
+                  <input
+                    id="profile-image-input"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    style={{ display: 'none' }}
+                  />
+                </label>
+              )}
+            </div>
+          </div>
+          <div className="profile-user-info">
+            <h1>{`${user?.PrenomPL || ''} ${user?.NomPL || ''}`}</h1>
+            <p>{user?.RoleUT || 'Student'}</p>
+          </div>
+          <button 
+            className="edit-profile-button"
+            onClick={() => setIsEditing(!isEditing)}
           >
-            {t('menu.logOut')}
-          </Button>
-        </Paper>
-      </Grid>
+            {isEditing ? 'Cancel' : 'Edit Profile'} <FaPen />
+          </button>
+        </div>
+      </div>
 
-      <Grid item xs={12} md={8}>
-        {/* Account Information */}
-        <Paper className={`paper ${darkMode ? 'dark' : 'light'}`}>
-          <Box className="flex-header">
-            <Typography variant="h6">
-              {t('profile.accountInfo') || 'Account Information'}
-            </Typography>
-            {!editState.account ? (
-              <IconButton
-                color="primary"
-                onClick={() => handleEditToggle('account')}
-                size="small"
-              >
-                <EditIcon />
-              </IconButton>
-            ) : (
-              <Box className="edit-buttons-container">
-                <IconButton
-                  color="error"
-                  onClick={() => handleEditToggle('account')}
-                  size="small"
-                >
-                  <CancelIcon />
-                </IconButton>
-                <IconButton
-                  color="success"
-                  onClick={handleAccountSave}
-                  size="small"
-                >
-                  <SaveIcon />
-                </IconButton>
-              </Box>
-            )}
-          </Box>
-          <Divider className="divider" />
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <Typography variant="subtitle2" className="secondary-text">
-                {t('profile.fullName') || 'Full Name'}
-              </Typography>
-              {editState.account ? (
-                <TextField
-                  name="name"
-                  label={t('profile.fullName') || 'Full Name'}
-                  value={accountData.name}
-                  onChange={handleAccountChange}
-                  fullWidth
-                  variant="outlined"
-                  size="small"
-                  className="edit-field"
-                />
-              ) : (
-                <Typography variant="body1">{accountData.name}</Typography>
-              )}
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Typography variant="subtitle2" className="secondary-text">
-                {t('profile.email') || 'Email'}
-              </Typography>
-              {editState.account ? (
-                <TextField
-                  name="email"
-                  label={t('profile.email') || 'Email'}
-                  value={accountData.email}
-                  onChange={handleAccountChange}
-                  fullWidth
-                  variant="outlined"
-                  size="small"
-                  type="email"
-                  className="edit-field"
-                />
-              ) : (
-                <Typography variant="body1">{accountData.email}</Typography>
-              )}
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Typography variant="subtitle2" className="secondary-text">
-                {t('profile.phoneNumber') || 'Phone Number'}
-              </Typography>
-              {editState.account ? (
-                <TextField
-                  name="phone"
-                  label={t('profile.phoneNumber') || 'Phone Number'}
-                  value={accountData.phone}
-                  onChange={handleAccountChange}
-                  fullWidth
-                  variant="outlined"
-                  size="small"
-                  type="tel"
-                  className="edit-field"
-                />
-              ) : (
-                <Typography variant="body1">{accountData.phone}</Typography>
-              )}
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Typography variant="subtitle2" className="secondary-text">
-                {t('profile.RoleUT') || 'RoleUT'}
-              </Typography>
-              <Typography variant="body1">
-                {userData.RoleUT.charAt(0).toUpperCase() + userData.RoleUT.slice(1)}
-              </Typography>
-            </Grid>
-          </Grid>
-        </Paper>
+      <div className={`profile-content ${isDarkMode ? 'dark' : 'light'}`}>
+        <div className="profile-tabs">
+          <button 
+            className={activeTab === 'personal' ? 'active' : ''} 
+            onClick={() => setActiveTab('personal')}
+          >
+            Personal Information
+          </button>
+          <button 
+            className={activeTab === 'settings' ? 'active' : ''} 
+            onClick={() => setActiveTab('settings')}
+          >
+            Preferences
+          </button>
+          <button 
+            className={activeTab === 'security' ? 'active' : ''} 
+            onClick={() => setActiveTab('security')}
+          >
+            Security
+          </button>
+        </div>
 
-        {/* Personal Information */}
-        <Paper className={`paper ${darkMode ? 'dark' : 'light'}`}>
-          <Box className="flex-header">
-            <Typography variant="h6">
-              {t('profile.personalInfo') || 'Personal Information'}
-            </Typography>
-            {!editState.personal ? (
-              <IconButton
-                color="primary"
-                onClick={() => handleEditToggle('personal')}
-                size="small"
-              >
-                <EditIcon />
-              </IconButton>
-            ) : (
-              <Box className="edit-buttons-container">
-                <IconButton
-                  color="error"
-                  onClick={() => handleEditToggle('personal')}
-                  size="small"
-                >
-                  <CancelIcon />
-                </IconButton>
-                <IconButton
-                  color="success"
-                  onClick={handlePersonalSave}
-                  size="small"
-                >
-                  <SaveIcon />
-                </IconButton>
-              </Box>
+        {isEditing ? (
+          <form onSubmit={handleSubmit} className="profile-edit-form">
+            {activeTab === 'personal' && (
+              <div className="profile-section">
+                <h2>Personal Information</h2>
+                <div className="form-grid">
+                  <div className="form-group">
+                    <label htmlFor="PrenomPL">First Name</label>
+                    <input
+                      type="text"
+                      id="PrenomPL"
+                      name="PrenomPL"
+                      value={formData.PrenomPL || ''}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="NomPL">Last Name</label>
+                    <input
+                      type="text"
+                      id="NomPL"
+                      name="NomPL"
+                      value={formData.NomPL || ''}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="EmailUT">Email</label>
+                    <input
+                      type="email"
+                      id="EmailUT"
+                      name="EmailUT"
+                      value={formData.EmailUT || ''}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="PhoneUT">Phone</label>
+                    <input
+                      type="tel"
+                      id="PhoneUT"
+                      name="PhoneUT"
+                      value={formData.PhoneUT || ''}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="AdressPL">Address</label>
+                    <input
+                      type="text"
+                      id="AdressPL"
+                      name="AdressPL"
+                      value={formData.AdressPL || ''}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="VillePL">City</label>
+                    <input
+                      type="text"
+                      id="VillePL"
+                      name="VillePL"
+                      value={formData.VillePL || ''}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="CodePostalPL">Postal Code</label>
+                    <input
+                      type="text"
+                      id="CodePostalPL"
+                      name="CodePostalPL"
+                      value={formData.CodePostalPL || ''}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="PaysPL">Country</label>
+                    <input
+                      type="text"
+                      id="PaysPL"
+                      name="PaysPL"
+                      value={formData.PaysPL || ''}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+              </div>
             )}
-          </Box>
-          <Divider className="divider" />
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <Typography variant="subtitle2" className="secondary-text">
-                {t(' Success!address') || 'Address'}
-              </Typography>
-              {editState.personal ? (
-                <TextField
-                  name="address"
-                  label={t('profile.address') || 'Address'}
-                  value={personalData.address}
-                  onChange={handlePersonalChange}
-                  fullWidth
-                  variant="outlined"
-                  size="small"
-                  className="edit-field"
-                />
-              ) : (
-                <Typography variant="body1">{personalData.address}</Typography>
-              )}
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Typography variant="subtitle2" className="secondary-text">
-                {t('profile.city') || 'City'}
-              </Typography>
-              {editState.personal ? (
-                <TextField
-                  name="city"
-                  label={t('profile.city') || 'City'}
-                  value={personalData.city}
-                  onChange={handlePersonalChange}
-                  fullWidth
-                  variant="outlined"
-                  size="small"
-                  className="edit-field"
-                />
-              ) : (
-                <Typography variant="body1">{personalData.city}</Typography>
-              )}
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Typography variant="subtitle2" className="secondary-text">
-                {t('profile.postalCode') || 'Postal Code'}
-              </Typography>
-              {editState.personal ? (
-                <TextField
-                  name="postalCode"
-                  label={t('profile.postalCode') || 'Postal Code'}
-                  value={personalData.postalCode}
-                  onChange={handlePersonalChange}
-                  fullWidth
-                  variant="outlined"
-                  size="small"
-                  className="edit-field"
-                />
-              ) : (
-                <Typography variant="body1">{personalData.postalCode}</Typography>
-              )}
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Typography variant="subtitle2" className="secondary-text">
-                {t('profile.country') || 'Country'}
-              </Typography>
-              {editState.personal ? (
-                <TextField
-                  name="country"
-                  label={t('profile.country') || 'Country'}
-                  value={personalData.country}
-                  onChange={handlePersonalChange}
-                  fullWidth
-                  variant="outlined"
-                  size="small"
-                  className="edit-field"
-                />
-              ) : (
-                <Typography variant="body1">{personalData.country}</Typography>
-              )}
-            </Grid>
-          </Grid>
-        </Paper>
 
-{/* Password Section */}
-<Paper className={`paper ${darkMode ? 'dark' : 'light'}`}>
-            <Box className="flex-header">
-              <Typography variant="h6">
-                {t('profile.security') || 'Security'}
-              </Typography>
-              {!editState.password ? (
-                <IconButton
-                  color="primary"
-                  onClick={() => handleEditToggle('password')}
-                  size="small"
-                >
-                  <EditIcon />
-                </IconButton>
-              ) : (
-                <Box className="edit-buttons-container">
-                  <IconButton
-                    color="error"
-                    onClick={() => handleEditToggle('password')}
-                    size="small"
-                  >
-                    <CancelIcon />
-                  </IconButton>
-                  <IconButton
-                    color="success"
-                    onClick={handlePasswordSave}
-                    size="small"
-                  >
-                    <SaveIcon />
-                  </IconButton>
-                </Box>
-              )}
-            </Box>
-            <Divider className="divider" />
-            {editState.password ? (
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <Typography variant="subtitle2" className="secondary-text">
-                    {t('profile.currentPassword') || 'Current Password'}
-                  </Typography>
-                  <TextField
-                    name="currentPassword"
-                    value={passwordData.currentPassword}
-                    onChange={handlePasswordChange}
-                    fullWidth
-                    variant="outlined"
-                    size="small"
-                    type="password"
-                    className="edit-field"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="subtitle2" className="secondary-text">
-                    {t('profile.newPassword') || 'New Password'}
-                  </Typography>
-                  <TextField
-                    name="newPassword"
-                    value={passwordData.newPassword}
-                    onChange={handlePasswordChange}
-                    fullWidth
-                    variant="outlined"
-                    size="small"
-                    type="connect"
-                    className="edit-field"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="subtitle2" className="secondary-text">
-                    {t('profile.confirmPassword') || 'Confirm Password'}
-                  </Typography>
-                  <TextField
-                    name="confirmPassword"
-                    value={passwordData.confirmPassword}
-                    onChange={handlePasswordChange}
-                    fullWidth
-                    variant="outlined"
-                    size="small"
-                    type="password"
-                    className="edit-field"
-                  />
-                </Grid>
-              </Grid>
-            ) : (
-              <Typography variant="body2" className="password-hidden">
-                {t('profile.passwordHidden') || 'Password information is hidden for security reasons.'}
-              </Typography>
+            {activeTab === 'settings' && (
+              <div className="profile-section">
+                <h2>Preferences</h2>
+                <div className="form-grid">
+                  <div className="form-group">
+                    <label htmlFor="LanguagePageUT">Language</label>
+                    <select
+                      id="LanguagePageUT"
+                      name="LanguagePageUT"
+                      value={formData.LanguagePageUT || 'fr'}
+                      onChange={handleChange}
+                    >
+                      <option value="fr">Français</option>
+                      <option value="en">English</option>
+                      <option value="ar">العربية</option>
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="ThemePageUT">Theme</label>
+                    <select
+                      id="ThemePageUT"
+                      name="ThemePageUT"
+                      value={formData.ThemePageUT || 'dark'}
+                      onChange={handleChange}
+                    >
+                      <option value="light">Light</option>
+                      <option value="dark">Dark</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
             )}
-          </Paper>
-      </Grid>
-    </Grid>
-  </Box>
+
+            {activeTab === 'security' && (
+              <div className="profile-section">
+                <h2>Security Settings</h2>
+                <div className="form-grid">
+                  <div className="form-group">
+                    <label htmlFor="currentPassword">Current Password</label>
+                    <input
+                      type="password"
+                      id="currentPassword"
+                      name="currentPassword"
+                      value={formData.currentPassword || ''}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="newPassword">New Password</label>
+                    <input
+                      type="password"
+                      id="newPassword"
+                      name="newPassword"
+                      value={formData.newPassword || ''}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="confirmPassword">Confirm Password</label>
+                    <input
+                      type="password"
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      value={formData.confirmPassword || ''}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+
+                <div className="security-options">
+                  <h3>Two-Factor Authentication</h3>
+                  <div className="form-check">
+                    <input
+                      type="checkbox"
+                      id="enable2FA"
+                      name="enable2FA"
+                      checked={formData.enable2FA || false}
+                      onChange={handleCheckboxChange}
+                    />
+                    <label htmlFor="enable2FA">Enable Two-Factor Authentication</label>
+                  </div>
+
+                  {formData.enable2FA && (
+                    <div className="auth-methods">
+                      <h4>Authentication Methods</h4>
+                      <div className="form-check">
+                        <input
+                          type="checkbox"
+                          id="useVerificationCode"
+                          name="useVerificationCode"
+                          checked={formData.useVerificationCode || false}
+                          onChange={handleCheckboxChange}
+                        />
+                        <label htmlFor="useVerificationCode">Verification Code (Offline)</label>
+                      </div>
+                      <div className="form-check">
+                        <input
+                          type="checkbox"
+                          id="useGoogleAuth"
+                          name="useGoogleAuth"
+                          checked={formData.useGoogleAuth || false}
+                          onChange={handleCheckboxChange}
+                        />
+                        <label htmlFor="useGoogleAuth">Google Authenticator</label>
+                      </div>
+                      <div className="form-check">
+                        <input
+                          type="checkbox"
+                          id="useEmailCode"
+                          name="useEmailCode"
+                          checked={formData.useEmailCode || false}
+                          onChange={handleCheckboxChange}
+                        />
+                        <label htmlFor="useEmailCode">Email Code</label>
+                      </div>
+                      <div className="form-check">
+                        <input
+                          type="checkbox"
+                          id="useSmsCode"
+                          name="useSmsCode"
+                          checked={formData.useSmsCode || false}
+                          onChange={handleCheckboxChange}
+                        />
+                        <label htmlFor="useSmsCode">SMS Code</label>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="profile-actions">
+                  <button type="button" className="save-button" onClick={handlePasswordChange}>Change Password</button>
+                  <button type="submit" className="save-button">Save Security Settings</button>
+                  <button type="button" className="cancel-button" onClick={() => setIsEditing(false)}>Cancel</button>
+                </div>
+              </div>
+            )}
+
+            {activeTab !== 'security' && (
+              <div className="profile-actions">
+                <button type="submit" className="save-button">Save Changes</button>
+                <button type="button" className="cancel-button" onClick={() => setIsEditing(false)}>Cancel</button>
+              </div>
+            )}
+          </form>
+        ) : (
+          <>
+            {activeTab === 'personal' && (
+              <div className="profile-section">
+                <h2>Personal Information</h2>
+                <div className="profile-info-grid">
+                  <div className="profile-info-item">
+                    <div className="info-icon"><FaUser /></div>
+                    <div className="info-content">
+                      <h3>Full Name</h3>
+                      <p>{`${user?.PrenomPL || 'Not set'} ${user?.NomPL || ''}`}</p>
+                    </div>
+                  </div>
+                  <div className="profile-info-item">
+                    <div className="info-icon"><FaEnvelope /></div>
+                    <div className="info-content">
+                      <h3>Email</h3>
+                      <p>{user?.EmailUT || 'Not set'}</p>
+                    </div>
+                  </div>
+                  <div className="profile-info-item">
+                    <div className="info-icon"><FaPhone /></div>
+                    <div className="info-content">
+                      <h3>Phone</h3>
+                      <p>{user?.PhoneUT || 'Not set'}</p>
+                    </div>
+                  </div>
+                  <div className="profile-info-item">
+                    <div className="info-icon"><FaMapMarkerAlt /></div>
+                    <div className="info-content">
+                      <h3>Address</h3>
+                      <p>{user?.AdressPL || 'Not set'}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'settings' && (
+              <div className="profile-section">
+                <h2>Preferences</h2>
+                <div className="profile-info-grid">
+                  <div className="profile-info-item">
+                    <div className="info-icon"><FaGlobe /></div>
+                    <div className="info-content">
+                      <h3>Language</h3>
+                      <p>{user?.LanguagePageUT === 'fr' ? 'Français' : 
+                         user?.LanguagePageUT === 'en' ? 'English' : 
+                         user?.LanguagePageUT === 'ar' ? 'العربية' : 'Not set'}</p>
+                    </div>
+                  </div>
+                  <div className="profile-info-item">
+                    <div className="info-icon">{isDarkMode ? <FaMoon /> : <FaSun />}</div>
+                    <div className="info-content">
+                      <h3>Theme</h3>
+                      <p>{user?.ThemePageUT === 'dark' ? 'Dark' : 'Light'}</p>
+                    </div>
+                  </div>
+                </div>
+                <button 
+                  className="edit-settings-button" 
+                  onClick={() => setIsEditing(true)}
+                >
+                  Edit Preferences
+                </button>
+              </div>
+            )}
+
+            {activeTab === 'security' && (
+              <div className="profile-section">
+                <h2>Security Settings</h2>
+                <div className="security-info">
+                  <div className="profile-info-item">
+                    <div className="info-icon"><FaShieldAlt /></div>
+                    <div className="info-content">
+                      <h3>Password</h3>
+                      <p>Last changed: {user?.password_changed_at || 'Never'}</p>
+                    </div>
+                  </div>
+                  <div className="profile-info-item">
+                    <div className="info-content">
+                      <h3>Two-Factor Authentication</h3>
+                      <p>{user?.enable2FA ? 'Enabled' : 'Disabled'}</p>
+                    </div>
+                  </div>
+                </div>
+                <button 
+                  className="edit-security-button" 
+                  onClick={() => setIsEditing(true)}
+                >
+                  Manage Security Settings
+                </button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </div>
   );
 };
 
