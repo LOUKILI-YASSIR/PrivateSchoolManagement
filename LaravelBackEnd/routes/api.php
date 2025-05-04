@@ -28,7 +28,7 @@ use App\Http\Controllers\Api\SchoolEventController;
 use App\Http\Controllers\Api\SpecialDayScheduleController;
 use App\Http\Controllers\Api\TimeTableExceptionController;
 use App\Http\Controllers\Api\GradeAdjustmentController;
-
+use App\Http\Controllers\Api\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,7 +46,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 })->name('api.current_user'); // Renamed from api.user to avoid conflict if auth.php is separate
 
+// User profile routes
 Route::middleware('auth:sanctum')->group(function () {
+    // Profile routes
+    Route::get('/users/profile', [AuthController::class, 'user'])->name('api.profile.get');
+    Route::put('/users/profile', [AuthController::class, 'updateProfile'])->name('api.profile.update');
+    Route::post('/users/upload-profile-image', [AuthController::class, 'uploadProfileImage'])->name('api.profile.upload_image');
+    Route::post('/users/change-password', [AuthController::class, 'changePassword'])->name('api.profile.change_password');
 
     // --- Add Paginate and Count Routes for Resources ---
     $resourceControllers = [
