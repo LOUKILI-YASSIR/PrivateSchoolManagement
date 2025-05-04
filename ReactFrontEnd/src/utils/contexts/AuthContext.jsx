@@ -42,7 +42,8 @@ export const AuthProvider = ({ children }) => {
       '/YLSchool/select-reset-password',
       '/YLSchool/reset-password-request-sms', 
       '/YLSchool/reset-password-request-email',
-      '/YLSchool/check-user-reset-password' 
+      '/YLSchool/check-user-reset-password',
+      '/YLSchool/reset-password-request-totp' 
     ].includes(location.pathname);
 
     if (!isAuthenticated && !isLoginPage && !isResetPasswordPage) {

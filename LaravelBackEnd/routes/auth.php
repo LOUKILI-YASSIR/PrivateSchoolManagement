@@ -22,6 +22,8 @@ Route::post('/check-user', [AuthController::class, 'checkUserByIdentifier']);
 Route::post('/send-sms-code', [AuthController::class, 'sendCodeViaSms']);
 Route::post('/send-email-code', [AuthController::class, 'sendCodeViaEmail']);
 Route::post('/verify-code', [AuthController::class, 'verifyCode']);
+Route::post('/setup-2fa', [AuthController::class, 'setupGoogle2FA']);
+Route::post('/verify-2fa', [AuthController::class, 'verifyGoogle2FA']);
 // Protected authentication routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('api.logout');

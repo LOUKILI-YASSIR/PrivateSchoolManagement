@@ -21,6 +21,8 @@ use Illuminate\Support\Facades\Crypt;
 use Twilio\Rest\Client;
 use Illuminate\Support\Facades\Mail;
 use Vonage\SMS\Client as SMSClient;
+use PragmaRX\Google2FA\Google2FA;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 /**
  * Authentication Controller
@@ -436,13 +438,18 @@ public function resetPassword(Request $request): JsonResponse
         try {
             $decryptedCode = $this->checkIfEncrypted($user->CodeVerificationUT)["value"];
             $decryptedCodeValidation = $this->checkIfEncrypted($validated["CodeVerificationUT"])["value"];
+            $valid= $decryptedCode === $decryptedCodeValidation;
             if(array_key_exists('TypeUT', $validated) && in_array($validated['TypeUT'], ['sms', 'email'])) {
                 $cacheKey = 'verification_code|' . $validated['identifier'];
                 $cachedCode = Cache::get($cacheKey);
-                $decryptedCode = $cachedCode; 
+                $decryptedCode = $cachedCode;
+                $valid = $decryptedCode === $decryptedCodeValidation; 
+            }else if(array_key_exists('TypeUT', $validated) && $validated['TypeUT'] == "google") {
+                $google2fa = new Google2FA();
+                $valid = $google2fa->verifyKey($user->GoogleSecretUT, $validated['CodeVerificationUT']);
             }
             Log::info("Decrypted code: $decryptedCode - Decrypted code validation: $decryptedCodeValidation");
-            if ($decryptedCode !== $decryptedCodeValidation) {
+            if (!$valid) {
                 return response()->json([
                     'status'  => 'error',
                     'message' => 'Invalid verification code.',
@@ -562,6 +569,179 @@ public function resetPassword(Request $request): JsonResponse
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+    
+    /**
+     * Setup Google 2FA for a user
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function setupGoogle2FA(Request $request): JsonResponse
+    {
+        try {
+            $validated = $request->validate([
+                'identifier' => ['required', 'string', function ($attr, $value, $fail) {
+                    if (
+                        !filter_var($value, FILTER_VALIDATE_EMAIL) &&
+                        !preg_match('/^\+?[1-9]\d{1,14}$/', $value) &&
+                        !preg_match('/^[a-zA-Z0-9_]{3,}$/', $value)
+                    ) {
+                        $fail('Identifier must be a valid email, phone number, or username.');
+                    }
+                }],
+            ]);
+            
+            // Determine the field
+            if (filter_var($validated['identifier'], FILTER_VALIDATE_EMAIL)) {
+                $field = 'EmailUT';
+            } elseif (preg_match('/^\+?[1-9]\d{1,14}$/', $validated['identifier'])) {
+                $field = 'PhoneUT';
+            } else {
+                $field = 'UserNameUT';
+            }
+            
+            $user = User::where($field, $validated['identifier'])->first();
+            if (!$user) {
+                return response()->json([
+                    'status'  => 'error',
+                    'message' => 'User not found.',
+                ], Response::HTTP_NOT_FOUND);
+            }
+            
+            // Generate Google2FA secret
+            $google2fa = new Google2FA();
+            $secret = $google2fa->generateSecretKey();
+            
+            // Save the secret to the user
+            $user->update([
+                'GoogleSecretUT' => $secret,
+            ]);
+            
+            // Generate QR code
+            $qrCodeUrl = $google2fa->getQRCodeUrl(
+                config('app.name'),
+                $user->EmailUT,
+                $secret
+            );
+            
+            $qrCode = QrCode::size(200)->generate($qrCodeUrl);
+            
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Google 2FA setup initiated successfully',
+                'data' => [
+                    'SecretKeyUT' => $secret,
+                    'QRCodeUrlUT' => base64_encode($qrCode),
+                ],
+            ], Response::HTTP_OK);
+            
+        } catch (ValidationException $e) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Validation failed',
+                'errors'  => $e->errors(),
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        } catch (Exception $e) {
+            Log::error('Google 2FA setup error: ' . $e->getMessage());
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'An unexpected error occurred',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+/**
+ * Verify Google 2FA code and enable 2FA for the user
+ *
+ * @param Request $request
+ * @return JsonResponse
+ */
+public function verifyGoogle2FA(Request $request): JsonResponse
+{
+    try {
+        // Validate input
+        $validated = $request->validate([
+            'identifier' => ['required', 'string', function ($attr, $value, $fail) {
+                if (
+                    !filter_var($value, FILTER_VALIDATE_EMAIL) &&
+                    !preg_match('/^\+?[1-9]\d{1,14}$/', $value) &&
+                    !preg_match('/^[a-zA-Z0-9_]{3,}$/', $value)
+                ) {
+                    $fail('Identifier must be a valid email, phone number, or username.');
+                }
+            }],
+            'CodeVerificationUT' => 'required|string|size:6', // Google 2FA codes are typically 6 digits
+            'SecretKeyUT' => 'required|string|size:16', // Google 2FA secret keys are typically 16 characters
+        ]);
+
+        // Determine the field
+        $field = filter_var($validated['identifier'], FILTER_VALIDATE_EMAIL)
+            ? 'EmailUT'
+            : (preg_match('/^\+?[1-9]\d{1,14}$/', $validated['identifier']) ? 'PhoneUT' : 'UserNameUT');
+
+        // Fetch user with lock to prevent race conditions
+        $user = User::where($field, $validated['identifier'])->lockForUpdate()->first();
+        if (!$user) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'User not found.',
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        // Check if 2FA setup exists
+        if (!$user->GoogleSecretUT || $user->GoogleSecretUT !== $validated['SecretKeyUT']) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Invalid or missing 2FA setup.',
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        // Verify OTP with time window
+        $google2fa = new Google2FA();
+        $valid = $google2fa->verifyKey(
+            $user->GoogleSecretUT,
+            $validated['CodeVerificationUT'],
+            2 // Allow 2 time windows (30s each) for clock drift
+        );
+
+        if (!$valid) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Invalid one-time password.',
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
+        // Enable 2FA and update timestamp
+        $user->update([
+            'google2fa_enabled' => true,
+            'google2fa_enabled_at' => now(),
+        ]);
+
+        // Log successful 2FA activation
+        Log::info('Google 2FA enabled for user', ['identifier' => $validated['identifier']]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Google 2FA has been successfully enabled',
+        ], Response::HTTP_OK);
+
+    } catch (ValidationException $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Validation failed',
+            'errors' => $e->errors(),
+        ], Response::HTTP_UNPROCESSABLE_ENTITY);
+    } catch (Exception $e) {
+        Log::error('Google 2FA verification error', [
+            'error' => $e->getMessage(),
+            'identifier' => $request->input('identifier'),
+        ]);
+        return response()->json([
+            'status' => 'error',
+            'message' => 'An unexpected error occurred',
+        ], Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+}
 
     /**
      * Update authenticated user profile information

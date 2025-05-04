@@ -10,6 +10,7 @@ import ResetPassword from "../components/Auth/ResetPassword";
 import SelectResetPasswordType from "../components/Auth/SelectResetPasswordType";
 import EmailSmsResetPassword from "../components/Auth/EmailSmsResetPassword";
 import CheckUserResetPassword from "../components/Auth/CheckUserResetPassword";
+import GoogleAuthResetPassword from "../components/Auth/GoogleAuthResetPassword";
 
 const routes = [
   {
@@ -93,6 +94,10 @@ const routes = [
   {
     path: "/YLSchool/check-user-reset-password",
     element: <CheckUserResetPassword />
+  },
+  {
+    path: "/YLSchool/reset-password-request-totp",
+    element: <GoogleAuthResetPassword />
   },
   {
     path: "/",

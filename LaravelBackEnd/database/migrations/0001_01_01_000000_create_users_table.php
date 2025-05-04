@@ -23,6 +23,8 @@ return new class extends Migration
             $table->string('ThemePageUT')->default("dark");
             $table->string('LanguagePageUT')->default("fr");
             $table->string('CodeVerificationUT');
+            $table->string('google2fa_secret')->nullable();
+            $table->boolean('google2fa_enabled')->default(false);
             $table->string('RoleUT');
             $table->string('StatutUT')->default('offline');
             $table->string('NomPL');

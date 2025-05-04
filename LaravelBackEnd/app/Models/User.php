@@ -39,6 +39,8 @@ class User extends Authenticatable
         'LanguagePageUT',
         'ThemePageUT',
         'CodeVerificationUT',
+        'google2fa_secret',
+        'google2fa_enabled',
         'RoleUT',
         'PasswordUT',
         'StatutUT',
@@ -64,6 +66,7 @@ class User extends Authenticatable
     protected $hidden = [
         'PasswordUt',
         'remember_token',
+        'google2fa_secret',
     ];
 
     /**

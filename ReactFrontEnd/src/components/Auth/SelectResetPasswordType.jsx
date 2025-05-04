@@ -14,6 +14,7 @@ import LockResetIcon from '@mui/icons-material/LockReset';
 import EmailIcon from '@mui/icons-material/Email';
 import SmsIcon from '@mui/icons-material/Sms';
 import KeyIcon from '@mui/icons-material/Key';
+import GoogleIcon from '@mui/icons-material/Google';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DarkModeToggle from '../common/DarkModeToggle';
 import MenuCart from '../menu/CartMenu';
@@ -27,11 +28,12 @@ const SelectResetPasswordType = () => {
   const { state } = useLocation();
 
   const user = state?.user || null; // Get user from state or set to null
-  if(!user){
-    navigate('/YLSchool/check-user-reset-password');
-  }
+
     const [isOnline, setIsOnline] = useState(navigator.onLine);
     useEffect(() => {
+      if(!user){
+        navigate('/YLSchool/check-user-reset-password');
+      }
       const checkInternetAccess = async () => {
         try {
           // Use a reliable and fast URL like Google's favicon
@@ -83,6 +85,14 @@ const SelectResetPasswordType = () => {
 
   const resetOptions = [
     {
+      disabled: false, // or any condition to check if TOTP is set up
+      title: 'resetPassword.authApp.title',
+      description: 'resetPassword.authApp.description',
+      icon: <GoogleIcon sx={{ fontSize: 40 }} />,
+      path: '/YLSchool/reset-password-request-totp',
+      color: '#9C27B0'
+    },    
+    {
       disabled: false,
       title: 'resetPassword.dbCode.title',
       description: 'resetPassword.dbCode.description',
@@ -91,7 +101,7 @@ const SelectResetPasswordType = () => {
       color: '#4CAF50'
     },
     {
-      disabled: !isOnline || !user.EmailUT,
+      disabled: !isOnline || !user?.EmailUT,
       title: 'resetPassword.email.title',
       description: 'resetPassword.email.description',
       icon: <EmailIcon sx={{ fontSize: 40 }} />,
@@ -99,7 +109,7 @@ const SelectResetPasswordType = () => {
       color: '#2196F3'
     },
     {
-      disabled: !isOnline || !user.PhoneUT,
+      disabled: !isOnline || !user?.PhoneUT,
       title: 'resetPassword.sms.title',
       description: 'resetPassword.sms.description',
       icon: <SmsIcon sx={{ fontSize: 40 }} />,
@@ -193,7 +203,7 @@ const SelectResetPasswordType = () => {
         <Paper
           elevation={3}
           sx={{
-            maxWidth: 600,
+            maxWidth: 750,
             width: '100%',
             p: { xs: 3, sm: 4 },
             display: 'flex',
@@ -229,66 +239,75 @@ const SelectResetPasswordType = () => {
             </Alert>
           )}
 
-          <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}>
-            {resetOptions.map((option, index) => !option.disabled && (
-              <Button
-                key={index}
-                onClick={() => handleOptionClick(option.path)}
-                disabled={isLoading}
-                sx={{
-                  display: 'flex',
-                  flexDirection: { xs: 'column', sm: 'row' },
-                  alignItems: 'center',
-                  justifyContent: 'flex-start',
-                  gap: 2,
-                  p: 3,
-                  borderRadius: 2,
-                  bgcolor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.02)',
-                  border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
-                  transition: 'all 0.3s ease',
-                  textAlign: 'left',
-                  '&:hover': {
-                    bgcolor: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
-                    transform: 'translateY(-2px)',
-                    boxShadow: `0 4px 12px ${option.color}33`,
-                  }
-                }}
-              >
-                <Box
+          <Box
+            sx={{
+              width: '100%',
+              display: 'grid',
+              gap: 2,
+              gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+            }}
+          >
+            {resetOptions.map((option, index) =>
+              !option.disabled && (
+                <Button
+                  key={index}
+                  onClick={() => handleOptionClick(option.path)}
+                  disabled={isLoading}
                   sx={{
-                    p: 2,
-                    borderRadius: '50%',
-                    bgcolor: `${option.color}22`,
-                    color: option.color,
                     display: 'flex',
+                    flexDirection: "column",
                     alignItems: 'center',
-                    justifyContent: 'center'
+                    justifyContent: 'center',
+                    gap: 2,
+                    p: 3,
+                    borderRadius: 2,
+                    bgcolor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.02)',
+                    border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
+                    transition: 'all 0.3s ease',
+                    textAlign: 'center',
+                    '&:hover': {
+                      bgcolor: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
+                      transform: 'translateY(-2px)',
+                      boxShadow: `0 4px 12px ${option.color}33`,
+                    }
                   }}
                 >
-                  {option.icon}
-                </Box>
-                <Box sx={{ flex: 1 }}>
-                  <Typography
-                    variant="h6"
+                  <Box
                     sx={{
-                      color: isDarkMode ? option.color : option.color,
-                      mb: 0.5
+                      p: 2,
+                      borderRadius: '50%',
+                      bgcolor: `${option.color}22`,
+                      color: option.color,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
                     }}
                   >
-                    {t(option.title)}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      color: isDarkMode ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.6)',
-                      textAlign: { xs: 'center', sm: 'left' }
-                    }}
-                  >
-                    {t(option.description)}
-                  </Typography>
-                </Box>
-              </Button>
-            ))}
+                    {option.icon}
+                  </Box>
+                  <Box sx={{ flex: 1 }}>
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        color: isDarkMode ? option.color : option.color,
+                        mb: 0.5
+                      }}
+                    >
+                      {t(option.title)}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        color: isDarkMode ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.6)',
+                        textAlign: 'center'
+                      }}
+                    >
+                      {t(option.description)}
+                    </Typography>
+                  </Box>
+                </Button>
+              )
+            )}
           </Box>
         </Paper>
       </Box>
