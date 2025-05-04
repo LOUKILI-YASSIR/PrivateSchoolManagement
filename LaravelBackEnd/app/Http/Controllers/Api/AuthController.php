@@ -1042,4 +1042,113 @@ public function verifyCode(Request $request): JsonResponse
         // Generate a random 6-digit numeric code
         return str_pad(mt_rand(0, 99999999), 8, '0', STR_PAD_LEFT);
     }
+
+    /**
+     * Upload user profile image
+     *
+     * @param Request $request The request containing the profile image
+     * @return JsonResponse The response containing the updated profile image URL
+     */
+    public function uploadProfileImage(Request $request): JsonResponse
+    {
+        try {
+            // Validate the request
+            $request->validate([
+                'profileImage' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ]);
+
+            $user = $request->user();
+
+            // Handle the file upload
+            if ($request->hasFile('profileImage')) {
+                $file = $request->file('profileImage');
+                $fileName = $user->MatriculeUT . '_' . time() . '.' . $file->getClientOriginalExtension();
+                
+                // Store the file in the public storage
+                $path = $file->storeAs('profile-images', $fileName, 'public');
+                
+                // Update the user's profile image field
+                $user->profile_image = '/storage/' . $path;
+                $user->save();
+
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Profile image uploaded successfully',
+                    'profileImage' => $user->profile_image
+                ], Response::HTTP_OK);
+            }
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No image file provided'
+            ], Response::HTTP_BAD_REQUEST);
+        } catch (Exception $e) {
+            Log::error('Error uploading profile image', [
+                'error' => $e->getMessage(),
+                'user_id' => $request->user()->MatriculeUT
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to upload profile image',
+                'error' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Change user password
+     *
+     * @param Request $request The request containing current and new password
+     * @return JsonResponse The response indicating success or failure
+     */
+    public function changePassword(Request $request): JsonResponse
+    {
+        try {
+            // Validate the request
+            $validated = $request->validate([
+                'currentPassword' => 'required|string',
+                'newPassword' => 'required|string|min:8|different:currentPassword',
+                'confirmPassword' => 'required|string|same:newPassword',
+            ]);
+
+            $user = $request->user();
+
+            // Check if current password is correct
+            if (!Hash::check($validated['currentPassword'], $user->PasswordUT)) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Current password is incorrect'
+                ], Response::HTTP_UNAUTHORIZED);
+            }
+
+            // Update the password
+            $user->PasswordUT = Hash::make($validated['newPassword']);
+            $user->password_changed_at = now();
+            $user->must_change_password = false;
+            $user->save();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Password changed successfully'
+            ], Response::HTTP_OK);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation error',
+                'errors' => $e->errors()
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        } catch (Exception $e) {
+            Log::error('Error changing password', [
+                'error' => $e->getMessage(),
+                'user_id' => $request->user()->MatriculeUT
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to change password',
+                'error' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }
