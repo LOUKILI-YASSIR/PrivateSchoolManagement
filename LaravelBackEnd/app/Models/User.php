@@ -40,7 +40,9 @@ class User extends Authenticatable
         'ThemePageUT',
         'CodeVerificationUT',
         'google2fa_secret',
+        'GoogleSecretUT',
         'google2fa_enabled',
+        'google2fa_enabled_at',
         'RoleUT',
         'PasswordUT',
         'StatutUT',
@@ -67,6 +69,7 @@ class User extends Authenticatable
         'PasswordUt',
         'remember_token',
         'google2fa_secret',
+        'GoogleSecretUT',
     ];
 
     /**
@@ -77,6 +80,8 @@ class User extends Authenticatable
     protected $casts = [
         'DateNaissancePL' => 'date',
         'PasswordUT' => 'hashed', // Use the 'hashed' cast for automatic hashing
+        'google2fa_enabled' => 'boolean',
+        'google2fa_enabled_at' => 'datetime',
     ];
 
     // Relationships

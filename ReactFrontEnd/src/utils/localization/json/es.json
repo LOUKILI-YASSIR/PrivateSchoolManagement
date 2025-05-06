@@ -198,6 +198,17 @@
       "invalidToken": "Su sesión no es válida. Por favor, inicie sesión de nuevo.",
       "tokenExpired": "Su sesión ha expirado. Por favor, inicie sesión de nuevo.",
       "unauthorized": "No está autorizado para acceder a este recurso."
+    },
+    "twoFactorAuth": {
+      "multiSelectAvailable": "Selección Múltiple Disponible",
+      "multiSelectDesc": "Puede seleccionar uno o más métodos de verificación para mayor seguridad.",
+      "multiSelectExplanation": "Seleccione múltiples métodos de verificación para mayor seguridad. En caso de que un método no esté disponible, tendrá alternativas para acceder a su cuenta.",
+      "statusEnabledDesc": "Su cuenta está protegida con autenticación de dos factores. Está utilizando {{count}} método(s) de verificación.",
+      "statusDisabledDesc": "Su cuenta no está protegida con autenticación de dos factores. Actívela para aumentar la seguridad.",
+      "enabled": "Autenticación de dos factores activada",
+      "disabled": "Autenticación de dos factores desactivada",
+      "enable": "Activar autenticación de dos factores",
+      "disable": "Desactivar autenticación de dos factores"
     }
   },
   "common": {
@@ -230,5 +241,4 @@
     "sending": "Enviando…",
     "sendLink": "Enviar enlace de restablecimiento"
   }
-
 }

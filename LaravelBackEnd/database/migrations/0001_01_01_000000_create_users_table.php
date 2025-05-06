@@ -24,7 +24,14 @@ return new class extends Migration
             $table->string('LanguagePageUT')->default("fr");
             $table->string('CodeVerificationUT');
             $table->string('google2fa_secret')->nullable();
+            $table->string('GoogleSecretUT')->nullable(); // Added for 2FA
             $table->boolean('google2fa_enabled')->default(false);
+            $table->timestamp('google2fa_enabled_at')->nullable(); // Added timestamp
+            $table->boolean('email2fa_enabled')->default(false); // Add email 2FA flag
+            $table->boolean('sms2fa_enabled')->default(false); // Add SMS 2FA flag
+            $table->boolean('db2fa_enabled')->default(false); // Add database code 2FA flag
+            $table->json('active_2fa_methods')->nullable(); // Store active 2FA methods
+            $table->string('preferred_2fa_method')->nullable(); // Store preferred 2FA method
             $table->string('RoleUT');
             $table->string('StatutUT')->default('offline');
             $table->string('NomPL');

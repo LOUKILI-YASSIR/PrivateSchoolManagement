@@ -79,17 +79,104 @@
       "accountCreated": "Account created successfully",
       "accountUpdated": "Account updated successfully",
       "accountDeleted": "Account deleted successfully"
+    },
+    "login": {
+      "title": "Login",
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "rememberMe": "Remember me",
+      "forgotPassword": "Forgot your password?",
+      "loginButton": "Login",
+      "registerPrompt": "Don't have an account? Register here."
+    },
+    "register": {
+      "title": "Register",
+      "nameLabel": "Name",
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "confirmPasswordLabel": "Confirm Password",
+      "registerButton": "Register",
+      "loginPrompt": "Already have an account? Login here."
+    },
+    "forgotPassword": {
+      "title": "Reset Password",
+      "emailLabel": "Email",
+      "sendLinkButton": "Send Reset Link",
+      "backToLogin": "Back to Login"
+    },
+    "resetPassword": {
+      "title": "Reset Password",
+      "passwordLabel": "New Password",
+      "confirmPasswordLabel": "Confirm Password",
+      "resetButton": "Reset Password"
+    },
+    "twoFactorAuth": {
+      "title": "Two-Factor Authentication",
+      "setupTitle": "Set Up Google Authenticator",
+      "setupDesc": "Two-factor authentication adds an extra layer of security to your account. After setup, you'll need both your password and a verification code from Google Authenticator to sign in.",
+      "startSetup": "Start Setup",
+      "setupComplete": "Two-Factor Authentication Enabled",
+      "setupCompleteDesc": "Your account is now protected with Google Authenticator. You'll need to enter a verification code when signing in.",
+      "qrCodeTab": "Scan QR Code",
+      "manualTab": "Manual Entry",
+      "secretKey": "Secret Key",
+      "verifySetup": "Verify Setup",
+      "verifyCode": "Enter the 6-digit verification code from Google Authenticator",
+      "verifyButton": "Verify & Enable",
+      "cancelButton": "Cancel",
+      "invalidCode": "Invalid verification code. Please try again.",
+      "enabled": "Two-Factor Authentication Enabled",
+      "disabled": "Two-Factor Authentication Disabled",
+      "enable": "Enable Two-Factor Authentication",
+      "disable": "Disable Two-Factor Authentication",
+      "confirmDisable": "Are you sure you want to disable two-factor authentication? This will reduce the security of your account.",
+      "preferredMethod": "Use as primary authentication method",
+      "methodUnavailable": "This method is not available for your account",
+      "addPhoneNumber": "Add a phone number to your profile to enable SMS verification",
+      "addEmail": "Add an email address to your profile to enable email verification",
+      "verifyEmail": "Email Verification",
+      "verifySMS": "SMS Verification",
+      "sendEmailCode": "We'll send a verification code to your email address.",
+      "sendSMSCode": "We'll send a verification code to your phone number.",
+      "enterEmailCode": "Enter the verification code we sent to your email",
+      "enterSMSCode": "Enter the verification code we sent to your phone",
+      "sendCode": "Send Code",
+      "setupInstructions": {
+        "step1": "Install Google Authenticator on your mobile device",
+        "step2": "Open the app and tap the \"+\" icon",
+        "step3": "Select \"Scan QR code\"",
+        "step4": "Scan the QR code shown above",
+        "step5": "Enter your account email and the secret key above",
+        "step6": "Select \"Time based\" for the type of key"
+      },
+      "errors": {
+        "setupFailed": "Failed to set up 2FA",
+        "verificationFailed": "Failed to verify 2FA code",
+        "disableFailed": "Failed to disable 2FA"
+      },
+      "multiSelectAvailable": "Multi-Select Available",
+      "multiSelectDesc": "You can select one or more verification methods for increased security.",
+      "multiSelectExplanation": "Select multiple verification methods for enhanced security. In case one method isn't available, you'll have alternatives to access your account.",
+      "statusEnabledDesc": "Your account is protected with two-factor authentication. You are using {{count}} verification method(s).",
+      "statusDisabledDesc": "Your account is not protected with two-factor authentication. Enable it to increase security."
     }
   },
   "common": {
     "error": {
       "serverError": "Server error. Please try again later.",
       "unexpectedError": "An unexpected error occurred. Please try again.",
-      "serviceUnavailable": "Service temporarily unavailable. Please try again later."
+      "serviceUnavailable": "Service temporarily unavailable. Please try again later.",
+      "cancel": "Cancel",
+      "save": "Save",
+      "edit": "Edit",
+      "delete": "Delete",
+      "success": "Success",
+      "loading": "Loading...",
+      "search": "Search..."
     }
   },
   "profile": {
-    "title": "My Profile",
+    "title": "Profile",
     "accountInfo": "Account Information",
     "personalInfo": "Personal Information",
     "fullName": "Full Name",
@@ -106,12 +193,14 @@
     "confirmPassword": "Confirm Password",
     "passwordHidden": "Password information is hidden for security reasons",
     "passwordMismatch": "Passwords do not match",
-    "save": "Save Changes",
-    "loading": "Loading profile...",
-    "address": "Address",
-    "city": "City",
-    "postalCode": "Postal Code",
-    "country": "Country",
+    "saveChanges": "Save Changes",
+    "cancelChanges": "Cancel",
+    "passwordChanged": "Password changed successfully",
+    "uploadImage": "Upload Image",
+    "twoFactorAuth": "Two-Factor Authentication",
+    "twoFactorAuthDesc": "Two-factor authentication adds an extra layer of security to your account. When enabled, you'll need your password and a verification code from Google Authenticator to sign in.",
+    "manageSettings": "Manage Security Settings",
+    "enabledOn": "Enabled on",
     "error": {
       "updateFailed": "Failed to update profile. Please try again.",
       "currentPasswordMismatch": "Current password does not match.",
@@ -327,21 +416,61 @@
     "girls": "Girls",
     "desc_girls": "Registered girls",
     "class": "Classes",
-    "desc_class": "Total classes"
+    "desc_class": "Total classes",
+    "welcome": "Welcome",
+    "stats": "Stats",
+    "recentActivity": "Recent Activity"
   }, 
   "resetPassword": {
     "error": {
-      "general": "An error occurred while resetting your password. Please try again."
+      "general": "An error occurred while resetting your password. Please try again.",
+      "invalidCode": "Invalid verification code. Please try again.",
+      "tooManyAttempts": "Too many attempts. Please try again later.",
+      "qrCodeNotGenerated": "Could not generate QR code. Please try again.",
+      "qrCodeLoadFailed": "Failed to load QR code. Please use manual entry instead.",
+      "2faSetupFailed": "Failed to set up 2FA. Please try again.",
+      "copyFailed": "Failed to copy to clipboard.",
+      "general": "An error occurred. Please try again."
     },
     "success": {
-      "linkSent": "A password reset link has been sent to your email address."
+      "linkSent": "A password reset link has been sent to your email address.",
+      "qrCodeGenerated": "QR code generated successfully.",
+      "2faSetupInitiated": "Two-factor authentication setup initiated.",
+      "copied": "Copied to clipboard!"
     },
     "loading": "Loading…",
+    "verifying": "Verifying...",
+    "generating": "Generating...",
     "requestTitle": "Reset password",
     "validationCode": "Validation code",
     "requestSubtitle": "Enter your email address, username or phone number to receive a password reset link.",
     "returnToLogin": "Return to login",
     "sending": "Sending…",
-    "sendLink": "Send reset link"
+    "sendLink": "Send reset link",
+    "verifyCode": "Verify code",
+    "selectLanguage": "Select language",
+    "2fa": {
+      "verifyTitle": "Two-Factor Authentication",
+      "verifyDescription": "Secure your account with an authentication app",
+      "setupInstructions": "Setup Instructions",
+      "downloadApp": "Download a 2FA app like Google Authenticator or Authy.",
+      "openApp": "Open the 2FA app on your device.",
+      "addAccount": "Tap 'Add' or '+' to add a new account.",
+      "enterKey": "Enter this secret key manually:",
+      "getCode": "Get the 6-digit code from the app and enter it below.",
+      "scanQrCode": "Scan QR Code",
+      "manualEntry": "Manual Entry Key",
+      "scanInstructions": "Scan this QR code with your authentication app",
+      "cantScan": "Can't scan the code?",
+      "useManualEntry": "Use manual entry instead",
+      "enterCode": "Enter the 6-digit code from your authentication app",
+      "copied": "Secret key copied to clipboard!"
+    }
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Logout"
   }
 }

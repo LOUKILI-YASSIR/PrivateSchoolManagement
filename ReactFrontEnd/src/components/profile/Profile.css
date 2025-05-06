@@ -700,10 +700,66 @@
 }
 
 .security-options {
-  margin-top: 24px;
+  margin: 20px 0;
   padding: 20px;
-  background-color: rgba(0, 0, 0, 0.03);
+  background-color: #fff;
   border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.security-options h3 {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.multi-select-badge {
+  font-size: 12px;
+  font-weight: 500;
+  background-color: #e1f5fe;
+  color: #0277bd;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-left: 10px;
+}
+
+.security-description {
+  margin-bottom: 20px;
+  color: #666;
+  line-height: 1.5;
+}
+
+.security-highlight-text {
+  color: #0277bd;
+  font-weight: 500;
+}
+
+.methods-explanation {
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #f5f9ff;
+  border-left: 4px solid #4285f4;
+  border-radius: 4px;
+}
+
+.methods-explanation p {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  color: #555;
+  line-height: 1.5;
+}
+
+.methods-explanation svg {
+  margin-right: 8px;
+  color: #4285f4;
+}
+
+.methods-list {
+  display: grid;
+  grid-gap: 16px;
+  margin-bottom: 20px;
 }
 
 .form-check {
@@ -812,4 +868,705 @@ select:focus {
 
 .profile-container.dark .security-options {
   background-color: #1e1e30;
+}
+
+/* Google Auth Setup Styles */
+.google-auth-setup {
+  background-color: var(--secondary-bg-color);
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.setup-intro,
+.setup-success {
+  text-align: center;
+  padding: 20px;
+}
+
+.setup-intro h3,
+.setup-success h3 {
+  margin-bottom: 15px;
+  color: var(--text-color);
+}
+
+.setup-intro p,
+.setup-success p {
+  margin-bottom: 25px;
+  line-height: 1.5;
+  color: var(--secondary-text-color);
+}
+
+.start-setup-button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.start-setup-button:hover {
+  background-color: var(--primary-hover-color);
+}
+
+.start-setup-button:disabled {
+  background-color: var(--disabled-color);
+  cursor: not-allowed;
+}
+
+.success-icon {
+  font-size: 48px;
+  color: var(--success-color);
+  margin-bottom: 15px;
+}
+
+.setup-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 20px;
+}
+
+.setup-tabs button {
+  padding: 10px 15px;
+  background: none;
+  border: none;
+  color: var(--secondary-text-color);
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.setup-tabs button.active {
+  color: var(--primary-color);
+  border-bottom: 2px solid var(--primary-color);
+}
+
+.setup-tabs button:hover {
+  color: var(--primary-color);
+}
+
+.setup-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.qrcode-tab,
+.manual-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.qrcode-container {
+  background-color: white;
+  padding: 15px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+}
+
+.secret-key-container {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.secret-key-container h4 {
+  margin-bottom: 10px;
+  color: var(--text-color);
+}
+
+.secret-key {
+  font-family: monospace;
+  font-size: 20px;
+  letter-spacing: 1px;
+  background-color: var(--input-bg-color);
+  padding: 15px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+}
+
+.setup-instructions {
+  padding-left: 20px;
+  color: var(--secondary-text-color);
+  line-height: 1.6;
+}
+
+.setup-instructions li {
+  margin-bottom: 10px;
+}
+
+.verification-section {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+}
+
+.verification-section h4 {
+  margin-bottom: 10px;
+  color: var(--text-color);
+}
+
+.verification-section p {
+  margin-bottom: 15px;
+  color: var(--secondary-text-color);
+}
+
+.verification-input {
+  margin-bottom: 15px;
+}
+
+.verification-input input {
+  width: 100%;
+  padding: 12px;
+  font-size: 18px;
+  text-align: center;
+  letter-spacing: 4px;
+  font-family: monospace;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--input-bg-color);
+  color: var(--text-color);
+}
+
+.verification-error {
+  color: var(--error-color);
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.setup-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.verify-button,
+.cancel-button {
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.verify-button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+}
+
+.verify-button:hover {
+  background-color: var(--primary-hover-color);
+}
+
+.verify-button:disabled {
+  background-color: var(--disabled-color);
+  cursor: not-allowed;
+}
+
+.cancel-button {
+  background-color: transparent;
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+}
+
+.cancel-button:hover {
+  background-color: var(--border-color);
+}
+
+/* Security section in profile */
+.security-description {
+  margin-bottom: 20px;
+  line-height: 1.5;
+  color: var(--secondary-text-color);
+}
+
+.google-auth-toggle {
+  margin-bottom: 20px;
+}
+
+.toggle-button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  width: 100%;
+  justify-content: center;
+}
+
+.toggle-button.enabled {
+  background-color: var(--success-bg-color);
+  color: var(--success-color);
+}
+
+.toggle-button.disabled {
+  background-color: var(--warning-bg-color);
+  color: var(--warning-color);
+}
+
+.toggle-button.enabled:hover {
+  background-color: var(--success-bg-hover);
+}
+
+.toggle-button.disabled:hover {
+  background-color: var(--warning-bg-hover);
+}
+
+.enabled-date {
+  font-size: 0.85em;
+  color: var(--secondary-text-color);
+  margin-top: 5px;
+}
+
+/* Dark mode adjustments */
+.dark .qrcode-container {
+  background-color: #fff; /* Keep QR code background white for better scanning */
+}
+
+.dark .toggle-button.enabled {
+  background-color: rgba(40, 167, 69, 0.2);
+}
+
+.dark .toggle-button.disabled {
+  background-color: rgba(255, 193, 7, 0.2);
+}
+
+/* Add styles for new multiple 2FA methods UI */
+.methods-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.method-item {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 15px;
+  border: 1px solid var(--border-color);
+  transition: all 0.2s ease-in-out;
+}
+
+.method-item.selected {
+  border-color: var(--primary-color);
+  background-color: rgba(var(--primary-color-rgb), 0.05);
+}
+
+.method-item.unavailable {
+  opacity: 0.7;
+}
+
+.method-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.method-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  background-color: rgba(var(--primary-color-rgb), 0.1);
+  color: var(--primary-color);
+  flex-shrink: 0;
+}
+
+.method-title {
+  flex-grow: 1;
+}
+
+.method-title h4 {
+  margin: 0 0 4px;
+  font-size: 16px;
+}
+
+.method-title p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--secondary-text-color);
+}
+
+.method-toggle {
+  flex-shrink: 0;
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+  background-color: var(--primary-color);
+}
+
+input:focus + .toggle-slider {
+  box-shadow: 0 0 1px var(--primary-color);
+}
+
+input:checked + .toggle-slider:before {
+  transform: translateX(24px);
+}
+
+.method-options {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(var(--border-color-rgb), 0.5);
+}
+
+.preferred-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.methods-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.method-unavailable {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--warning-color);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.verification-panel {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+  border: 1px solid var(--border-color);
+}
+
+.verification-panel h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.verification-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.loading-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+}
+
+.loading-indicator .spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(var(--primary-color-rgb), 0.2);
+  border-radius: 50%;
+  border-top-color: var(--primary-color);
+  animation: spin 1s linear infinite;
+  margin-bottom: 15px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.disable-button {
+  background-color: var(--warning-bg-color);
+  color: var(--warning-color);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.disable-button:hover {
+  background-color: var(--warning-bg-hover);
+}
+
+.disable-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .method-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .method-toggle {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+  }
+  
+  .verification-actions {
+    flex-direction: column;
+  }
+  
+  .verification-actions button {
+    width: 100%;
+  }
+}
+
+/* Add styles for the 2FA status banner */
+.twofa-status-banner {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.twofa-status-banner.enabled {
+  background-color: #e8f5e9;
+  border: 1px solid #c8e6c9;
+}
+
+.twofa-status-banner.disabled {
+  background-color: #ffebee;
+  border: 1px solid #ffcdd2;
+}
+
+.status-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  margin-right: 16px;
+  flex-shrink: 0;
+}
+
+.enabled .status-icon {
+  background-color: #4caf50;
+  color: white;
+}
+
+.disabled .status-icon {
+  background-color: #f44336;
+  color: white;
+}
+
+.status-text {
+  flex-grow: 1;
+}
+
+.status-text h4 {
+  margin: 0 0 4px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.enabled .status-text h4 {
+  color: #2e7d32;
+}
+
+.disabled .status-text h4 {
+  color: #c62828;
+}
+
+.status-text p {
+  margin: 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.enable-2fa-btn,
+.disable-2fa-btn {
+  padding: 10px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.enable-2fa-btn {
+  background-color: #4caf50;
+  color: white;
+}
+
+.enable-2fa-btn:hover {
+  background-color: #388e3c;
+}
+
+.disable-2fa-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.disable-2fa-btn:hover {
+  background-color: #d32f2f;
+}
+
+.enable-2fa-btn:disabled,
+.disable-2fa-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Dark mode adjustments */
+.profile-container.dark .twofa-status-banner.enabled {
+  background-color: rgba(76, 175, 80, 0.15);
+  border-color: rgba(76, 175, 80, 0.3);
+}
+
+.profile-container.dark .twofa-status-banner.disabled {
+  background-color: rgba(244, 67, 54, 0.15);
+  border-color: rgba(244, 67, 54, 0.3);
+}
+
+.profile-container.dark .status-text p {
+  color: #aaa;
+}
+
+@media (max-width: 768px) {
+  .twofa-status-banner {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .status-icon {
+    margin-right: 0;
+    margin-bottom: 12px;
+  }
+  
+  .status-text {
+    margin-bottom: 16px;
+  }
+}
+
+/* Method Description Tooltip */
+.method-description-tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.method-description-tooltip .tooltip-text {
+  visibility: hidden;
+  width: 250px;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  white-space: normal;
+}
+
+.method-description-tooltip .tooltip-text::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: rgba(0, 0, 0, 0.8) transparent transparent transparent;
+}
+
+.method-description-tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Make sure tooltip appears on hover over the whole title area */
+.method-title {
+  position: relative;
+  cursor: help;
+}
+
+/* Method item styling enhancements */
+.method-item {
+  transition: box-shadow 0.3s ease;
+}
+
+.method-item:hover {
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }

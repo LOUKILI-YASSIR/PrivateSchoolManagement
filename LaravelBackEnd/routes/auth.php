@@ -32,4 +32,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/refresh-token', [AuthController::class, 'refreshToken'])->name('api.token.refresh');
     // Route::get('/user', [AuthController::class, 'user'])->name('api.user'); // Defined in api.php
     Route::get('/check-token', [AuthController::class, 'checkToken'])->name('api.token.check');
+    // Two-factor authentication management (for authenticated users)
+    Route::post('/disableGoogle2FA', [AuthController::class, 'disableGoogle2FA'])->name('2fa.disable');
+    Route::get('/google2fa-status', [AuthController::class, 'getGoogle2FAStatus'])->name('2fa.status');
 });

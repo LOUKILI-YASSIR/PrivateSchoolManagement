@@ -11,11 +11,19 @@ import {
   IconButton,
   TextField,
   Divider,
+  Card,
+  CardContent,
+  Grid,
+  Tab,
+  Tabs,
 } from '@mui/material';
+import { QRCodeSVG } from 'qrcode.react';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import SecurityIcon from '@mui/icons-material/Security';
 import SendIcon from '@mui/icons-material/Send';
-import DownloadIcon from '@mui/icons-material/Download';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import QrCodeIcon from '@mui/icons-material/QrCode';
+import KeyIcon from '@mui/icons-material/Key';
 import DarkModeToggle from '../common/DarkModeToggle';
 import MenuCart from '../menu/CartMenu';
 import LoadingSpinner from '../common/LoadingSpinner';
@@ -24,14 +32,15 @@ import apiServices from '../../api/apiServices';
 const GoogleAuthResetPassword = () => {
   const { state: { user } } = useLocation();
   const navigate = useNavigate();
-  const [verificationCode, setVerificationCode] = useState(['', '', '', '', '', '', '', '']);
+  const [verificationCode, setVerificationCode] = useState(['', '', '', '', '', '']);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [qrCodeUrl, setQrCodeUrl] = useState('');
   const [secretKey, setSecretKey] = useState('');
+  const [otpauthUrl, setOtpauthUrl] = useState('');
+  const [tabValue, setTabValue] = useState(0);
   const { t, i18n } = useTranslation();
-  const qrCodeRef = useRef(null);
+  const secretKeyRef = useRef(null);
 
   // Dark mode from Redux
   const isDarkMode = useSelector((state) => state?.theme?.darkMode || false);
@@ -52,6 +61,10 @@ const GoogleAuthResetPassword = () => {
     return currentLang.flag;
   };
 
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
+
   // Fetch QR code on component mount
   useEffect(() => {
     fetchQrCode();
@@ -70,14 +83,15 @@ const GoogleAuthResetPassword = () => {
       });
 
       if (response.status === 'success') {
-        console.log(response.data)
-        setQrCodeUrl(response.data.QRCodeUrlUT);
+        // Set the secret key and otpauth URL
         setSecretKey(response.data.SecretKeyUT);
-        setSuccess('resetPassword.success.qrCodeGenerated');
+        setOtpauthUrl(response.data.otpauthUrl || response.data.QRCodeUrlUT);
+        setSuccess('resetPassword.success.2faSetupInitiated');
       } else {
-        setError('resetPassword.error.qrCodeNotGenerated');
+        setError('resetPassword.error.2faSetupFailed');
       }
     } catch (err) {
+      console.error('2FA setup error:', err);
       const statusCode = err?.response?.status;
       if (statusCode === 429) {
         setError('resetPassword.error.tooManyAttempts');
@@ -96,7 +110,7 @@ const GoogleAuthResetPassword = () => {
     newCode[index] = value;
     setVerificationCode(newCode);
 
-    if (value && index < 7) {
+    if (value && index < 5) {
       const nextInput = document.getElementById(`code-${index + 1}`);
       if (nextInput) nextInput.focus();
     }
@@ -113,7 +127,7 @@ const GoogleAuthResetPassword = () => {
     e.preventDefault();
     const code = verificationCode.join('');
 
-    if (code.length !== 8) {
+    if (code.length !== 6) {
       setError('resetPassword.error.invalidCode');
       return;
     }
@@ -135,6 +149,7 @@ const GoogleAuthResetPassword = () => {
         setError('resetPassword.error.invalidCode');
       }
     } catch (err) {
+      console.error('2FA verification error:', err);
       const statusCode = err?.response?.status;
 
       if (statusCode === 429) {
@@ -149,22 +164,22 @@ const GoogleAuthResetPassword = () => {
     }
   };
 
-  const downloadQrCode = () => {
-    if (!qrCodeUrl) return;
-
-    // Create a temporary link element
-    const link = document.createElement('a');
-    link.href = qrCodeUrl;
-    link.download = `2fa-qrcode-${user.IdUT}.png`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text)
+      .then(() => {
+        setSuccess('resetPassword.2fa.copied');
+        setTimeout(() => setSuccess(''), 2000);
+      })
+      .catch(err => {
+        console.error('Copy failed:', err);
+        setError('resetPassword.error.copyFailed');
+      });
   };
 
   return (
     <>
       {isLoading && (
-        <LoadingSpinner message={t(qrCodeUrl ? 'resetPassword.verifying' : 'resetPassword.generating')} />
+        <LoadingSpinner message={t(otpauthUrl ? 'resetPassword.verifying' : 'resetPassword.generating')} />
       )}
       <Box
         sx={{
@@ -297,7 +312,7 @@ const GoogleAuthResetPassword = () => {
             </Alert>
           )}
 
-          {qrCodeUrl && (
+          {secretKey && otpauthUrl && (
             <Box
               sx={{
                 width: '100%',
@@ -307,59 +322,169 @@ const GoogleAuthResetPassword = () => {
                 mb: 3,
               }}
             >
-              <Box
-                ref={qrCodeRef}
+              <Tabs 
+                value={tabValue} 
+                onChange={handleTabChange} 
+                aria-label="2FA setup options"
+                sx={{ 
+                  mb: 3,
+                  '.MuiTabs-indicator': {
+                    backgroundColor: getThemeColor(),
+                  },
+                }}
+              >
+                <Tab 
+                  icon={<QrCodeIcon />} 
+                  label={t('resetPassword.2fa.scanQrCode')} 
+                  sx={{ 
+                    color: tabValue === 0 ? getThemeColor() : 'inherit',
+                    '&.Mui-selected': {
+                      color: getThemeColor(),
+                    }
+                  }}
+                />
+                <Tab 
+                  icon={<KeyIcon />} 
+                  label={t('resetPassword.2fa.manualEntry')} 
+                  sx={{ 
+                    color: tabValue === 1 ? getThemeColor() : 'inherit',
+                    '&.Mui-selected': {
+                      color: getThemeColor(),
+                    }
+                  }}
+                />
+              </Tabs>
+
+              {/* QR Code Tab Panel */}
+              {tabValue === 0 && (
+                <Card 
+                  variant="outlined" 
+                  sx={{ 
+                    width: '100%', 
+                    mb: 3,
+                    bgcolor: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)'
+                  }}
+                >
+                  <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <Typography variant="h6" gutterBottom color={getThemeColor()}>
+                      {t('resetPassword.2fa.scanQrCode')}
+                    </Typography>
+                    
+                    <Typography variant="body2" paragraph align="center">
+                      {t('resetPassword.2fa.scanInstructions')}
+                    </Typography>
+                    
+                    <Box 
                 sx={{
-                  width: 200,
-                  height: 200,
-                  mb: 2,
-                  p: 2,
+                        p: 3, 
                   bgcolor: 'white',
                   borderRadius: 1,
+                        mb: 2,
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
-                }}
-              >
-                <img src={qrCodeUrl} alt="QR Code" style={{ width: '100%', height: '100%' }} />
+                        width: '200px',
+                        height: '200px',
+                      }}
+                    >
+                      <QRCodeSVG 
+                        value={otpauthUrl}
+                        size={180}
+                        bgColor={"#ffffff"}
+                        fgColor={"#000000"}
+                        level={"M"}
+                        includeMargin={false}
+                      />
               </Box>
 
+                    <Typography variant="body2" color="textSecondary">
+                      {t('resetPassword.2fa.cantScan')} 
               <Button
-                variant="contained"
-                startIcon={<DownloadIcon />}
-                onClick={downloadQrCode}
+                        onClick={() => setTabValue(1)} 
                 sx={{
-                  mb: 2,
-                  color: 'white',
-                  bgcolor: getThemeColor(),
+                          textTransform: 'none',
+                          color: getThemeColor(),
                   '&:hover': {
-                    bgcolor: getThemeColor(0.8),
-                    boxShadow: isDarkMode ? '0 0 10px rgba(106, 95, 201, 0.5)' : '0 4px 8px rgba(0,0,0,0.2)',
-                  },
-                  boxShadow: isDarkMode ? '0 0 8px rgba(106, 95, 201, 0.4)' : '0 2px 4px rgba(0,0,0,0.2)',
-                  borderRadius: 2,
-                  px: 3,
-                  py: 1,
-                  fontWeight: 'medium',
-                  transition: 'all 0.3s ease',
+                            backgroundColor: 'transparent',
+                            textDecoration: 'underline',
+                          }
                 }}
               >
-                {t('resetPassword.2fa.downloadQrCode')}
+                        {t('resetPassword.2fa.useManualEntry')}
               </Button>
+                    </Typography>
+                  </CardContent>
+                </Card>
+              )}
 
-              {secretKey && (
-                <Typography
-                  variant="body2"
-                  align="center"
+              {/* Manual Entry Tab Panel */}
+              {tabValue === 1 && (
+                <Card 
+                  variant="outlined" 
                   sx={{
-                    color: isDarkMode ? 'rgba(255,255,255,0.7)' : 'text.secondary',
-                    mb: 2,
-                    wordBreak: 'break-all',
-                    px: 2,
+                    width: '100%', 
+                    mb: 3,
+                    bgcolor: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)'
                   }}
                 >
-                  {t('resetPassword.2fa.manualEntry')}: <strong>{secretKey}</strong>
+                  <CardContent>
+                    <Typography variant="h6" gutterBottom color={getThemeColor()}>
+                      {t('resetPassword.2fa.setupInstructions')}
+                    </Typography>
+                    
+                    <Typography variant="body2" paragraph>
+                      1. {t('resetPassword.2fa.downloadApp')}
+                    </Typography>
+                    
+                    <Typography variant="body2" paragraph>
+                      2. {t('resetPassword.2fa.openApp')}
+                    </Typography>
+                    
+                    <Typography variant="body2" paragraph>
+                      3. {t('resetPassword.2fa.addAccount')}
+                    </Typography>
+                    
+                    <Typography variant="body2" paragraph>
+                      4. {t('resetPassword.2fa.enterKey')}
+                    </Typography>
+                    
+                    <Box 
+                      sx={{ 
+                        p: 2, 
+                        bgcolor: isDarkMode ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.05)',
+                        borderRadius: 1,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        mb: 2
+                      }}
+                    >
+                      <Typography
+                        ref={secretKeyRef}
+                        variant="body1"
+                        sx={{
+                          fontFamily: 'monospace',
+                          fontWeight: 'bold',
+                          letterSpacing: 1,
+                          fontSize: '1.2rem',
+                          wordBreak: 'break-all',
+                        }}
+                      >
+                        {secretKey}
+                      </Typography>
+                      <IconButton 
+                        onClick={() => copyToClipboard(secretKey)}
+                        sx={{ color: getThemeColor() }}
+                      >
+                        <ContentCopyIcon />
+                      </IconButton>
+                    </Box>
+                    
+                    <Typography variant="body2" paragraph>
+                      5. {t('resetPassword.2fa.getCode')}
                 </Typography>
+                  </CardContent>
+                </Card>
               )}
 
               <Divider sx={{ width: '100%', my: 2 }} />

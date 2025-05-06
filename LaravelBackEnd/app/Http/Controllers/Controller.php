@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Crypt;
 
 /**
  * Base Controller Class
- * 
+ *
  * This class serves as the foundation for all API controllers in the application.
  * It provides standardized methods for handling API responses, errors, validation,
  * pagination, sorting, and other common controller operations.
@@ -28,7 +28,7 @@ class Controller extends BaseController
 
     /**
      * Load messages from JSON file
-     * 
+     *
      * @return array Loaded messages
      */
     protected function loadMessages(): array
@@ -38,12 +38,12 @@ class Controller extends BaseController
 
     /**
      * Retrieve a message from the messages array
-     * 
+     *
      * @param string $type Message type ('success' or 'error')
      * @param string $category Message category (e.g., 'validation', 'auth')
      * @param string $key Specific message key
      * @return string The message text or default error message if not found
-     * 
+     *
      * @example getMessage('error', 'validation', 'required') // Returns: "Required fields are missing"
      */
     protected function getMessage(string $type, string $category, string $key = 'general'): string
@@ -54,11 +54,11 @@ class Controller extends BaseController
 
     /**
      * Generate a standardized API response with CORS headers
-     * 
+     *
      * @param mixed $data The data to be included in the response
      * @param int $statusCode HTTP status code
      * @return JsonResponse
-     * 
+     *
      * @example response(['data' => $user], 200)
      */
     protected function response($data, int $statusCode = 200): JsonResponse
@@ -71,13 +71,13 @@ class Controller extends BaseController
 
     /**
      * Generate a standardized error response
-     * 
+     *
      * @param string $category Error category (e.g., 'validation', 'auth')
      * @param string $key Specific error key
      * @param array $errors Additional error details
      * @param int $statusCode HTTP status code
      * @return JsonResponse
-     * 
+     *
      * @example errorResponse('validation', 'required', ['name' => 'Name is required'], 422)
      */
     protected function errorResponse(string $category = 'server', string $key = 'general', array $errors = [], int $statusCode = Response::HTTP_BAD_REQUEST): JsonResponse
@@ -91,12 +91,12 @@ class Controller extends BaseController
 
     /**
      * Generate a standardized success response
-     * 
+     *
      * @param mixed $data The data to be included in the response
      * @param string $key Success message key
      * @param int $statusCode HTTP status code
      * @return JsonResponse
-     * 
+     *
      * @example successResponse($user, 'created', 201)
      */
     protected function successResponse($data = [], string $key = 'processed', int $statusCode = Response::HTTP_OK): JsonResponse
@@ -110,7 +110,7 @@ class Controller extends BaseController
 
     /**
      * Handle validation exceptions with detailed error messages
-     * 
+     *
      * @param ValidationException $e The validation exception
      * @return JsonResponse
      */
@@ -121,7 +121,7 @@ class Controller extends BaseController
 
     /**
      * Handle and log general exceptions
-     * 
+     *
      * @param Exception $e The exception to handle
      * @return JsonResponse
      */
@@ -138,13 +138,13 @@ class Controller extends BaseController
 
     /**
      * Validate request data against given rules
-     * 
+     *
      * @param Request $request The request to validate
      * @param array $rules Validation rules
      * @param array $messages Custom error messages
      * @return array Validated data
      * @throws ValidationException
-     * 
+     *
      * @example validateRequest($request, ['name' => 'required|string'])
      */
     protected function validateRequest(Request $request, array $rules, array $messages = []): array
@@ -158,12 +158,12 @@ class Controller extends BaseController
 
     /**
      * Handle pagination parameters with support for both page-based and offset-based pagination
-     * 
+     *
      * @param Request $request The request containing pagination parameters
      * @param int $defaultLength Default number of items per page
      * @return array Pagination parameters
      * @throws ValidationException
-     * 
+     *
      * @example
      * $pagination = handlePagination($request, 15);
      * $query->paginate($pagination['per_page'], ['*'], 'page', $pagination['page']);
@@ -191,14 +191,14 @@ class Controller extends BaseController
 
     /**
      * Handle sorting parameters with validation
-     * 
+     *
      * @param Request $request The request containing sort parameters
      * @param array $allowedFields Fields that can be used for sorting
      * @param string $defaultField Default field to sort by
      * @param string $defaultDirection Default sort direction
      * @return array [field, direction]
      * @throws ValidationException
-     * 
+     *
      * @example
      * [$field, $direction] = handleSorting($request, ['name', 'created_at']);
      * $query->orderBy($field, $direction);
@@ -225,13 +225,13 @@ class Controller extends BaseController
 
     /**
      * Handle date range parameters with validation
-     * 
+     *
      * @param Request $request The request containing date range parameters
      * @param string $startField Name of the start date field
      * @param string $endField Name of the end date field
      * @return array [Carbon|null startDate, Carbon|null endDate]
      * @throws ValidationException
-     * 
+     *
      * @example
      * [$startDate, $endDate] = handleDateRange($request);
      * $query->whereBetween('created_at', [$startDate, $endDate]);
@@ -252,11 +252,11 @@ class Controller extends BaseController
 
     /**
      * Format a date string using Carbon
-     * 
+     *
      * @param string|null $date Date string to format
      * @param string $format Desired date format
      * @return string|null Formatted date or null if input is null
-     * 
+     *
      * @example formatDate('2023-01-01', 'Y-m-d H:i:s')
      */
     protected function formatDate(?string $date, string $format = 'Y-m-d H:i:s'): ?string
@@ -266,11 +266,11 @@ class Controller extends BaseController
 
     /**
      * Handle search parameters and generate search conditions
-     * 
+     *
      * @param Request $request The request containing search parameters
      * @param array $searchableFields Fields that can be searched
      * @return array Array of search conditions for query building
-     * 
+     *
      * @example
      * $conditions = handleSearch($request, ['name', 'email']);
      * foreach ($conditions as $condition) {
@@ -347,6 +347,7 @@ class Controller extends BaseController
     {
         return $this->errorResponse('request', 'invalid_format', ['request' => $message], Response::HTTP_BAD_REQUEST);
     }
+
     public function checkIfEncrypted($value)
 {
     try {
@@ -362,5 +363,4 @@ class Controller extends BaseController
         ];
     }
 }
-
 }

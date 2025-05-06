@@ -80,7 +80,11 @@
     "address": "Adresse",
     "city": "Ville",
     "postalCode": "Code Postal",
-    "country": "Pays"
+    "country": "Pays",
+    "twoFactorAuth": "Authentification à Deux Facteurs",
+    "twoFactorAuthDesc": "L'authentification à deux facteurs ajoute une couche de sécurité supplémentaire à votre compte. Lorsqu'elle est activée, vous aurez besoin de votre mot de passe et d'un code de vérification de Google Authenticator pour vous connecter.",
+    "manageSettings": "Gérer les Paramètres de Sécurité",
+    "enabledOn": "Activé le"
   },
   "info": {
     "info": "Info :",
@@ -272,17 +276,93 @@
   },
   "resetPassword": {
     "error": {
-      "general": "Une erreur est survenue lors de la réinitialisation de votre mot de passe. Veuillez réessayer."
+      "general": "Une erreur est survenue lors de la réinitialisation de votre mot de passe. Veuillez réessayer.",
+      "invalidCode": "Code de vérification invalide. Veuillez réessayer.",
+      "tooManyAttempts": "Trop de tentatives. Veuillez réessayer plus tard.",
+      "qrCodeNotGenerated": "Impossible de générer le code QR. Veuillez réessayer.",
+      "qrCodeLoadFailed": "Échec du chargement du code QR. Veuillez utiliser la saisie manuelle.",
+      "2faSetupFailed": "Échec de la configuration de l'authentification à deux facteurs. Veuillez réessayer.",
+      "copyFailed": "Échec de la copie dans le presse-papiers.",
+      "general": "Une erreur s'est produite. Veuillez réessayer."
     },
     "success": {
-      "linkSent": "Un lien de réinitialisation a été envoyé à votre adresse e-mail."
+      "linkSent": "Un lien de réinitialisation a été envoyé à votre adresse e-mail.",
+      "qrCodeGenerated": "Code QR généré avec succès.",
+      "2faSetupInitiated": "Configuration de l'authentification à deux facteurs initiée.",
+      "copied": "Copié dans le presse-papiers !"
     },
     "loading": "Chargement…",
+    "verifying": "Vérification...",
+    "generating": "Génération...",
     "requestTitle": "Réinitialiser le mot de passe",
     "validationCode": "Code de validation",
-    "requestSubtitle": "Entrez votre adresse e-mail, nom d’utilisateur ou numéro de téléphone pour recevoir un lien de réinitialisation.",
+    "requestSubtitle": "Entrez votre adresse e-mail, nom d'utilisateur ou numéro de téléphone pour recevoir un lien de réinitialisation.",
     "returnToLogin": "Retour à la connexion",
     "sending": "Envoi en cours…",
-    "sendLink": "Envoyer le lien de réinitialisation"
+    "sendLink": "Envoyer le lien de réinitialisation",
+    "verifyCode": "Vérifier le code",
+    "selectLanguage": "Sélectionner la langue",
+    "2fa": {
+      "verifyTitle": "Authentification à Deux Facteurs",
+      "verifyDescription": "Sécurisez votre compte avec une application d'authentification",
+      "setupInstructions": "Instructions de Configuration",
+      "downloadApp": "Téléchargez une application 2FA comme Google Authenticator ou Authy.",
+      "openApp": "Ouvrez l'application 2FA sur votre appareil.",
+      "addAccount": "Appuyez sur 'Ajouter' ou '+' pour ajouter un nouveau compte.",
+      "enterKey": "Saisissez cette clé secrète manuellement :",
+      "getCode": "Obtenez le code à 6 chiffres depuis l'application et saisissez-le ci-dessous.",
+      "scanQrCode": "Scanner le Code QR",
+      "manualEntry": "Saisie Manuelle de la Clé",
+      "scanInstructions": "Scannez ce code QR avec votre application d'authentification",
+      "cantScan": "Impossible de scanner le code ?",
+      "useManualEntry": "Utilisez la saisie manuelle à la place",
+      "enterCode": "Saisissez le code à 6 chiffres depuis votre application d'authentification",
+      "copied": "Clé secrète copiée dans le presse-papiers !"
+    }
+  },
+  "twoFactorAuth": {
+    "title": "Authentification à Deux Facteurs",
+    "setupTitle": "Configurer Google Authenticator",
+    "setupDesc": "L'authentification à deux facteurs ajoute une couche de sécurité supplémentaire à votre compte. Après la configuration, vous aurez besoin de votre mot de passe et d'un code de vérification de Google Authenticator pour vous connecter.",
+    "startSetup": "Commencer la Configuration",
+    "setupComplete": "Authentification à Deux Facteurs Activée",
+    "setupCompleteDesc": "Votre compte est maintenant protégé avec Google Authenticator. Vous devrez entrer un code de vérification lors de la connexion.",
+    "qrCodeTab": "Scanner le Code QR",
+    "manualTab": "Saisie Manuelle",
+    "secretKey": "Clé Secrète",
+    "verifySetup": "Vérifier la Configuration",
+    "verifyCode": "Entrez le code de vérification à 6 chiffres de Google Authenticator",
+    "verifyButton": "Vérifier et Activer",
+    "cancelButton": "Annuler",
+    "invalidCode": "Code de vérification invalide. Veuillez réessayer.",
+    "enabled": "Authentification à Deux Facteurs Activée",
+    "disabled": "Authentification à Deux Facteurs Désactivée",
+    "enable": "Activer l'Authentification à Deux Facteurs",
+    "disable": "Désactiver l'Authentification à Deux Facteurs",
+    "confirmDisable": "Êtes-vous sûr de vouloir désactiver l'authentification à deux facteurs? Cela réduira la sécurité de votre compte.",
+    "preferredMethod": "Utiliser comme méthode d'authentification principale",
+    "methodUnavailable": "Cette méthode n'est pas disponible pour votre compte",
+    "addPhoneNumber": "Ajoutez un numéro de téléphone à votre profil pour activer la vérification par SMS",
+    "addEmail": "Ajoutez une adresse e-mail à votre profil pour activer la vérification par e-mail",
+    "verifyEmail": "Vérification par E-mail",
+    "verifySMS": "Vérification par SMS",
+    "sendEmailCode": "Nous enverrons un code de vérification à votre adresse e-mail.",
+    "sendSMSCode": "Nous enverrons un code de vérification à votre numéro de téléphone.",
+    "enterEmailCode": "Entrez le code de vérification que nous avons envoyé à votre e-mail",
+    "enterSMSCode": "Entrez le code de vérification que nous avons envoyé à votre téléphone",
+    "sendCode": "Envoyer le Code",
+    "setupInstructions": {
+      "step1": "Installez Google Authenticator sur votre appareil mobile",
+      "step2": "Ouvrez l'application et appuyez sur l'icône \"+\"",
+      "step3": "Sélectionnez \"Scanner le code QR\"",
+      "step4": "Scannez le code QR affiché ci-dessus",
+      "step5": "Entrez votre email de compte et la clé secrète ci-dessus",
+      "step6": "Sélectionnez \"Basé sur le temps\" pour le type de clé"
+    },
+    "errors": {
+      "setupFailed": "Échec de la configuration de l'authentification à deux facteurs",
+      "verificationFailed": "Échec de la vérification du code",
+      "disableFailed": "Échec de la désactivation de l'authentification à deux facteurs"
+    }
   }
 }

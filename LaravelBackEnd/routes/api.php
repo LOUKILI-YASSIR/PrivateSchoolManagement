@@ -42,6 +42,14 @@ require __DIR__.'/auth.php';
 
 // Authentication routes are typically in routes/auth.php or included here
 
+// Add public 2FA routes
+Route::post('/setupGoogle2FA', [AuthController::class, 'setupGoogle2FA'])->name('api.2fa.setup');
+Route::post('/verifyGoogle2FA', [AuthController::class, 'verifyGoogle2FA'])->name('api.2fa.verify');
+Route::post('/disableGoogle2FA', [AuthController::class, 'disableGoogle2FA'])->name('api.2fa.disable');
+Route::post('/verify2FA', [AuthController::class, 'verify2FA'])->name('api.2fa.verify_any');
+Route::post('/send2FAVerificationCode', [AuthController::class, 'send2FAVerificationCode'])->name('api.2fa.send_code');
+Route::post('/getLoginVerificationMethods', [AuthController::class, 'getLoginVerificationMethods'])->name('api.2fa.login_methods');
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 })->name('api.current_user'); // Renamed from api.user to avoid conflict if auth.php is separate
@@ -53,6 +61,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/users/profile', [AuthController::class, 'updateProfile'])->name('api.profile.update');
     Route::post('/users/upload-profile-image', [AuthController::class, 'uploadProfileImage'])->name('api.profile.upload_image');
     Route::post('/users/change-password', [AuthController::class, 'changePassword'])->name('api.profile.change_password');
+
+    // 2FA Routes
+    Route::get('/users/2fa-methods', [AuthController::class, 'getAvailable2FAMethods'])->name('api.profile.2fa.methods');
+    Route::post('/users/update-2fa-settings', [AuthController::class, 'update2FASettings'])->name('api.profile.2fa.update');
 
     // --- Add Paginate and Count Routes for Resources ---
     $resourceControllers = [
