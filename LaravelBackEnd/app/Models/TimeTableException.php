@@ -23,6 +23,7 @@ class TimeTableException extends Model
 
     protected $fillable = [
         'MatriculeTE',
+        'MatriculeYR',
         'ExceptionTypeTE',
         'ExceptionDateTE',
         'IsFulldayTE',
@@ -44,6 +45,11 @@ class TimeTableException extends Model
     public function newTimeSlot()
     {
         return $this->belongsTo(TimeSlot::class, 'NewMatriculeTS', 'MatriculeTS')->withDefault();
+    }
+
+    public function academicYear()
+    {
+        return $this->belongsTo(AcademicYear::class, 'MatriculeYR', 'MatriculeYR');
     }
 
     protected static function getMatriculePrefix()

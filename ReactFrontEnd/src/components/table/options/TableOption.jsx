@@ -10,7 +10,7 @@ import FormWrapper from "../../form/FormWrapper"; // Adjust import path as neede
 import { useTranslation } from "react-i18next";
 import ActionMenu from "../../menu/ActionMenu";
 import { useSelector } from "react-redux";
-
+import dayjs from 'dayjs';
 export const GetInfoTable = () => {
   const { t: Traduction, i18n } = useTranslation();
   const Language = i18n.language;
@@ -25,7 +25,7 @@ export const GetInfoTable = () => {
     matiere: Traduction("TableDBName.subject"),
     niveaux: Traduction("TableDBName.level"),
     salles: Traduction("TableDBName.room"),
-    groupes: Traduction("TableDBName.group"),
+    groups: Traduction("TableDBName.group"),
     evaluations: Traduction("TableDBName.evaluation"),
     "regular-timetables": Traduction("TableDBName.timetable")
   };
@@ -37,19 +37,70 @@ export const GetInfoTable = () => {
       de: MRT_Localization_DE,
       es: MRT_Localization_ES,
     }[Language],
-    ActionOption: (table, row, Handels, closeMenu, BoxOptionDeleteBy1, options = { consult: true, edit: true, remove: true }) => {
+    ActionOption: (table, row, Handels, closeMenu, BoxOptionDeleteBy1, BoxOptionGrade, options = { consult: true, edit: true, remove: true }) => {
       const { consult, edit, remove } = options;
-      const { handleDelete } = Handels;
+      const { handleDelete, handleSetGrade } = Handels;
+
+      switch (TableName) {
+        case 'etudiants':
+          row={
+            MatriculeET:row.MatriculeET,
+            EmailET: row?.user?.EmailUT,
+            EmailTR:row?.EmailTR,
+            LienParenteTR:row.LienParenteTR,
+            MatriculeGP:row.MatriculeGP,
+            MatriculeNV:row.MatriculeNV,
+            NomTR:row.NomTR,
+            ObservationTR:row.ObservationTR,
+            Phone1TR:row.Phone1TR,
+            Phone2TR:row.Phone2TR,
+            PhoneET:row?.user?.PhoneUT,
+            PrenomTR:row.PrenomTR,
+            ProfessionTR:row.ProfessionTR,
+            ...(row?.user ? row.user : {}),
+            DateNaissancePL:dayjs(row?.user?.DateNaissancePL),
+          }
+          break
+        case 'professeurs': 
+          row = {
+            MatriculePR:row.MatriculePR,
+            EmailPR: row?.user?.EmailUT,
+            PhonePR:row?.user?.PhoneUT,
+            MatriculeMT:row.MatriculeMT,
+            CivilitePR:row.CivilitePR,
+            DateEmbauchePR:row.DateEmbauchePR,
+            NomBanquePR:row.NomBanquePR,
+            RIBPR:row.RIBPR,
+            SalairePR:row.SalairePR,
+            CINPR:row.CINPR,
+            ...(row?.user ? row.user : {}),
+            DateNaissancePL:dayjs(row?.user?.DateNaissancePL),
+          }
+          break
+      }
+      console.log("ACTION OPTION: ",row)
       const itemId = row[{
         etudiants: "MatriculeET",
         professeurs: "MatriculePR",
         matiere: "MatriculeMT",
         niveaux: "MatriculeNV",
         salles: "MatriculeSL",
-        groupes: "MatriculeGP",
-        evaluations: "MatriculeEV",
-        "regular-timetables": "MatriculeRT"
+        groups: "MatriculeGP",
+        "evaluation-types": "MatriculeEP",
+        "regular-timetables": "MatriculeRT",
+        "academic-years" : "MatriculeYR"
       }[TableName]];
+      console.log({
+        etudiants: "MatriculeET",
+        professeurs: "MatriculePR",
+        matiere: "MatriculeMT",
+        niveaux: "MatriculeNV",
+        salles: "MatriculeSL",
+        groups: "MatriculeGP",
+        "evaluation-types": "MatriculeEP",
+        "regular-timetables": "MatriculeRT",
+        "academic-years" : "MatriculeYR"
+      }[TableName],itemId)
       const actions = [
         consult && (
           <MRT_ActionMenuItem
@@ -85,6 +136,19 @@ export const GetInfoTable = () => {
             }}
           />
         ),
+        TableName === "groups" && (
+          <ActionMenu
+            key="GradeBox"
+            fullWidth={true}
+            contentOptions={BoxOptionGrade({ closeMenu, itemId, Traduction })}
+            maxWidth="lg"
+            disableBackdropClick={false}
+            style={{ 
+              width: '70vh',
+              borderLeft: isDarkMode ? '3px solid rgba(220, 38, 38, 0.8)' : '3px solid rgba(220, 38, 38, 0.7)' 
+            }}
+          />
+        )
       ];
       return actions.filter(Boolean); // Remove falsy values
     },

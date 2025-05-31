@@ -23,6 +23,7 @@ class RegularTimeTable extends Model
 
     protected $fillable = [
         'MatriculeRT',
+        'MatriculeYR',
         'MatriculeDW',
         'MatriculeTS',
         'MatriculeGP',
@@ -64,6 +65,12 @@ class RegularTimeTable extends Model
     {
         return $this->belongsTo(Salle::class, 'MatriculeSL', 'MatriculeSL');
     }
+
+    public function academicYear()
+    {
+        return $this->belongsTo(AcademicYear::class, 'MatriculeYR', 'MatriculeYR');
+    }
+
     // Required method for GeneratesMatricule trait
     protected static function getMatriculePrefix()
     {

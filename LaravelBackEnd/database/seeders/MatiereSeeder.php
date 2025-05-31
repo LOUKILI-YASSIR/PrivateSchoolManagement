@@ -6,7 +6,6 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Matiere;
 use App\Models\Niveau;
-use App\Models\Professeur;
 
 class MatiereSeeder extends Seeder
 {
@@ -16,10 +15,9 @@ class MatiereSeeder extends Seeder
     public function run(): void
     {
         $niveaux = Niveau::all();
-        $professeurs = Professeur::all();
 
-        if ($niveaux->isEmpty() || $professeurs->isEmpty()) {
-            $this->command->warn('Niveaux or Professeurs not found. Skipping MatiereSeeder. Please run NiveauSeeder and ProfesseurSeeder first.');
+        if ($niveaux->isEmpty()) {
+            $this->command->warn('Niveaux not found. Skipping MatiereSeeder. Please run NiveauSeeder and ProfesseurSeeder first.');
             return;
         }
 
@@ -28,7 +26,6 @@ class MatiereSeeder extends Seeder
             for ($i = 0; $i < 3; $i++) {
                 Matiere::factory()
                     ->forNiveau($niveau->MatriculeNV)
-                    ->forProfesseur($professeurs->random()->MatriculePR)
                     ->create();
             }
         }

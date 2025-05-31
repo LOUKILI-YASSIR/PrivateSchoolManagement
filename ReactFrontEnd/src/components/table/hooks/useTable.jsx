@@ -32,4 +32,4 @@ export const useTable = () => {
         refetch: refetch || (() => {}),
         OnDrowRows
     };
-};
+};  

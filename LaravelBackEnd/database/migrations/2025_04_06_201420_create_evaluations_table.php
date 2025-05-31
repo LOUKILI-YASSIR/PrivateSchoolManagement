@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('evaluations', function (Blueprint $table) {
             $table->string('MatriculeEV')->primary();
+            $table->string('MatriculeYR');
             $table->string('MatriculeMT');
             $table->string('MatriculeEP');
             $table->integer('NbrEV')->nullable();
@@ -20,6 +21,7 @@ return new class extends Migration
 
             $table->foreign('MatriculeMT')->references('MatriculeMT')->on('matieres')->onDelete('cascade');
             $table->foreign('MatriculeEP')->references('MatriculeEP')->on('evaluation_types')->onDelete('cascade');
+            $table->foreign('MatriculeYR')->references('MatriculeYR')->on('academic_years');
         });
     }
 

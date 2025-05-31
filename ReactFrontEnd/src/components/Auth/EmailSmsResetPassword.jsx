@@ -19,9 +19,13 @@ import DarkModeToggle from '../common/DarkModeToggle';
 import MenuCart from '../menu/CartMenu';
 import LoadingSpinner from '../common/LoadingSpinner';
 import apiServices from '../../api/apiServices';
+import { useAuth } from '../../utils/contexts/AuthContext';
 
-const EmailSmsResetPassword = ({ type }) => {
-  const { state: { user } } = useLocation();
+const EmailSmsResetPassword = ({ type, isFromLogin }) => {
+  const location = useLocation();
+  const { state } = location;
+  const user = state?.user;
+  const verificationFlow = state?.verificationFlow;
   const navigate = useNavigate();
   const [verificationCode, setVerificationCode] = useState(['', '', '', '', '', '', '', '']);
   const [error, setError] = useState('');
@@ -31,6 +35,20 @@ const EmailSmsResetPassword = ({ type }) => {
   const [countdown, setCountdown] = useState(60); // 60 seconds countdown
   const [isResendDisabled, setIsResendDisabled] = useState(true); // Disable resend initially
   const { t, i18n } = useTranslation();
+  const { login } = useAuth();
+
+  // Check for verification flow data
+  const isLastMethod = verificationFlow?.isLastMethod;
+  const allMethods = verificationFlow?.allMethods || [];
+  const currentIndex = verificationFlow?.currentIndex || 0;
+  
+  // Get the next method if available
+  const getNextMethod = () => {
+    if (!verificationFlow || !allMethods || currentIndex >= allMethods.length - 1) {
+      return null;
+    }
+    return allMethods[currentIndex + 1];
+  };
 
   // Dark mode from Redux
   const isDarkMode = useSelector((state) => state?.theme?.darkMode || false);
@@ -151,9 +169,97 @@ const EmailSmsResetPassword = ({ type }) => {
       });
 
       if (response.status === 'success') {
-        navigate('/YLSchool/reset-password', {
-          state: { user :  {...user, CodeVerificationUT: code, TypeUT: type} },
-        });
+        if (isFromLogin) {
+          // Handle login verification flow
+          if (isLastMethod) {
+            // If this is the last verification method, complete the authentication process
+            try {
+              console.log(`Last ${type} verification passed, completing authentication`);
+              
+              // Call a completion endpoint to get a token
+              const completionResponse = await apiServices.postData('/complete-2fa', {
+                identifier: user.EmailUT || user.UserNameUT || user.PhoneUT,
+                verification_status: true,
+                password: user.PasswordUT || ''
+              });
+              
+              if (completionResponse.status === 'success' && completionResponse.data?.access_token) {
+                // Store token in session storage
+                sessionStorage.setItem('token', completionResponse.data.access_token);
+                sessionStorage.setItem('userRole', completionResponse.data.role);
+                sessionStorage.setItem('userID', completionResponse.data.MatriculeUT);
+                
+                // Navigate to dashboard
+                navigate('/YLSchool/DashBoard');
+              } else {
+                console.error('Failed to complete authentication after 2FA verification');
+                navigate('/YLSchool/Login');
+              }
+              return;
+            } catch (error) {
+              console.error("Error during 2FA completion:", error);
+              
+              // Fallback to direct navigation if the completion endpoint fails
+              console.log('Falling back to direct dashboard navigation');
+              navigate('/YLSchool/DashBoard');
+              return;
+            }
+          } else {
+            // Move to the next verification method
+            const nextMethod = getNextMethod();
+            if (!nextMethod) {
+              navigate('/YLSchool/DashBoard');
+              return;
+            }
+            
+            // Update verification flow for the next method
+            const updatedFlow = {
+              ...verificationFlow,
+              currentIndex: currentIndex + 1,
+              isLastMethod: currentIndex + 1 >= allMethods.length - 1
+            };
+            
+            // Navigate to the appropriate next verification method
+            switch (nextMethod.id) {
+              case 'google':
+                navigate('/YLSchool/reset-password-request-totp', { 
+                  state: { 
+                    user: { ...user, previousVerification: code },
+                    verificationFlow: updatedFlow 
+                  }
+                });
+                break;
+                
+              case 'email':
+              case 'sms':
+                navigate('/YLSchool/reset-password-request-' + nextMethod.id, { 
+                  state: { 
+                    user: { ...user, previousVerification: code },
+                    verificationFlow: updatedFlow,
+                    type: nextMethod.id
+                  }
+                });
+                break;
+                
+              case 'db':
+                navigate('/YLSchool/reset-password-request', { 
+                  state: { 
+                    user: { ...user, previousVerification: code },
+                    verificationFlow: updatedFlow
+                  }
+                });
+                break;
+                
+              default:
+                navigate('/YLSchool/DashBoard');
+            }
+          }
+        } else {
+          // Handle password reset flow
+          navigate('/YLSchool/reset-password', {
+            state: { user: { ...user, CodeVerificationUT: code, TypeUT: type } },
+          });
+        }
       } else {
         setError('resetPassword.error.invalidCode');
       }

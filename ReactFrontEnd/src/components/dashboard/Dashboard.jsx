@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Container, Grid, Typography, Paper, Stack, Avatar, Tabs, Tab, Select, MenuItem, FormControl, InputLabel, IconButton, Tooltip } from '@mui/material';
 import { ExpandMore as ExpandMoreIcon, ExpandLess as ExpandLessIcon } from '@mui/icons-material';
 import { useDashboard } from './hooks/useDashboard';
 import styles from './Dashboard.module.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import ContentBlock from '../common/ContentBlock';
 import { 
   faUsers, 
@@ -124,9 +124,22 @@ const mockData = {
 
 const Dashboard = ({ type = "admin" }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { Language } = useDashboard();
-  const { userRole } = useAuth();
+  const { userRole, isAuthenticated, checkTokenValidity } = useAuth();
   const isDarkMode = useSelector((state) => state?.theme?.darkMode || false);
+  
+  // Log authentication state for debugging
+  useEffect(() => {
+    const token = sessionStorage.getItem('token');
+    console.log('Dashboard Auth State:', {
+      isAuthenticated,
+      userRole,
+      hasToken: !!token,
+      tokenValue: token,
+      path: location.pathname
+    });
+  }, [isAuthenticated, userRole, location.pathname]);
   
   // Add state for horizontal navigation
   const [activeGestionTab, setActiveGestionTab] = useState('students');
@@ -154,7 +167,7 @@ const Dashboard = ({ type = "admin" }) => {
   const [activeAttendanceTab, setActiveAttendanceTab] = useState('attendance');
   const [activeGradesTab, setActiveGradesTab] = useState('grades');
   const [selectedTimeTableClass, setSelectedTimeTableClass] = useState('Class I');
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState('gender');
   const [selectedClass, setSelectedClass] = useState('Class I');
   const isMobile = window.innerWidth < 600;
 

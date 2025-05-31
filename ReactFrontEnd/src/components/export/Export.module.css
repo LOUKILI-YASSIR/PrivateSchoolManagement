@@ -100,6 +100,7 @@ button:disabled::before {
 .file-type-selector:hover {
   transform: translateY(-3px);
   filter: brightness(1.05);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
 }
 
 .file-type-selector.selected {
@@ -159,4 +160,434 @@ button:disabled::before {
 
 .export-dialog-button:hover::after {
   left: 100%;
+}
+
+/* New styles for the improved Export UI */
+
+/* Column selector chips animation */
+.column-chip {
+  transition: all 0.2s ease;
+}
+
+.column-chip:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+}
+
+.column-chip.selected {
+  font-weight: bold;
+}
+
+/* Format card hover effect */
+.format-card {
+  transition: all 0.3s ease;
+}
+
+.format-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.format-card.selected {
+  border-color: currentColor;
+}
+
+/* Tab animations */
+.tab-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.tab-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.tab-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.tab-exit-active {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 300ms, transform 300ms;
+}
+
+/* Preview container animation */
+.preview-container {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.preview-container:hover {
+  transform: scale(1.01);
+}
+
+/* Enhanced pulse animation for export icon */
+@keyframes enhanced-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.export-icon-enhanced {
+  animation: enhanced-pulse 2s infinite;
+}
+
+/* Column preview table styling */
+.column-preview-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.column-preview-table th {
+  background-color: #6a5fc9;
+  color: white;
+  font-weight: 600;
+  padding: 10px 16px;
+  text-align: left;
+}
+
+.column-preview-table td {
+  padding: 8px 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.column-preview-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Dark mode for column preview */
+.dark-mode .column-preview-table th {
+  background-color: #444;
+}
+
+.dark-mode .column-preview-table td {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Export info cards */
+.export-info-card {
+  height: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.export-info-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Export button animation */
+.export-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.export-button::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transition: all 0.8s ease;
+}
+
+.export-button:hover::after {
+  left: 100%;
+}
+
+/* Export Module Styles */
+
+/* Format icons animations */
+.export-icon {
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.export-icon:hover {
+  transform: translateY(-2px);
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2));
+}
+
+.export-success {
+  animation: success-pulse 1.5s ease;
+}
+
+@keyframes success-pulse {
+  0% { transform: scale(1); }
+  15% { transform: scale(1.3); }
+  30% { transform: scale(1); }
+  45% { transform: scale(1.2); }
+  60% { transform: scale(1); }
+  100% { transform: scale(1); }
+}
+
+/* Quick export button animation */
+.quick-export-btn.exporting {
+  animation: exporting-animation 1.5s infinite ease-in-out;
+}
+
+@keyframes exporting-animation {
+  0% { transform: translateY(0); opacity: 1; }
+  50% { transform: translateY(-2px); opacity: 0.8; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+/* Format selection cards */
+.format-card {
+  transition: all 0.2s ease-in-out;
+}
+
+.format-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.format-card.selected {
+  transform: scale(1.03);
+}
+
+/* Preview image transition */
+.format-preview {
+  transition: all 0.3s ease;
+}
+
+/* Category tabs animations */
+.category-tab-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.category-tab-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.category-tab-exit {
+  opacity: 1;
+}
+
+.category-tab-exit-active {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 300ms, transform 300ms;
+}
+
+/* Column chips animations */
+.column-chip {
+  transition: all 0.2s ease;
+}
+
+.column-chip:hover {
+  transform: translateY(-2px);
+}
+
+/* Success notification animation */
+.success-notification-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.success-notification-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms ease-out;
+}
+
+.success-notification-exit {
+  opacity: 1;
+}
+
+.success-notification-exit-active {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 300ms, transform 300ms ease-in;
+}
+
+/* Export dialog transition */
+.export-dialog-content {
+  transition: opacity 0.3s ease-in-out;
+}
+
+.export-dialog-enter {
+  opacity: 0;
+}
+
+.export-dialog-enter-active {
+  opacity: 1;
+  transition: opacity 300ms;
+}
+
+.export-dialog-exit {
+  opacity: 1;
+}
+
+.export-dialog-exit-active {
+  opacity: 0;
+  transition: opacity 300ms;
+}
+
+/* Export progress animation */
+@keyframes progress-animation {
+  0% { 
+    background-position: 0% 50%;
+  }
+  50% { 
+    background-position: 100% 50%;
+  }
+  100% { 
+    background-position: 0% 50%;
+  }
+}
+
+.export-in-progress {
+  background: linear-gradient(90deg, rgba(66, 153, 225, 0.5) 0%, rgba(42, 33, 133, 0.5) 50%, rgba(66, 153, 225, 0.5) 100%);
+  background-size: 200% 100%;
+  animation: progress-animation 2s infinite linear;
+}
+
+/* Button ripple effect */
+.button-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.button-ripple:after {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
+  background-repeat: no-repeat;
+  background-position: 50%;
+  transform: scale(10, 10);
+  opacity: 0;
+  transition: transform .5s, opacity 1s;
+}
+
+.button-ripple:active:after {
+  transform: scale(0, 0);
+  opacity: 0.3;
+  transition: 0s;
+}
+
+.exportContainer {
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.columnSelection {
+    margin: 20px 0;
+}
+
+.columnLimit {
+    color: #666;
+    font-size: 0.9em;
+    margin-bottom: 15px;
+}
+
+.columnList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+}
+
+.columnOption {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.columnOption:hover {
+    background-color: #f5f5f5;
+}
+
+.columnOption input[type="checkbox"] {
+    margin: 0;
+}
+
+.error {
+    color: #f44336;
+    margin-top: 10px;
+    font-size: 0.9em;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.exportButton {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.exportButton:hover {
+    background-color: #45a049;
+}
+
+.exportButton:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.cancelButton {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.cancelButton:hover {
+    background-color: #da190b;
 } 

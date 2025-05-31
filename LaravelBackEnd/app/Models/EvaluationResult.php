@@ -23,6 +23,7 @@ class EvaluationResult extends Model
 
     protected $fillable = [
         'MatriculeER',
+        'MatriculeYR',
         'MatriculeET',
         'MatriculeEV',
         'GradeER',
@@ -48,6 +49,11 @@ class EvaluationResult extends Model
     public function gradeAdjustments()
     {
         return $this->hasMany(GradeAdjustment::class, 'MatriculeER', 'MatriculeER');
+    }
+
+    public function academicYear()
+    {
+        return $this->belongsTo(AcademicYear::class, 'MatriculeYR', 'MatriculeYR');
     }
 
     // Required method for GeneratesMatricule trait

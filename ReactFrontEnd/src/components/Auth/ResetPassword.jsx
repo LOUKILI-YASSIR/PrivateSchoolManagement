@@ -5,6 +5,7 @@ import apiServices from '../../api/apiServices';
 import LoadingSpinner from '../common/LoadingSpinner';
 import DarkModeToggle from '../common/DarkModeToggle';
 import MenuCart from '../menu/CartMenu';
+import { useAuth } from '../../utils/contexts/AuthContext';
 import { 
   TextField, 
   Button, 
@@ -28,6 +29,7 @@ import { toggleDarkMode } from '../../Store/Slices/ThemeSlice';
 const ResetPassword = () => {
 
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
@@ -53,6 +55,10 @@ const ResetPassword = () => {
     number: false,
     special: false
   });
+
+  // Check if this is a first-time password change coming from login
+  const isFirstTimeChange = user?.requires_password_change || 
+                          (user?.MatriculeUT && !user?.CodeVerificationUT);
 
   const calculatePasswordStrength = (password) => {
     const requirements = {
@@ -88,7 +94,6 @@ const ResetPassword = () => {
       [key]: !prev[key]
     }));
   };
-  
 
   const validateInput = () => {
     if (!user || !password || !passwordConfirmation) {
@@ -115,23 +120,65 @@ const ResetPassword = () => {
     if (!validateInput()) return;
     try {
       setIsLoading(true);
-      const response = await apiServices.postData('/reset-password', {
-        identifier: user.TypeUT == "sms" ? user.PhoneUT : user.TypeUT == "email" ? user.EmailUT : user.UserNameUT,
+      
+      // Prepare request payload based on whether it's a first-time change
+      const payload = {
+        identifier: user.TypeUT == "sms" ? user.PhoneUT : 
+                    user.TypeUT == "email" ? user.EmailUT : 
+                    user.UserNameUT || user.MatriculeUT,
         PasswordUT: password,
         PasswordUT_confirmation: passwordConfirmation,
-        CodeVerificationUT: user.CodeVerificationUT, // Already correct
-        TypeUT: user.TypeUT
-      });
+        TypeUT: user.TypeUT || 'db',
+        is_first_change: isFirstTimeChange
+      };
+      
+      // Only include CodeVerificationUT if not a first-time change
+      if (!isFirstTimeChange && user.CodeVerificationUT) {
+        payload.CodeVerificationUT = user.CodeVerificationUT;
+      }
+      
+      const response = await apiServices.postData('/reset-password', payload);
   
       if (response.status === 'success') {
         setSuccess('resetPassword.success.passwordReset');
-        if(response.message === 'is first login') setTimeout(()=>navigate("/YLSchool/Dashboard"), 3000);
-        else setTimeout(() => navigate('/YLSchool/Login'), 3000);
+        
+        if(response.message === 'is first login' || isFirstTimeChange) {
+          // For first time login, we need to authenticate with the backend again
+          try {
+            // Get a token by logging in with the new password
+            const loginResponse = await apiServices.postData('/login', {
+              identifier: payload.identifier,
+              PasswordUT: password
+            });
+            
+            if (loginResponse.status === 'success' && loginResponse?.data?.access_token) {
+              // Now we have a token, authenticate the user properly
+              setTimeout(() => {
+                // Clear any redirection flags before logging in to prevent loops
+                login(loginResponse.data.access_token, loginResponse.data.role);
+              }, 1500);
+            } else {
+              // If login fails, just redirect to login page
+              setTimeout(() => navigate('/YLSchool/Login'), 1500);
+            }
+          } catch (loginError) {
+            console.error('Auto-login error after password change:', loginError);
+            setTimeout(() => navigate('/YLSchool/Login'), 1500);
+          }
+        } else {
+          // For regular password reset, redirect to login page
+          setTimeout(() => navigate('/YLSchool/Login'), 1500);
+        }
       } else {
         setError('resetPassword.error.failedReset');
       }
     } catch (error) {
+      console.error('Reset password error:', error);
+      if (error.message === 'Invalid verification code.') {
+        setError('resetPassword.error.invalidCode');
+      } else {
       setError('resetPassword.error.general');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -195,7 +242,15 @@ const ResetPassword = () => {
         </Box>
         {/* Back Button */}
         <IconButton
-          onClick={() => nav('/YLSchool/select-reset-password', { state : { user }})}
+          onClick={() => {
+            if (isFirstTimeChange) {
+              // For first-time change, go back to login
+              nav('/YLSchool/Login');
+            } else {
+              // For normal reset, go back to selection
+              nav('/YLSchool/select-reset-password', { state : { user }});
+            }
+          }}
           sx={{
             position: 'absolute',
             top: 20,
@@ -243,7 +298,9 @@ const ResetPassword = () => {
               textShadow: isDarkMode ? '0 0 8px rgba(106, 95, 201, 0.5)' : 'none'
             }}
           >
-            {t('resetPassword.title')}
+            {isFirstTimeChange 
+              ? t('resetPassword.firstTimeTitle') 
+              : t('resetPassword.title')}
           </Typography>
           <Typography 
             variant="subtitle1" 
@@ -257,7 +314,9 @@ const ResetPassword = () => {
               justifyContent: 'center'
             }}
           >
-            {t('resetPassword.subtitle')}
+            {isFirstTimeChange 
+              ? t('resetPassword.firstTimeSubtitle') 
+              : t('resetPassword.subtitle')}
           </Typography>
 
           {error && (

@@ -34,7 +34,6 @@ export default function TEXTAREA ({ register, fieldItem, handleChange, errors, i
             label={fieldItem.props.label}
             placeholder={fieldItem.props.placeholder}
             error={!!errors[fieldItem.label]}
-            helperText={errors[fieldItem.label]?.message}
         />
     );
 }

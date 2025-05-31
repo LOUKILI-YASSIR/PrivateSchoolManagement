@@ -24,11 +24,15 @@ return new class extends Migration
             $table->string('EmailTR')->nullable();
             $table->text('ObservationTR')->nullable();
             $table->string('MatriculeUT');
-            $table->string('MatriculeGP');
+            $table->string('MatriculeGP')->nullable();
+            $table->string('MatriculeNV');
+            $table->string('MatriculeYR');
             $table->timestamps();
 
             $table->foreign('MatriculeUT')->references('MatriculeUT')->on('users')->onDelete('cascade');
-            $table->foreign('MatriculeGP')->references('MatriculeGP')->on('groups')->onDelete('cascade');
+            $table->foreign('MatriculeGP')->references('MatriculeGP')->on('groups')->onDelete('set null');
+            $table->foreign('MatriculeNV')->references('MatriculeNV')->on('niveaux')->onDelete('restrict');
+            $table->foreign('MatriculeYR')->references('MatriculeYR')->on('academic_years');
         });
     }
 

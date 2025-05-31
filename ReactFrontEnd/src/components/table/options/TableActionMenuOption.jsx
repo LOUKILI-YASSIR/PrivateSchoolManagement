@@ -6,6 +6,7 @@ import { MRT_ActionMenuItem } from "material-react-table";
 import { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { MainContext } from "../../../utils/contexts/MainContext";
+import GradeIcon from '@mui/icons-material/Grade';
 
 export const getActionOptionsMenu = (rows=[], DeleteSelected=()=>null,DeleteOption="") => {
     const { t: Traduction } = useTranslation();
@@ -60,6 +61,33 @@ export const getActionOptionsMenu = (rows=[], DeleteSelected=()=>null,DeleteOpti
                             closeMenu()
                         },
                         value: Traduction("actions.delete"),
+                        handleClose : true
+                    }
+                ]
+            }
+        },
+        BoxOptionGrade: (Options)=> {
+            const { handleSetGrade, closeMenu, itemId, Traduction } = Options
+            return {
+                Title: Traduction("validationTexts.deleteBy1"),
+                MainBtn : ({ClickToOpen})=>(
+                    <span className="hover:text-red-600 flex p-2 pl-3 cursor-pointer" onClick={ClickToOpen}>
+                        <GradeIcon/>
+                        <div className="pl-2">{Traduction("actions.grade")}</div>
+                    </span>
+                ), 
+                Btns: [
+                    {
+                        handleClick: () => closeMenu(),
+                        value: Traduction("actions.cancel"),
+                        handleClose : true
+                    },
+                    {
+                        handleClick: () => {
+                            handleSetGrade(itemId);
+                            closeMenu()
+                        },
+                        value: Traduction("actions.grade"),
                         handleClose : true
                     }
                 ]

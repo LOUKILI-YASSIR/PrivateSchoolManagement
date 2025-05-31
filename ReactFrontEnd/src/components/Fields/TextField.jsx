@@ -23,7 +23,6 @@ export default function TEXT({ register, fieldItem, handleChange, errors, isFilt
       placeholder={fieldItem.props.placeholder}
       fullWidth
       error={Boolean(errors[fieldItem.label])}
-      helperText={errors[fieldItem.label]?.message}
     />
   );
 }

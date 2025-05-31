@@ -14,25 +14,17 @@ class Niveau extends Model
     public $incrementing = false;
     protected $keyType = 'string';
 
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
     protected $table = 'niveaux';
 
     protected $fillable = [
         'MatriculeNV',
         'CodeNV',
         'NomNV',
-        'SubMatriculeNV',
-        'TypeNV',
         'DescriptionNV',
-        'StatusNV',
+        'MatriculeYR', // Foreign key to academic_years table
     ];
 
-    // Relationships
-
+    // Relations
     public function matieres()
     {
         return $this->hasMany(Matiere::class, 'MatriculeNV', 'MatriculeNV');
@@ -42,19 +34,25 @@ class Niveau extends Model
     {
         return $this->hasMany(Group::class, 'MatriculeNV', 'MatriculeNV');
     }
-
-    // Self-referencing relationships
-    public function parent()
+        public function academicYear()
     {
-        return $this->belongsTo(Niveau::class, 'SubMatriculeNV', 'MatriculeNV');
+        return $this->belongsTo(AcademicYear::class, 'MatriculeYR', 'MatriculeYR');
     }
+public static function generateMatricule($year = null)
+{
+    // إذا لم يتم تمرير السنة، نستخدم السنة الحالية
+    $year = $year ?? date('Y');
 
-    public function children()
-    {
-        return $this->hasMany(Niveau::class, 'SubMatriculeNV', 'MatriculeNV');
-    }
+    // عدّ عدد المستويات في هذه السنة
+    $count = self::whereYear('created_at', $year)->count();
 
-    // Required method for GeneratesMatricule trait
+    // زيادة العداد + تنسيقه ليكون 6 أرقام (مثل 000001)
+    $formattedCount = str_pad($count + 1, 6, '0', STR_PAD_LEFT);
+
+    // إرجاع الماتريكول بالشكل المطلوب
+    return "YLSchool_{$year}_NV_{$formattedCount}";
+}
+
     protected static function getMatriculePrefix()
     {
         return 'NV';

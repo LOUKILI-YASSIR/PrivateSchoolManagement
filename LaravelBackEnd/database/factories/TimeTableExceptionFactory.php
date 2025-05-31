@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\TimeTableException;
 use App\Models\TimeSlot;
+use App\Models\AcademicYear;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,6 +21,7 @@ class TimeTableExceptionFactory extends Factory
     public function definition(): array
     {
         return [
+            'MatriculeYR' => AcademicYear::factory(),
             // 'matriculeTe' handled by trait
             'ExceptionTypeTE' => $this->faker->randomElement(['Cancellation', 'Reschedule', 'Room Change']),
             'ExceptionDateTE' => $this->faker->dateTimeBetween('now', '+1 month')->format('Y-m-d'),

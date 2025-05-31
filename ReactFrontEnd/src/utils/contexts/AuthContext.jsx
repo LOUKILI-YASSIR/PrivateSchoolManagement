@@ -19,6 +19,7 @@ export const AuthProvider = ({ children }) => {
   const [userRole, setUserRole] = useState(null);
   const [user, setUser] = useState(null);
   const [loadingProfile, setLoadingProfile] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -46,8 +47,8 @@ export const AuthProvider = ({ children }) => {
         // If we get a 401 Unauthorized error, token might be expired
         if (response.status === 401) {
           console.log("Token appears to be invalid - logging out");
-          setIsAuthenticated(false);
           sessionStorage.clear();
+          setIsAuthenticated(false);
         }
         
         return null;
@@ -62,8 +63,8 @@ export const AuthProvider = ({ children }) => {
       // Check if the error is due to unauthorized access
       if (error.response && error.response.status === 401) {
         console.log("Unauthorized error during profile fetch - logging out");
-        setIsAuthenticated(false);
         sessionStorage.clear();
+        setIsAuthenticated(false);
       }
       
       return null;
@@ -82,6 +83,8 @@ export const AuthProvider = ({ children }) => {
     const token = sessionStorage.getItem('token');
     const storedRole = sessionStorage.getItem('userRole');
 
+    console.log('Initializing auth state with token:', !!token, 'and role:', storedRole);
+
     if (token && storedRole) {
       setIsAuthenticated(true);
       setUserRole(storedRole);
@@ -90,23 +93,43 @@ export const AuthProvider = ({ children }) => {
       // Load user profile after authentication
       loadUserProfile().catch(error => {
         console.error('Failed to load profile during initialization:', error);
-        // If profile loading fails during initialization, we should still continue
         setLoadingProfile(false);
+        
+        // If profile loading fails, check if it's an auth issue
+        if (error.response && error.response.status === 401) {
+          // Invalid token, clear auth state
+          console.log('Invalid token detected during initialization, clearing auth state');
+          sessionStorage.removeItem('token');
+          sessionStorage.removeItem('userRole');
+          setIsAuthenticated(false);
+          setUserRole(null);
+          setUser(null);
+        }
       });
     } else {
       // Ensure we're not authenticated if there's no token
+      console.log('No token found, ensuring logged out state');
       setIsAuthenticated(false);
       setUserRole(null);
       setUser(null);
+      
+      // Clear any leftover data
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('userRole');
     }
 
     setIsLoading(false);
   }, []);
 
+  // Fix navigation logic with a more controlled approach
   useEffect(() => {
-    if (isLoading) return;
+    // Skip if still loading or already redirecting
+    if (isLoading || isRedirecting) return;
 
-    const isLoginPage = location.pathname === '/YLSchool/Login';
+    const currentPath = location.pathname;
+    const isLoginPage = currentPath === '/YLSchool/Login';
+    const isDashboardPage = currentPath === '/YLSchool/DashBoard';
+    
     const isResetPasswordPage = [
       '/YLSchool/reset-password-request',
       '/YLSchool/reset-password',
@@ -115,38 +138,102 @@ export const AuthProvider = ({ children }) => {
       '/YLSchool/reset-password-request-email',
       '/YLSchool/check-user-reset-password',
       '/YLSchool/reset-password-request-totp' 
-    ].includes(location.pathname);
+    ].includes(currentPath);
 
-    // Only redirect to login if not authenticated and not already on login or reset password pages
-    if (!isAuthenticated && !isLoginPage && !isResetPasswordPage) {
-      navigate('/YLSchool/Login', { replace: true });
-    } 
-    // Redirect to dashboard if authenticated and on login page (not on reset password page)
-    else if (isAuthenticated && isLoginPage) {
-      redirectToDashboard();
+    // Make sure our isAuthenticated state matches the token
+    const hasToken = checkTokenValidity();
+    if (isAuthenticated !== hasToken) {
+      console.log('Authentication state mismatch, updating to match token presence');
+      setIsAuthenticated(hasToken);
+      setUserRole(hasToken ? sessionStorage.getItem('userRole') : null);
+      return; // Exit to let the updated state trigger the next cycle
     }
-  }, [isAuthenticated, isLoading, location.pathname, navigate, userRole]);
 
-  const redirectToDashboard = () => {
-    navigate('/YLSchool/DashBoard', { replace: true });
-  };
+    // Case 1: Not authenticated user trying to access protected pages
+    if (!isAuthenticated && !isLoginPage && !isResetPasswordPage) {
+      console.log('Not authenticated, redirecting to login from:', currentPath);
+      setIsRedirecting(true);
+      navigate('/YLSchool/Login', { replace: true });
+      // Reset redirecting flag after navigation completes
+      setTimeout(() => setIsRedirecting(false), 100);
+      return;
+    }
 
-  const login = async (token, role, must_change_password=false, obj) => {
-    // Set authentication state
-    sessionStorage.setItem('token', token);
-    sessionStorage.setItem('userRole', role);
-    setUserRole(role);
-    setIsAuthenticated(true);
-    
-    // Load user profile right after login
-    await loadUserProfile();
-    
-    // Handle navigation based on password change requirement
-    if(must_change_password) {
-      navigate('/YLSchool/reset-password', { state: { ...obj } });
-    } else {
-      // Use replace: true to prevent back navigation to login
+    // Case 2: Authenticated user on login page should go to dashboard
+    if (isAuthenticated && isLoginPage) {
+      console.log('Authenticated on login page, redirecting to dashboard');
+      setIsRedirecting(true);
       navigate('/YLSchool/DashBoard', { replace: true });
+      // Reset redirecting flag after navigation completes
+      setTimeout(() => setIsRedirecting(false), 100);
+      return;
+    }
+    
+    // All other cases are valid and don't need redirection
+  }, [isAuthenticated, isLoading, isRedirecting, location.pathname, navigate, checkTokenValidity]);
+
+  const login = async (MatriculeUT, token, role, must_change_password=false, obj) => {
+    // For password change or 2FA flows, don't set token yet
+    if (must_change_password || obj?.requires2FA) {
+      // Only store minimal information needed for the flow
+      if (obj?.requires_password_change) {
+        // For password change flow, navigate but don't authenticate yet
+        setIsRedirecting(true);
+        navigate('/YLSchool/reset-password', { 
+          state: { 
+            user: {
+              ...obj.user,
+              requires_password_change: true
+            } 
+          }
+        });
+        setTimeout(() => setIsRedirecting(false), 100);
+      } else if (obj?.requires2FA) {
+        // For 2FA flow, handle separately
+        setIsRedirecting(true);
+        navigate('/YLSchool/select-reset-password', { 
+          state: { 
+            user: obj.user,
+            methods: obj.methods
+          }
+        });
+        setTimeout(() => setIsRedirecting(false), 100);
+      } else {
+        // Legacy handling for older code paths
+        setIsRedirecting(true);
+        navigate('/YLSchool/reset-password', { state: { ...obj } });
+        setTimeout(() => setIsRedirecting(false), 100);
+      }
+      return;
+    }
+    
+    // Normal login with valid token
+    if (token) {
+      // First update state
+      console.log('Setting authentication with token and role:', role);
+      
+      // Set storage
+      sessionStorage.setItem('token', token);
+      sessionStorage.setItem('userRole', role);
+       sessionStorage.setItem('userID', MatriculeUT);
+      // Update state
+      setUserRole(role);
+      setIsAuthenticated(true);
+      
+      // Load user profile right after login
+      await loadUserProfile();
+      
+      // Prevent loops by setting redirecting flag
+      setIsRedirecting(true);
+      
+      // Navigate to dashboard directly
+      console.log('Login successful, navigating to dashboard');
+      navigate('/YLSchool/DashBoard', { replace: true });
+      
+      // Reset flag after navigation
+      setTimeout(() => setIsRedirecting(false), 100);
+    } else {
+      console.error('Login attempted with no token');
     }
   };
 

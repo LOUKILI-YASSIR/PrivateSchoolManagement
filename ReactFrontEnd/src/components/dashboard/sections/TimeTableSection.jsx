@@ -233,6 +233,7 @@ const TimeTableSection = ({
                           key={scheduleKey}
                           draggableId={scheduleKey}
                           index={index}
+                          
                         >
                           {(provided, snapshot) => renderTimeSlot(provided, snapshot, day, slot, scheduleItem)}
                         </Draggable>

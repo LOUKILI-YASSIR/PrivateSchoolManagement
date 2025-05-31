@@ -18,11 +18,11 @@ return new class extends Migration
             $table->string('DescriptionMT')->nullable();
             $table->float('CoefficientMT')->nullable();
             $table->string('MatriculeNV');
-            $table->string('MatriculePR');
+            $table->string('MatriculeYR');
             $table->timestamps();
 
             $table->foreign('MatriculeNV')->references('MatriculeNV')->on('niveaux')->onDelete('cascade');
-            $table->foreign('MatriculePR')->references('MatriculePR')->on('professeurs')->onDelete('cascade');
+            $table->foreign('MatriculeYR')->references('MatriculeYR')->on('academic_years');
         });
     }
 

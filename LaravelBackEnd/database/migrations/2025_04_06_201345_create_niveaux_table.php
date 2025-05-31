@@ -16,15 +16,12 @@ return new class extends Migration
             $table->string('MatriculeNV')->primary();
             $table->string('CodeNV');
             $table->string('NomNV');
-            $table->string('SubMatriculeNV')->nullable();
-            $table->string('TypeNV');
             $table->string('DescriptionNV')->nullable();
-            $table->string('StatusNV')->nullable();
+            $table->string('MatriculeYR');
+            $table->foreign('MatriculeYR')->references('MatriculeYR')->on('academic_years');
             $table->timestamps();
-
-            // Self-referencing foreign key for parent niveau
-            $table->foreign('SubMatriculeNV')->references('MatriculeNV')->on('niveaux')->onDelete('set null');
         });
+
     }
 
     /**

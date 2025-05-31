@@ -31,7 +31,7 @@ router.get("/ville/:pays", (req, res) => {
   const filteredCities = cities.filter(city => 
     city.country.toUpperCase() === countryCode
   );
-
+  console.log(filteredCities);
   if (!filteredCities.length) {
     return res.status(200).json({
       success: false,

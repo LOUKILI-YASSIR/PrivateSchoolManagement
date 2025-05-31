@@ -14,12 +14,14 @@ return new class extends Migration
         Schema::create('teacher_vocations', function (Blueprint $table) {
             $table->string('MatriculeTV')->primary();
             $table->string('MatriculePR');
+            $table->string('MatriculeYR');
             $table->date('StartDatetV');
             $table->boolean('ApprovedTV')->default(false);
             $table->date('EndDateTV')->nullable();
             $table->timestamps();
 
             $table->foreign('MatriculePR')->references('MatriculePR')->on('professeurs')->onDelete('cascade');
+            $table->foreign('MatriculeYR')->references('MatriculeYR')->on('academic_years');
         });
     }
 

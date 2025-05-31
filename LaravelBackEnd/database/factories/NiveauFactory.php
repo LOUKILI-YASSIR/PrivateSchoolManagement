@@ -25,7 +25,6 @@ class NiveauFactory extends Factory
             'SubMatriculeNV' => null, // Default to null, set in seeder if needed
             'TypeNV' => $this->faker->randomElement(['Primary', 'Secondary', 'Higher Education', 'Department']),
             'DescriptionNV' => $this->faker->optional()->sentence(),
-            'StatusNV' => $this->faker->randomElement(['Active', 'Inactive', 'Planned']),
         ];
     }
 

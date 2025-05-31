@@ -25,9 +25,9 @@ export const TableTemplate = () => {
     
     const isDarkMode = useSelector((state) => state?.theme?.darkMode || false);
     const { ActionOption, LanguageOption, TableOptions } = GetInfoTable(TableName);
-    const customColumns = useColumns(data, TableName, extraData);
+    const customColumns  = useColumns(data, TableName, extraData);
     const Handels = useHandlesData(TableName);
-    const { BoxOptionDeleteBy1 } = getActionOptionsMenu();
+    const { BoxOptionDeleteBy1, BoxOptionGrade } = getActionOptionsMenu();
 
     const finalColumns = contextColumns?.length > 0 ? contextColumns : customColumns;
     const tableTheme = createTheme(createTableTheme(isDarkMode));
@@ -57,19 +57,31 @@ export const TableTemplate = () => {
                 muiPaginationProps={pagination}
                 localization={LanguageOption}
                 renderRowActionMenuItems={({ row, table, closeMenu }) =>
-                    ActionOption?.(table, row.original, Handels, closeMenu, BoxOptionDeleteBy1)
+                    ActionOption?.(table, row.original, Handels, closeMenu, BoxOptionDeleteBy1, BoxOptionGrade)
                 }
                 muiTablePaperProps={style.paper}
-                muiTableContainerProps={style.container}
+                muiTableContainerProps={{
+                    ...style.container,
+                    style: {
+                        ...style.container?.style,
+                        maxWidth: '100%', // Ensure table takes full width of container
+                    }
+                }}
                 muiTableBodyRowProps={style.bodyRow}
                 initialState={{
                     density: 'compact',
+                }}
+                enableColumnResizing={true}
+                columnResizeMode="onChange"
+                defaultColumn={{
+                    enableResizing: true,
+                    minSize: 40, // Minimum column width
+                    maxSize: 500, // Maximum column width
                 }}
                 state={{
                     isLoading: isTableLoading,
                     showProgressBars: isRefetching,
                 }}
-                defaultDisplayColumn={{ enableResizing: false }}
             />
         </ThemeProvider>
     );

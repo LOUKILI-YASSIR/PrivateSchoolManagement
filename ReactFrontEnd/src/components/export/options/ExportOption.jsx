@@ -13,7 +13,6 @@ export const ExportOptions = () => {
       "Csv",
       "Excel",
       "Pdf",
-      "Word",
     ],
     OptionsExportFile :  [
       {
@@ -114,7 +113,17 @@ export const BoxOptions = (Options) => {
             },
             {
                 handleClose: true,
-                handleClick: () => ClickToExport(),
+                handleClick: () => ClickToExport({
+                    attendance: {
+                        present: true,
+                        absent: true,
+                        late: true,
+                        excused: true
+                    },
+                    grades: {
+                        finalGrade: true
+                    }
+                }),
                 disabled: false,
                 value: Traduction("actions.export"),
                 style: getActionButtonStyle('info', isDarkMode)

@@ -18,9 +18,11 @@ return new class extends Migration
             $table->string('ReasonGA')->nullable();
             $table->date('DateGA');
             $table->string('MatriculeER'); // FK to evaluation_results
+            $table->string('MatriculeYR');
             $table->timestamps();
 
             $table->foreign('MatriculeER')->references('MatriculeER')->on('evaluation_results')->onDelete('cascade');
+            $table->foreign('MatriculeYR')->references('MatriculeYR')->on('academic_years');
         });
     }
 

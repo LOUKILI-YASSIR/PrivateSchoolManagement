@@ -23,6 +23,7 @@ class Note extends Model
 
     protected $fillable = [
         'MatriculeNT',
+        'MatriculeYR',
         'MatriculeET',
         'MatriculeMT',
         'GradeNT',
@@ -43,6 +44,11 @@ class Note extends Model
     public function matiere()
     {
         return $this->belongsTo(Matiere::class, 'MatriculeMT', 'MatriculeMT');
+    }
+
+    public function academicYear()
+    {
+        return $this->belongsTo(AcademicYear::class, 'MatriculeYR', 'MatriculeYR');
     }
 
     // Required method for GeneratesMatricule trait

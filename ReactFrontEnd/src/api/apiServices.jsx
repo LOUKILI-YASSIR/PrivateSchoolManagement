@@ -20,9 +20,21 @@ const apiServices = {
     try {
       console.log(`Making POST request to ${endpoint}:`, data);
       const response = await apiClient.post(endpoint, data);
+      
+      // Check if the response contains 2FA required status
+      if (response.data?.status === 'error' && response.data?.message === '2fa_required') {
+        console.log('2FA required detected in success response:', response.data);
+      }
+      
       return response.data;
     } catch (error) {
       console.error(`Error posting data to ${endpoint}:`, error);
+      
+      // Log the specific response for debugging 2FA issues
+      if (error.response?.status === 403 && error.response?.data?.message === '2fa_required') {
+        console.log('2FA required detected in error response:', error.response.data);
+      }
+      
       return handleApiError(error);
     }
   },
@@ -56,6 +68,28 @@ const handleApiError = (error) => {
     // The request was made and the server responded with a status code
     // that falls out of the range of 2xx
     console.error('Response error:', error.response.data);
+    
+    // Special handling for 403 errors with status 'user' (for password change)
+    if (error.response.status === 403 && error.response.data?.status === 'user') {
+      // Return the server's response directly to maintain its structure
+      return error.response.data;
+    }
+    
+    // Special handling for 2FA required errors (403 status code)
+    if (error.response.status === 403 && error.response.data?.message === '2fa_required') {
+      // Return the server's response directly to maintain its structure for 2FA handling
+      return error.response.data;
+    }
+    
+    // Special handling for verification code errors
+    if (error.response.status === 401 && error.response.data?.message === 'Invalid verification code.') {
+      return {
+        error: true,
+        status: 401,
+        message: 'Invalid verification code.',
+        errors: { code: 'resetPassword.error.invalidCode' }
+      };
+    }
     
     // Return the error data for handling in the component
     return {

@@ -156,7 +156,84 @@ class AuthController extends Controller
             // 5) Clear throttle on success
             RateLimiter::clear($throttleKey);
 
-            // 6) Generate a short‑lived access token (Sanctum)
+            // 6) Check if user needs to change password first
+            if ($user->must_change_password) {
+                return response()->json([
+                    'status' => 'user',
+                    'message' => 'must_change_password',
+                    'data' => [
+                        'MatriculeUT' => $user->MatriculeUT,
+                        'user' => [
+                            'UserNameUT' => $user->UserNameUT,
+                            'EmailUT' => $user->EmailUT,
+                            'PhoneUT' => $user->PhoneUT,
+                            'MatriculeUT' => $user->MatriculeUT,
+                            'CodeVerificationUT' => $user->CodeVerificationUT
+                        ],
+                        'requires_password_change' => true
+                    ]
+                ], Response::HTTP_FORBIDDEN);
+            }
+
+            // 7) Check if 2FA is required
+            $activeMethods = json_decode($user->active_2fa_methods) ?? [];
+            if (!empty($activeMethods)) {
+                // Order 2FA methods - prioritize db method first
+                $orderedMethods = [];
+                
+                // First add db method if available
+                if (in_array('db', $activeMethods) && $user->db2fa_enabled) {
+                    $orderedMethods[] = [
+                        'id' => 'db',
+                        'name' => 'Secret Code',
+                        'description' => 'Use your personal verification code'
+                    ];
+                }
+                
+                // Then add other methods
+                if (in_array('google', $activeMethods) && $user->google2fa_enabled && $user->GoogleSecretUT) {
+                    $orderedMethods[] = [
+                        'id' => 'google',
+                        'name' => 'Google Authenticator',
+                        'description' => 'Enter the 6-digit code from your authenticator app'
+                    ];
+                }
+
+                if (in_array('sms', $activeMethods) && $user->sms2fa_enabled && $user->PhoneUT) {
+                    $orderedMethods[] = [
+                        'id' => 'sms',
+                        'name' => 'SMS Verification',
+                        'description' => 'Receive a code via SMS to ' . $this->maskPhoneNumber($user->PhoneUT)
+                    ];
+                }
+
+                if (in_array('email', $activeMethods) && $user->email2fa_enabled && $user->EmailUT) {
+                    $orderedMethods[] = [
+                        'id' => 'email',
+                        'name' => 'Email Verification',
+                        'description' => 'Receive a code via email to ' . $this->maskEmail($user->EmailUT)
+                    ];
+                }
+
+                return response()->json([
+                    'status' => 'error',
+                    'message' => '2fa_required',
+                    'data' => [
+                        'MatriculeUT' => $user->MatriculeUT,
+                        'user' => [
+                            'UserNameUT' => $user->UserNameUT,
+                            'EmailUT' => $user->EmailUT,
+                            'PhoneUT' => $user->PhoneUT,
+                            'MatriculeUT' => $user->MatriculeUT
+                        ],
+                        'requires_2fa' => true,
+                        'methods' => $orderedMethods,
+                        'preferred_method' => $user->preferred_2fa_method
+                    ]
+                ], Response::HTTP_OK);
+            }
+
+            // 8) Generate a short‑lived access token (Sanctum)
             $expiresAt = $request->boolean('remember_me')
                 ? now()->addDays(30)
                 : now()->addHours(2);
@@ -164,10 +241,7 @@ class AuthController extends Controller
             $tokenResult = $user->createToken('auth_token');
             $token      = $tokenResult->plainTextToken;
 
-            // Manually set the expiry on the token record:
-            // $tokenResult->accessToken->update(['expires_at' => $expiresAt]);
-
-            // 7) Update user status & last_login
+            // 9) Update user status & last_login
             $user->update([
                 'StatutUT'      => 'online',
                 'last_login_at' => now(),
@@ -178,22 +252,21 @@ class AuthController extends Controller
                 'ip'          => $request->ip(),
             ]);
 
-            // 8) Build response
+            // 10) Build response
             $response = response()->json([
                 'status'       => 'success',
-                'message'      => $user->must_change_password ? 'must_change_password' : 'Login successful.',
+                'message'      => 'Login successful.',
                 'data'         => [
-                    'matricule'    => $user->MatriculeUT,
+                    'MatriculeUT'    => $user->MatriculeUT,
                     'role'         => $user->RoleUT,
-                    'UserNameUT'         => $user->UserNameUT,
-                    'CodeVerificationUT' => $user->CodeVerificationUT,
+                    'UserNameUT'   => $user->UserNameUT,
                     'access_token' => $token,
                     'token_type'   => self::TOKEN_TYPE,
                     'expires_at'   => $expiresAt->toDateTimeString(),
                 ],
             ], Response::HTTP_OK);
 
-            // 9) Issue refresh token cookie (HttpOnly, Secure, SameSite)
+            // 11) Issue refresh token cookie (HttpOnly, Secure, SameSite)
             $refreshTtl = $request->boolean('remember_me')
                 ? 60 * 60 * 24 * 30   // 30 days
                 : 60 * 60 * 24 * 7;   // 7 days
@@ -399,8 +472,12 @@ public function resetPassword(Request $request): JsonResponse
     }
 
     try {
-        $validated = $request->validate([
-            'identifier'             => ['required', 'string', function ($attr, $value, $fail) {
+        // Check if this is a first-time password change 
+        $isFirstTimeChange = $request->input('is_first_change', false);
+        
+        // Adjust validation rules based on whether it's a first-time change
+        $validationRules = [
+            'identifier' => ['required', 'string', function ($attr, $value, $fail) {
                 if (
                     !filter_var($value, FILTER_VALIDATE_EMAIL) &&
                     !preg_match('/^\+?[1-9]\d{1,14}$/', $value) &&
@@ -409,11 +486,18 @@ public function resetPassword(Request $request): JsonResponse
                     $fail('Identifier must be a valid email, phone number, or username.');
                 }
             }],
-            'CodeVerificationUT'     => 'required|string',
-            'PasswordUT'             => 'required|string|min:8',
+            'CodeVerificationUT' => 'string', 
+            'PasswordUT' => 'required|string|min:8',
             'PasswordUT_confirmation' => 'required|same:PasswordUT',
-            'TypeUT'                   => 'nullable|string'
-        ]);
+            'TypeUT' => 'nullable|string'
+        ];
+        
+        // Only require CodeVerificationUT for regular password resets (not first-time changes)
+        if (!$isFirstTimeChange) {
+            $validationRules['CodeVerificationUT'] = 'required|string';
+        }
+        
+        $validated = $request->validate($validationRules);
 
         RateLimiter::hit($throttleKey, self::PASSWORD_RESET_THROTTLE_SECONDS);
 
@@ -434,45 +518,54 @@ public function resetPassword(Request $request): JsonResponse
             ], Response::HTTP_NOT_FOUND);
         }
 
-        // Verify the code
-        $valid = false;
-        try {
-            if (isset($validated['TypeUT'])) {
-                if ($validated['TypeUT'] === 'google') {
-                    // Google 2FA verification
-                    $google2fa = new Google2FA();
-                    $valid = $google2fa->verifyKey(
-                        $user->GoogleSecretUT,
-                        $validated['CodeVerificationUT'],
-                        2 // Allow some time drift
-                    );
-                } elseif (in_array($validated['TypeUT'], ['sms', 'email'])) {
-                    // SMS or Email verification
-                    $cacheKey = 'verification_code|' . $validated['identifier'];
-                    $cachedCode = Cache::get($cacheKey);
-                    $valid = $cachedCode && $cachedCode === $validated['CodeVerificationUT'];
-                }
-            } else {
-                // Default verification using CodeVerificationUT
-                $decryptedCode = $this->checkIfEncrypted($user->CodeVerificationUT)["value"];
-                $decryptedCodeValidation = $this->checkIfEncrypted($validated["CodeVerificationUT"])["value"];
-                $valid = $decryptedCode === $decryptedCodeValidation;
-            }
+        // For first-time password change, we skip verification code check
+        $valid = $isFirstTimeChange && $user->must_change_password;
 
-            if (!$valid) {
+        // If not a first-time change, verify the code
+        if (!$valid) {
+            try {
+                if (isset($validated['TypeUT'])) {
+                    if ($validated['TypeUT'] === 'google') {
+                        // Google 2FA verification
+                        $google2fa = new Google2FA();
+                        $valid = $google2fa->verifyKey(
+                            $user->GoogleSecretUT,
+                            $validated['CodeVerificationUT'],
+                            2 // Allow some time drift
+                        );
+                    } elseif (in_array($validated['TypeUT'], ['sms', 'email'])) {
+                        // SMS or Email verification
+                        $cacheKey = 'verification_code|' . $validated['identifier'];
+                        $cachedCode = Cache::get($cacheKey);
+                        $valid = $cachedCode && $cachedCode === $validated['CodeVerificationUT'];
+                    } else {
+                        // Default verification using CodeVerificationUT
+                        $decryptedCode = $this->checkIfEncrypted($user->CodeVerificationUT)["value"];
+                        $decryptedCodeValidation = $this->checkIfEncrypted($validated["CodeVerificationUT"])["value"];
+                        $valid = $user->CodeVerificationUT === $validated["CodeVerificationUT"] || $decryptedCode === $decryptedCodeValidation;
+                    }
+                } else {
+                    // Default verification using CodeVerificationUT
+                    $decryptedCode = $this->checkIfEncrypted($user->CodeVerificationUT)["value"];
+                    $decryptedCodeValidation = $this->checkIfEncrypted($validated["CodeVerificationUT"])["value"];
+                    $valid = $user->CodeVerificationUT === $validated["CodeVerificationUT"] || $decryptedCode === $decryptedCodeValidation;
+                }
+
+                if (!$valid) {
+                    return response()->json([
+                        'status'  => 'error',
+                        'message' => 'Invalid verification code.',
+                    ], Response::HTTP_UNAUTHORIZED);
+                }
+            } catch (\Exception $e) {
+                Log::error('Verification code check error: ' . $e->getMessage(), [
+                    'trace' => $e->getTraceAsString()
+                ]);
                 return response()->json([
                     'status'  => 'error',
-                    'message' => 'Invalid verification code.',
+                    'message' => 'Invalid or corrupted verification code.',
                 ], Response::HTTP_UNAUTHORIZED);
             }
-        } catch (\Exception $e) {
-            Log::error('Verification code check error: ' . $e->getMessage(), [
-                'trace' => $e->getTraceAsString()
-            ]);
-            return response()->json([
-                'status'  => 'error',
-                'message' => 'Invalid or corrupted verification code.',
-            ], Response::HTTP_UNAUTHORIZED);
         }
 
         $firstLogin = $user->must_change_password;
@@ -979,13 +1072,34 @@ public function sendCodeViaEmail(Request $request): JsonResponse
         RateLimiter::hit($throttleKey, 3600); // 1 hour
 
         $code = $this->generateVerificationCode();
+        
+        // Check mail configuration before trying to send
+        $mailConfig = config('mail');
+        if (empty($mailConfig['mailers'][$mailConfig['default']])) {
+            throw new Exception('Mail configuration is incomplete');
+        }
 
-        Mail::raw("Your verification code is: {$code}", function ($message) use ($validatedEmail) {
-            $message->to($validatedEmail)
-                    ->subject('Verification Code');
-        });
-
-        Log::info('Email verification code sent', ['email' => $validatedEmail]);
+        try {
+            // Use a safer approach to send email
+            Mail::raw("Your verification code is: {$code}", function ($message) use ($validatedEmail) {
+                $message->to($validatedEmail)
+                        ->subject('Verification Code');
+            });
+            
+            Log::info('Email verification code sent', ['email' => $validatedEmail]);
+        } catch (\Exception $mailException) {
+            // Log the specific mail error
+            Log::error('Mail sending error: ' . $mailException->getMessage(), [
+                'trace' => $mailException->getTraceAsString()
+            ]);
+            
+            // In development, let's still allow the code to be used
+            if (app()->environment('local', 'development', 'testing')) {
+                Log::warning('Using code despite mail error in non-production environment');
+            } else {
+                throw $mailException;
+            }
+        }
 
         $cacheKey = 'verification_code|' . $validatedEmail;
         Cache::put($cacheKey, $code, now()->addMinutes(15));
@@ -1004,7 +1118,7 @@ public function sendCodeViaEmail(Request $request): JsonResponse
         ], 422);
 
     } catch (Exception $e) {
-        // Don't log array offset access anymore — just the exception message
+        // Log the exception with detailed information
         Log::error('Email sending error: ' . $e->getMessage(), [
             'email' => $email,
             'trace' => $e->getTraceAsString()
@@ -1484,7 +1598,21 @@ public function verifyCode(Request $request): JsonResponse
                             'message' => 'No email available for email verification.',
                         ], Response::HTTP_BAD_REQUEST);
                     }
-                    return $this->sendCodeViaEmail(new Request(['email' => $user->EmailUT]));
+                    Log::info('Attempting to send 2FA email to: ' . $user->EmailUT);
+                    try {
+                        return $this->sendCodeViaEmail(new Request(['email' => $user->EmailUT]));
+                    } catch (Exception $emailException) {
+                        Log::error('Error in send2FAVerificationCode when calling sendCodeViaEmail: ' . $emailException->getMessage(), [
+                            'email' => $user->EmailUT,
+                            'trace' => $emailException->getTraceAsString()
+                        ]);
+                        
+                        // Return a more specific error message
+                        return response()->json([
+                            'status' => 'error',
+                            'message' => 'Failed to send verification email. Please try again later or use another method.',
+                        ], Response::HTTP_INTERNAL_SERVER_ERROR);
+                    }
 
                 default:
                     return response()->json([
@@ -1500,10 +1628,15 @@ public function verifyCode(Request $request): JsonResponse
                 'errors' => $e->errors(),
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (Exception $e) {
-            Log::error('Send 2FA verification code error: ' . $e->getMessage());
+            Log::error('Send 2FA verification code error: ' . $e->getMessage(), [
+                'identifier' => $request->input('identifier'),
+                'method' => $request->input('method'),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
             return response()->json([
                 'status' => 'error',
-                'message' => 'An unexpected error occurred.',
+                'message' => 'An unexpected error occurred while sending verification code.',
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -1529,6 +1662,7 @@ public function verifyCode(Request $request): JsonResponse
                 }],
                 'code' => 'required|string',
                 'method' => 'required|string|in:google,sms,email,db',
+                'is_setup' => 'boolean'
             ]);
 
             // Determine the field
@@ -1548,13 +1682,18 @@ public function verifyCode(Request $request): JsonResponse
                 ], Response::HTTP_NOT_FOUND);
             }
 
-            // Check if the specified method is enabled
-            $activeMethods = json_decode($user->active_2fa_methods) ?? [];
-            if (!in_array($validated['method'], $activeMethods)) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Selected verification method is not enabled for this user.',
-                ], Response::HTTP_BAD_REQUEST);
+            // For email and SMS verification during setup, we don't need to check active methods
+            $isSetupVerification = $request->boolean('is_setup', false);
+            
+            if (!$isSetupVerification) {
+                // Check if the specified method is enabled for regular verification
+                $activeMethods = json_decode($user->active_2fa_methods) ?? [];
+                if (!in_array($validated['method'], $activeMethods)) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Selected verification method is not enabled for this user.',
+                    ], Response::HTTP_BAD_REQUEST);
+                }
             }
 
             // Verify code based on method
@@ -1576,7 +1715,7 @@ public function verifyCode(Request $request): JsonResponse
                     break;
 
                 case 'sms':
-                    if (!$user->sms2fa_enabled || !$user->PhoneUT) {
+                    if (!$isSetupVerification && (!$user->sms2fa_enabled || !$user->PhoneUT)) {
                         return response()->json([
                             'status' => 'error',
                             'message' => 'SMS verification is not enabled for this user.',
@@ -1588,7 +1727,7 @@ public function verifyCode(Request $request): JsonResponse
                     break;
 
                 case 'email':
-                    if (!$user->email2fa_enabled || !$user->EmailUT) {
+                    if (!$isSetupVerification && (!$user->email2fa_enabled || !$user->EmailUT)) {
                         return response()->json([
                             'status' => 'error',
                             'message' => 'Email verification is not enabled for this user.',
@@ -1597,6 +1736,15 @@ public function verifyCode(Request $request): JsonResponse
                     $cacheKey = 'verification_code|' . $user->EmailUT;
                     $cachedCode = Cache::get($cacheKey);
                     $valid = $cachedCode && $cachedCode === $validated['code'];
+                    
+                    // If this is a setup verification and the code is valid, enable email 2FA
+                    if ($isSetupVerification && $valid) {
+                        $user->email2fa_enabled = true;
+                        $user->save();
+                        
+                        // Update active methods
+                        $this->updateActive2FAMethods($user);
+                    }
                     break;
 
                 case 'db':
@@ -1874,5 +2022,105 @@ public function verifyCode(Request $request): JsonResponse
         }
 
         return substr($phone, 0, 2) . str_repeat('*', $len - 4) . substr($phone, -2);
+    }
+
+    /**
+     * Complete 2FA verification and issue access token
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function complete2FA(Request $request): JsonResponse
+    {
+        try {
+            $validated = $request->validate([
+                'identifier' => ['required', 'string', function ($attr, $value, $fail) {
+                    if (
+                        !filter_var($value, FILTER_VALIDATE_EMAIL) &&
+                        !preg_match('/^\+?[1-9]\d{1,14}$/', $value) &&
+                        !preg_match('/^[a-zA-Z0-9_]{3,}$/', $value)
+                    ) {
+                        $fail('Identifier must be a valid email, phone number, or username.');
+                    }
+                }],
+                'verification_status' => 'required|boolean',
+                'password' => 'nullable|string',
+            ]);
+
+            // Determine the field
+            if (filter_var($validated['identifier'], FILTER_VALIDATE_EMAIL)) {
+                $field = 'EmailUT';
+            } elseif (preg_match('/^\+?[1-9]\d{1,14}$/', $validated['identifier'])) {
+                $field = 'PhoneUT';
+            } else {
+                $field = 'UserNameUT';
+            }
+
+            $user = User::where($field, $validated['identifier'])->first();
+            if (!$user) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'User not found.',
+                ], Response::HTTP_NOT_FOUND);
+            }
+
+            // If verification isn't complete, return error
+            if (!$validated['verification_status']) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => '2FA verification incomplete.',
+                ], Response::HTTP_UNAUTHORIZED);
+            }
+
+            // Generate access token
+            $expiresAt = now()->addHours(2);
+            $tokenResult = $user->createToken('auth_token');
+            $token = $tokenResult->plainTextToken;
+
+            // Update user status & last_login
+            $user->update([
+                'StatutUT' => 'online',
+                'last_login_at' => now(),
+            ]);
+
+            Log::info('User logged in via 2FA', [
+                'MatriculeUT' => $user->MatriculeUT,
+                'ip' => $request->ip(),
+            ]);
+
+            // Build response
+            $response = response()->json([
+                'status' => 'success',
+                'message' => 'Login successful.',
+                'data' => [
+                    'MatriculeUT' => $user->MatriculeUT,
+                    'role' => $user->RoleUT,
+                    'UserNameUT' => $user->UserNameUT, 
+                    'access_token' => $token,
+                    'token_type' => self::TOKEN_TYPE,
+                    'expires_at' => $expiresAt->toDateTimeString(),
+                    'MatriculeUT' => $user->MatriculeUT,
+                ],
+            ], Response::HTTP_OK);
+
+            return $response;
+
+        } catch (ValidationException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation failed',
+                'errors' => $e->errors(),
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        } catch (Exception $e) {
+            Log::error('Complete 2FA error: ' . $e->getMessage(), [
+                'identifier' => $request->input('identifier'),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'status' => 'error',
+                'message' => 'An unexpected error occurred.',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 }

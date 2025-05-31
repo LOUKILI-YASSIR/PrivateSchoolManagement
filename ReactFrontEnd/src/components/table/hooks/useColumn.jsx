@@ -19,11 +19,10 @@ import { niveauxColumns } from "./columns/niveauxColumns.jsx";
  */
 export const useColumns = (data, TableName) => {
   const { t: Traduction } = useTranslation();
-  console.log(data)
-  const columns = useMemo(() => {
+  console.log(data);
+  const result = useMemo(() => {
     if (!data || data.length === 0) return [];
 
-    // Define filter mode options.
     const FilterModeOptions = {
       comparison: ["greaterThan", "greaterThanOrEqualTo", "lessThan", "lessThanOrEqualTo"],
       range: ["between", "betweenInclusive"],
@@ -36,15 +35,16 @@ export const useColumns = (data, TableName) => {
       etudiants: etudiantsColumns(Traduction, FilterModeOptions),
       professeurs: professeursColumns(Traduction, FilterModeOptions),
       groups: groupColumns(Traduction, FilterModeOptions),
-      academicYears: AcademicYearsColumns(Traduction, FilterModeOptions),
+      "academic-years": AcademicYearsColumns(Traduction, FilterModeOptions),
       salles: sallesColumns(Traduction, FilterModeOptions),
       matieres: matiereColumns(Traduction, FilterModeOptions),
-      evaluations: evaluationsColumns(Traduction, FilterModeOptions),
+      "evaluation-types": evaluationsColumns(Traduction, FilterModeOptions),
       niveaux: niveauxColumns(Traduction, FilterModeOptions),
     };
 
-    return tables[TableName] || [];
+    return tables[TableName] || { columns: [], visibility: {} };
   }, [data, TableName, Traduction]);
 
-  return columns;
+  return result;
 };
+

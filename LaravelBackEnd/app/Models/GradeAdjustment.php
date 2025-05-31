@@ -24,6 +24,7 @@ class GradeAdjustment extends Model
     // Added fillable
     protected $fillable = [
         'MatriculeGA',
+        'MatriculeYR',
         'TypeGA',
         'ValueGA',
         'ReasonGA',
@@ -41,6 +42,11 @@ class GradeAdjustment extends Model
     public function evaluationResult()
     {
         return $this->belongsTo(EvaluationResult::class, 'MatriculeER', 'MatriculeER');
+    }
+
+    public function academicYear()
+    {
+        return $this->belongsTo(AcademicYear::class, 'MatriculeYR', 'MatriculeYR');
     }
 
     // Required method for GeneratesMatricule trait

@@ -20,20 +20,16 @@ class AcademicYearFactory extends Factory
      */
     public function definition(): array
     {
-        $startYear = $this->faker->numberBetween(2020, Carbon::now()->year);
-        $startDate = Carbon::createFromDate($startYear, 9, 1); // Sept 1st
-        $endDate = $startDate->copy()->addYear()->subDay(); // End of Aug next year
-
         return [
             // 'MatriculeYR' handled by trait
-            'StatusYR' => 'Planned',
-            'NameYR' => $startYear . '-' . ($startYear + 1),
+            'StatusYR' => $this->faker->randomElement(['Active', 'Archived', 'Planned']),
+            'NameYR' => $this->faker->year() . '-' . ($this->faker->year() + 1),
             'DescriptionYR' => $this->faker->optional()->sentence(),
-            'StartDateYR' => $startDate->format('Y-m-d'),
-            'EndDateYR' => $endDate->format('Y-m-d'),
-            'ArchivedDateYR' => null,
-            'IsCurrentYR' => false,
-            'MatriculeUT' => User::factory()->admin(), // Default to creating an admin user
+            'StartDateYR' => $this->faker->dateTimeBetween('-1 year', 'now'),
+            'EndDateYR' => $this->faker->dateTimeBetween('now', '+1 year'),
+            'ArchivedDateYR' => $this->faker->optional()->dateTimeBetween('now', '+2 years'),
+            'IsCurrentYR' => $this->faker->boolean(20),
+            'MatriculeUT' => User::factory(),
         ];
     }
 

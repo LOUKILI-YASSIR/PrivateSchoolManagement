@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\SpecialDaySchedule;
 use App\Models\TimeSlot;
+use App\Models\AcademicYear;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,6 +21,7 @@ class SpecialDayScheduleFactory extends Factory
     public function definition(): array
     {
         return [
+            'MatriculeYR' => AcademicYear::factory(),
             // 'MatriculeSS' handled by trait
             'DateSS' => $this->faker->dateTimeBetween('+1 day', '+2 months')->format('Y-m-d'),
             'IsFulldaySS' => $this->faker->boolean(20), // 20% chance of full day event

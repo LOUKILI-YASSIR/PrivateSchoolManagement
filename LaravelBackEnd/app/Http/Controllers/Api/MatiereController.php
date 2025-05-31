@@ -20,29 +20,50 @@ class MatiereController extends Controller
         'CodeMT' => 'required|string|max:255',
         'DescriptionMT' => 'nullable|string|max:255',
         'CoefficientMT' => 'nullable|numeric',
-        'MatriculeNV' => 'required|string|exists:niveaux,MatriculeNV',
-        'MatriculePR' => 'required|string|exists:professeurs,MatriculePR',
+        'MatriculeNV' => 'nullable|string|exists:niveaux,MatriculeNV', // Changed to nullable
     ];
-
     /**
      * Display a listing of the resource with related data.
      *
      * @return \Illuminate\Http\JsonResponse
      */
     public function index(): JsonResponse
-    {
-        try {
-            $records = $this->getModelClass()::with([
-                'niveau:MatriculeNV,NomNV',
-                'professeur.user:MatriculeUT,NomPL,PrenomPL',
-                'evaluations'
-            ])->get();
-
-            return $this->successResponse($records, 'retrieved');
-        } catch (Exception $e) {
-            return $this->handleException($e);
+{
+    try {
+        $records = $this->getModelClass()::with([
+            'niveau',
+            'evaluations',
+            'notes',
+        ])->get();
+        
+        foreach ($records as $record) {
+            // Process niveau name
+            $record->niveau_name = $record->niveau ? $record->niveau->NomNV : null;
+            unset($record->niveau);
+        
+            // Total number of evaluations
+            $record->total_evaluations = $record->evaluations->sum('NbrEV');
+            unset($record->evaluations);
+        
+            // Sort notes by grade
+            $notes = $record->notes;
+            $sortedByGrade = $notes->sortBy('GradeNT')->values();
+        
+            $lowestNote = $sortedByGrade->first();
+            $record->lowest_note_grade = $lowestNote?->GradeNT;
+        
+            $highestNote = $sortedByGrade->last();
+            $record->highest_note_grade = $highestNote?->GradeNT;
+        
+            unset($record->notes);
         }
+        
+        return $this->successResponse($records, 'retrieved');
+                            
+    } catch (Exception $e) {
+        return $this->handleException($e);
     }
+}
 
     /**
      * Store a newly created resource in storage.

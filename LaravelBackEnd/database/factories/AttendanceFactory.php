@@ -6,6 +6,7 @@ use App\Models\Attendance;
 use App\Models\User;
 use App\Models\Etudiant;
 use App\Models\Professeur;
+use App\Models\AcademicYear;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -26,6 +27,7 @@ class AttendanceFactory extends Factory
 
         return [
             // 'MatriculeAT' handled by trait
+            'MatriculeYR' => AcademicYear::factory(),
             'StatusAT' => $status,
             'IsJustifAT' => $isJustified,
             'JustifAT' => $isJustified ? $this->faker->sentence() : null,

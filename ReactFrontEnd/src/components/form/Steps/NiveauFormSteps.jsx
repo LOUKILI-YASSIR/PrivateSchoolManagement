@@ -2,11 +2,34 @@ import { useFormOptions } from '../utils/hooks';
 
 import { commonValidations, generateField } from '../utils/formUtils';
 import { useFetchData } from '../../../api/queryHooks';
-export const getFormStepsNv = () => {
+import { useEffect, useState } from 'react';
+export const getFormStepsNv = (formContext, row) => {
     const {
-      TYPE: { SELECT, TEXT, DATE, TEXTAREA, EMAIL, PHONE, IMAGE, NUMBER, AUTO_COMPLETE_SELECT }
+      TYPE: { SELECT, TEXT, DATE, TEXTAREA, EMAIL, PHONE, IMAGE, NUMBER, AUTO_COMPLETE_SELECT, MULTI_SELECT }
     } = useFormOptions();
-    const { data, isLoading, error } = useFetchData("niveaux");
+    const [NamesData,setNamesData] = useState([]);
+    const { data: NamesDT } = useFetchData("getallniveauxnames");
+    useEffect(()=>setNamesData(NamesDT || []),[NamesDT]);
+
+    let FilteredNamesData = null;
+    if (row && typeof row === "object" && NamesData) {
+      FilteredNamesData = {
+        noms: NamesData.noms?.filter(nom => nom !== row.NameSL) || [],
+      };
+    }
+    function NamesValidation (value) {
+      if (!value || value.trim() === "") {
+        return "Le nom ne peut pas être vide.";
+      }
+      if (FilteredNamesData) {
+        if(FilteredNamesData.noms.includes(value.trim())) {
+          return "Ce nom est déjà utilisé.";
+        }
+      }else if (NamesData && NamesData?.noms && NamesData?.noms?.includes(value.trim())) {
+        return "Ce nom est déjà utilisé.";
+      }
+      return true;
+    }
     return [
         {
             title: "Niveau",
@@ -24,7 +47,8 @@ export const getFormStepsNv = () => {
                           // Pattern: starts with a capital letter, then lowercase letters; allows hyphenated parts and multiple words.
                           /^([A-Z][a-z]+(?:-[A-Z][a-z]+)?)(\s[A-Z][a-z]+(?:-[A-Z][a-z]+)?)*$/,
                           `Nom doit commencer par une lettre majuscule, contenir uniquement des noms valides et avoir un seul espace entre les mots.`
-                        )
+                        ),
+                        {validate: NamesValidation}
                       )
                   }), 
                 generateField({
@@ -43,31 +67,6 @@ export const getFormStepsNv = () => {
                         )
                       )
                   }), 
-                generateField({
-                    type: SELECT,
-                    label: "TypeNV",
-                    propsLabel: "Type",
-                    options: [
-                        { value: 'niveau', label: 'Niveau' },
-                        { value: 'option', label: 'Option' }
-                    ],
-                    validation: commonValidations.combine(
-                      commonValidations.required("Type"),
-                      commonValidations.inArray("Type", ["Niveau", "Option"], "Type doit être option ou niveau")
-                    )
-                  }), 
-                  generateField({
-                    type: SELECT,
-                    label: 'SubMatriculeNV',
-                    propsLabel: "Niveaux",
-                    options: (isLoading || error || !data || data?.data?.length === 0
-                      ? [] // Fallback to empty array if data is not ready
-                      : data?.data.filter((niveau)=>niveau.NomNV && !niveau.parent?.NomNV).map((niveau) => ({
-                          value: niveau.MatriculeNV,
-                          label: niveau.NomNV,
-                      }))),
-                    validation: commonValidations.required("Niveaux")
-                  }),
                 generateField({
                     type: TEXTAREA,
                     label: "DescriptionNV",

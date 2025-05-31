@@ -49,6 +49,7 @@ Route::post('/disableGoogle2FA', [AuthController::class, 'disableGoogle2FA'])->n
 Route::post('/verify2FA', [AuthController::class, 'verify2FA'])->name('api.2fa.verify_any');
 Route::post('/send2FAVerificationCode', [AuthController::class, 'send2FAVerificationCode'])->name('api.2fa.send_code');
 Route::post('/getLoginVerificationMethods', [AuthController::class, 'getLoginVerificationMethods'])->name('api.2fa.login_methods');
+Route::post('/complete-2fa', [AuthController::class, 'complete2FA'])->name('api.2fa.complete');
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -112,3 +113,14 @@ Route::options('/{any}', function () {
         ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
         ->header('Access-Control-Allow-Credentials', 'true');
 })->where('any', '.*');
+Route::get("academic-years/current",[AcademicYearController::class,"getCurrentAcademicYear"]);
+Route::get("getemailsphonesusernames/etudiant",[EtudiantController::class,"getAllEmailPhoneUserNameArray"]);
+Route::get("getemailsphonesusernames/professeur",[ProfesseurController::class,"getAllEmailPhoneUserNameArray"]);
+Route::get("getallsallesnames",[SalleController::class,"getAllSallesNamesArray"]);
+Route::get("getallgroupsnames",[GroupController::class,"getAllGroupsNamesArray"]);
+Route::get("getallniveauxnames",[NiveauController::class,"getAllNiveauxNamesArray"]);
+Route::get("getetudiantsselect/{MatriculeGP?}",[EtudiantController::class,"getEtudiantsSelect"]);
+Route::get("getprofesseursselect/{MatriculeGP?}",[ProfesseurController::class,"getAllProfesseursSelect"]);
+Route::get("getgroupsselect/{MatriculePR?}",[GroupController::class,"getAllGroupsSelect"]);
+Route::get('getAllNiveauxSelect/{TypeNV}/{MatriculeNV?}', [NiveauController::class, 'getAllNiveauxSelect']);
+Route::get("getgroups/{MatriculeNV?}",[GroupController::class,"getGroupsByNiveau"]);

@@ -9,6 +9,7 @@ use App\Models\Group;
 use App\Models\Matiere;
 use App\Models\Professeur;
 use App\Models\Salle;
+use App\Models\AcademicYear;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -26,7 +27,7 @@ class RegularTimeTableFactory extends Factory
     {
         // These should ideally be replaced by existing models in the seeder
         return [
-            // 'MatriculeRT' handled by trait
+            'MatriculeYR' => AcademicYear::factory(),
             'MatriculeDW' => DayWeek::factory(),
             'MatriculeTS' => TimeSlot::factory(),
             'MatriculeGP' => Group::factory(),

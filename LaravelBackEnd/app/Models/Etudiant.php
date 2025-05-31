@@ -23,6 +23,7 @@ class Etudiant extends Model
 
     protected $fillable = [
         'MatriculeET',
+        'MatriculeYR',
         'EmailET',
         'PhoneET',
         'LienParenteTR',
@@ -35,6 +36,7 @@ class Etudiant extends Model
         'ObservationTR',
         'MatriculeUT',
         'MatriculeGP',
+        'MatriculeNV',
     ];
 
     // Relationships
@@ -47,6 +49,11 @@ class Etudiant extends Model
     public function group()
     {
         return $this->belongsTo(Group::class, 'MatriculeGP', 'MatriculeGP');
+    }
+
+    public function niveau()
+    {
+        return $this->belongsTo(Niveau::class, 'MatriculeNV', 'MatriculeNV');
     }
 
     public function attendances()
@@ -67,6 +74,11 @@ class Etudiant extends Model
     public function evaluationResults()
     {
         return $this->hasMany(EvaluationResult::class, 'MatriculeET', 'MatriculeET');
+    }
+
+    public function academicYear()
+    {
+        return $this->belongsTo(AcademicYear::class, 'MatriculeYR', 'MatriculeYR');
     }
 
     // Required method for GeneratesMatricule trait

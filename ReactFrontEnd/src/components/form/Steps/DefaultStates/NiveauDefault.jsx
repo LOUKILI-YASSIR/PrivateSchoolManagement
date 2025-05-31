@@ -1,8 +1,6 @@
-export const NIVEAU = {
+export const NIVEAUX = {
     CodeNV: 'Abc',
     NomNV: 'Niveau primary',
-    SubMatriculeNV: '',
-    TypeNV: 'Niveau',
     DescriptionNV: 'this Niveaux for ......',
 };
 

@@ -1,4 +1,4 @@
-import { Fragment, useContext, useEffect } from "react";
+  import { Fragment, useContext, useEffect } from "react";
 import { GetInfoTable } from "./options/TableOption";
 import { Box, IconButton, Tooltip } from '@mui/material';
 import { UseTableHead } from "./hooks/useTablehead";
@@ -19,7 +19,7 @@ const TableHead = ({ tableData, handleDelete, refetch }) => {
   const { BoxOptionDeleteByN } = getActionOptionsMenu(rows, DeleteSelected, DeleteOption);
   const isDarkMode = useSelector((state) => state?.theme?.darkMode || false);
   const { setTableData } = useContext(MainContext);
-  useEffect(()=>setTableData(tableData),[tableData])
+  useEffect(()=>setTableData(tableData),[tableData]);
   return (
     <Box
       sx={{
@@ -45,6 +45,7 @@ const TableHead = ({ tableData, handleDelete, refetch }) => {
           <FontAwesomeIcon icon={faRotateLeft} className="h5 mt-2"/>
         </IconButton>
       </Tooltip>
+
       {!["regular-timetables"].includes(TableName) && (
         <Fragment>
           <ActionMenu 

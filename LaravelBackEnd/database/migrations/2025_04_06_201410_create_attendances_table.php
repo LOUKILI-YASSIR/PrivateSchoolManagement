@@ -20,11 +20,13 @@ return new class extends Migration
             $table->string('MatriculeUT');
             $table->string('MatriculeET')->nullable(); // Nullable based on diagram (0..1 relation)
             $table->string('MatriculePR')->nullable(); // Nullable based on diagram (0..1 relation)
+            $table->string('MatriculeYR');
             $table->timestamps();
 
             $table->foreign('MatriculeUT')->references('MatriculeUT')->on('users')->onDelete('cascade');
             $table->foreign('MatriculeET')->references('MatriculeET')->on('etudiants')->onDelete('cascade');
             $table->foreign('MatriculePR')->references('MatriculePR')->on('professeurs')->onDelete('cascade');
+            $table->foreign('MatriculeYR')->references('MatriculeYR')->on('academic_years');
         });
     }
 

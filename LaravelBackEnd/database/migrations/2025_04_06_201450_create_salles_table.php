@@ -21,6 +21,8 @@ return new class extends Migration
             $table->string('StatusSL')->nullable();
             $table->string('FloorSL')->nullable();
             $table->text('ObservationSL')->nullable();
+            $table->string('MatriculeYR'); // Foreign key to academic_years table
+            $table->foreign('MatriculeYR')->references('MatriculeYR')->on('academic_years')->onDelete('cascade');
             $table->timestamps();
         });
     }

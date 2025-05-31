@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\GradeAdjustment;
 use App\Models\EvaluationResult;
+use App\Models\AcademicYear;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,7 +21,7 @@ class GradeAdjustmentFactory extends Factory
     public function definition(): array
     {
         return [
-            // 'MatriculeGA' handled by trait
+            'MatriculeYR' => AcademicYear::factory(),
             'TypeGA' => $this->faker->randomElement(['Bonus', 'Penalty', 'Correction']),
             'ValueGA' => $this->faker->randomFloat(2, -5, 5), // Adjustment value +/- 5 points
             'ReasonGA' => $this->faker->optional()->sentence(),

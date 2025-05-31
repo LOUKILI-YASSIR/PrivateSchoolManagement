@@ -11,49 +11,59 @@ import { useTranslation } from 'react-i18next';
 dayjs.extend(localizedFormat);
 
 export default function DATE({ register, fieldItem, handleChange, errors, isFilter = false }) {
-    const { i18n } = useTranslation();
-  
-    // Set Day.js locale dynamically based on i18n language
-    dayjs.locale(i18n.language);
-    console.log(fieldItem.props.value);
-    if (isFilter) {
-      return (
-        <DatePicker 
-          onChange={(date) => {
-            const event = { target: { value: date?.toISOString() || null } };
-            handleChange(event);
-          }}
-          label={fieldItem.props.label}
-          format="DD/MM/YYYY"
-          slotProps={{
-            textField: {
-              fullWidth: true,
-            },
-          }}
-        />
-      );
+  const { i18n } = useTranslation();
+
+  // Set Day.js locale dynamically based on i18n language
+  dayjs.locale(i18n.language);
+
+  const handleDateChange = (date) => {
+    if (!date || !date.isValid()) {
+      handleChange({ target: { value: null } }, fieldItem.label);
+      return;
     }
-  
-    const { ref, ...rest } = register(fieldItem.label, fieldItem.validation);
-  
+
+    try {
+      const formattedDate = date.format('YYYY-MM-DD');
+      handleChange({ target: { value: formattedDate } }, fieldItem.label);
+    } catch (error) {
+      console.error('Invalid date:', error);
+      handleChange({ target: { value: null } }, fieldItem.label);
+    }
+  };
+
+  // Convert fieldItem.value (string) to a Day.js object if it exists
+  const parsedValue = fieldItem.value ? dayjs(fieldItem.value) : null;
+
+  if (isFilter) {
     return (
       <DatePicker
-        {...rest}
-        inputRef={ref}
-        onChange={(date) => {
-          const event = { target: { value: date?.toISOString() || null } };
-          handleChange(event, fieldItem.label);
-        }}
+        onChange={handleDateChange}
         label={fieldItem.props.label}
         format="DD/MM/YYYY"
         slotProps={{
           textField: {
             fullWidth: true,
-            error: !!errors[fieldItem.label],
-            helperText: errors[fieldItem.label]?.message,
           },
         }}
       />
     );
   }
-  
+
+  const { ref, ...rest } = register(fieldItem.label, fieldItem.validation);
+
+  return (
+    <DatePicker
+      {...rest}
+      value={parsedValue} // Use the parsed Day.js object
+      inputRef={ref}
+      onChange={handleDateChange}
+      label={fieldItem.props.label}
+      format="DD/MM/YYYY"
+      slotProps={{
+        textField: {
+          fullWidth: true,
+        },
+      }}
+    />
+  );
+}

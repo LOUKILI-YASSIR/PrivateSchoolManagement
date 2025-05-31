@@ -6,6 +6,7 @@ use App\Models\TeacherVocation;
 use App\Models\Professeur;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Carbon\Carbon;
+use App\Models\AcademicYear;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\TeacherVocation>
@@ -25,6 +26,7 @@ class TeacherVocationFactory extends Factory
         $endDate = Carbon::instance($startDate)->addDays($duration - 1);
 
         return [
+            'MatriculeYR' => AcademicYear::factory(),
             // 'MatriculeTV' handled by trait
             'MatriculePR' => Professeur::factory(),
             'StartDatetV' => $startDate->format('Y-m-d'),

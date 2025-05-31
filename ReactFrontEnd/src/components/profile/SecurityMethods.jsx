@@ -23,6 +23,7 @@ import {
 import { styled } from '@mui/material/styles';
 import { useProfileSecurity } from './hooks/useProfileSecurity';
 import GoogleAuthSetup from './GoogleAuthSetup';
+import SecurityMethodConfirmation from './SecurityMethodConfirmation';
 import './Profile.css';
 import { useAuth } from '../../utils/contexts/AuthContext';
 
@@ -112,6 +113,54 @@ const VerificationPanel = styled(Paper)(({ theme }) => ({
     : theme.palette.background.paper,
 }));
 
+// Sort methods by security level
+const getMethodSecurityLevel = (methodId) => {
+  // Order from most secure to least secure
+  switch (methodId) {
+    case 'google': return 3; // Most secure
+    case 'email': return 2;
+    case 'sms': return 1;
+    case 'db': return 0; // Least secure
+    default: return -1;
+  }
+};
+
+// Component to show security level
+const SecurityLevelIndicator = ({ level, small = false }) => {
+  const getColor = (l) => {
+    switch (l) {
+      case 3: return 'success.main'; // High security
+      case 2: return 'info.main';    // Medium-high security
+      case 1: return 'warning.main'; // Medium security
+      case 0: return 'error.main';   // Low security
+      default: return 'text.disabled';
+    }
+  };
+  
+  const getLabel = (l) => {
+    switch (l) {
+      case 3: return 'High';
+      case 2: return 'Medium-High';
+      case 1: return 'Medium';
+      case 0: return 'Basic';
+      default: return 'Unknown';
+    }
+  };
+  
+  return (
+    <Chip 
+      label={`${getLabel(level)} Security`}
+      size={small ? "small" : "medium"}
+      sx={{ 
+        backgroundColor: (theme) => `${getColor(level)}20`,
+        color: getColor(level),
+        fontWeight: 'medium',
+        fontSize: small ? '0.7rem' : '0.75rem'
+      }}
+    />
+  );
+};
+
 const SecurityMethods = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
@@ -142,11 +191,33 @@ const SecurityMethods = () => {
   const [verifyingMethod, setVerifyingMethod] = useState(null);
   const [verificationSent, setVerificationSent] = useState(false);
   const [code, setCode] = useState('');
+  // Track previously enabled methods that need verification when re-enabled
+  const [previouslyEnabledMethods, setPreviouslyEnabledMethods] = useState([]);
+
+  // Confirmation dialog states
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [confirmationData, setConfirmationData] = useState({
+    methodId: '',
+    methodName: '',
+    isLastMethod: false,
+    is2FADisable: false,
+    action: 'disable',
+    onConfirm: () => {}
+  });
 
   // Initialize selected methods from active methods
   useEffect(() => {
     setSelectedMethods(activeMethods);
     setSelectedPreferred(preferredMethod);
+    
+    // Keep track of previously enabled methods for re-verification
+    if (activeMethods && activeMethods.length > 0) {
+      setPreviouslyEnabledMethods(prev => {
+        // Add currently active methods to the tracking list
+        const combined = [...new Set([...prev, ...activeMethods])];
+        return combined;
+      });
+    }
   }, [activeMethods, preferredMethod]);
 
   useEffect(() => {
@@ -156,14 +227,90 @@ const SecurityMethods = () => {
     }
   }, [user]);
 
-  // Handle method toggling
+  // Handle method toggling with confirmation
   const toggleMethod = (methodId) => {
-    if (methodId === 'google' && !activeMethods.includes('google')) {
-      // Special case for Google Auth - needs setup flow
-      setShowGoogleAuthSetup(true);
-      return;
+    // Find method details
+    const method = availableMethods.find(m => m.id === methodId);
+    if (!method) return;
+    
+    const isSelected = selectedMethods.includes(methodId);
+    const wasEnabledBefore = previouslyEnabledMethods.includes(methodId);
+    
+    if (isSelected) {
+      // Removing a method - check if confirmation needed
+      const isLastActiveMethod = activeMethods.length === 1 && activeMethods.includes(methodId);
+      
+      if (isLastActiveMethod) {
+        // Show confirmation for disabling last method (which disables 2FA)
+        setConfirmationData({
+          methodId,
+          methodName: method.name,
+          isLastMethod: true,
+          is2FADisable: true,
+          action: 'disable',
+          onConfirm: () => performToggleMethod(methodId)
+        });
+        setShowConfirmation(true);
+      } else {
+        // Show regular confirmation for disabling a method
+        setConfirmationData({
+          methodId,
+          methodName: method.name,
+          isLastMethod: false,
+          is2FADisable: false,
+          action: 'disable',
+          onConfirm: () => performToggleMethod(methodId)
+        });
+        setShowConfirmation(true);
+      }
+    } else {
+      // Adding a method
+      if (methodId === 'google') {
+        // Google Auth needs setup flow - always show QR code setup
+        setConfirmationData({
+          methodId,
+          methodName: method.name,
+          isLastMethod: false,
+          is2FADisable: false,
+          action: 'enable',
+          onConfirm: () => {
+            // Always show the setup flow for Google Auth, even for re-enabling
+            setShowGoogleAuthSetup(true);
+          }
+        });
+        setShowConfirmation(true);
+      } else if (['email', 'sms'].includes(methodId) || wasEnabledBefore) {
+        // These methods always require verification
+        setConfirmationData({
+          methodId,
+          methodName: method.name,
+          isLastMethod: false,
+          is2FADisable: false,
+          action: 'enable',
+          onConfirm: () => {
+            // Show verification screen after confirmation
+            setVerifyingMethod(methodId);
+            setShowVerification(true);
+          }
+        });
+        setShowConfirmation(true);
+      } else {
+        // Other methods just need regular enable confirmation
+        setConfirmationData({
+          methodId,
+          methodName: method.name,
+          isLastMethod: false,
+          is2FADisable: false,
+          action: 'enable',
+          onConfirm: () => performToggleMethod(methodId)
+        });
+        setShowConfirmation(true);
+      }
     }
+  };
 
+  // Actual method toggling implementation
+  const performToggleMethod = (methodId) => {
     const isSelected = selectedMethods.includes(methodId);
     let newSelectedMethods;
     
@@ -175,6 +322,14 @@ const SecurityMethods = () => {
       if (selectedPreferred === methodId) {
         setSelectedPreferred(newSelectedMethods.length > 0 ? newSelectedMethods[0] : '');
       }
+      
+      // Add to previously enabled methods list when disabling
+      setPreviouslyEnabledMethods(prev => {
+        if (!prev.includes(methodId)) {
+          return [...prev, methodId];
+        }
+        return prev;
+      });
     } else {
       // Add method
       newSelectedMethods = [...selectedMethods, methodId];
@@ -183,16 +338,23 @@ const SecurityMethods = () => {
       if (selectedMethods.length === 0) {
         setSelectedPreferred(methodId);
       }
-      
-      // If this method requires verification, show the verification screen
-      if (['email', 'sms'].includes(methodId)) {
-        setVerifyingMethod(methodId);
-        setShowVerification(true);
-        return;
-      }
     }
     
     setSelectedMethods(newSelectedMethods);
+  };
+
+  // Override the existing disableAll2FA with confirmation
+  const handleDisableAll2FA = () => {
+    // Set confirmation data
+    setConfirmationData({
+      methodId: '',
+      methodName: '',
+      isLastMethod: false,
+      is2FADisable: true,
+      action: 'disable',
+      onConfirm: disableAll2FA
+    });
+    setShowConfirmation(true);
   };
 
   // Handle preferred method selection
@@ -223,10 +385,21 @@ const SecurityMethods = () => {
       setShowGoogleAuthSetup(true);
     } else {
       // Fallback to DB method if Google Auth is not available
-      const success = await updateTwoFactorSettings(['db'], 'db');
-      if (success) {
-        loadAvailableMethods();
-      }
+      // Show confirmation first
+      setConfirmationData({
+        methodId: 'db',
+        methodName: availableMethods.find(m => m.id === 'db')?.name || 'Database',
+        isLastMethod: false,
+        is2FADisable: false,
+        action: 'enable',
+        onConfirm: async () => {
+          const success = await updateTwoFactorSettings(['db'], 'db');
+          if (success) {
+            loadAvailableMethods();
+          }
+        }
+      });
+      setShowConfirmation(true);
     }
   };
 
@@ -241,20 +414,28 @@ const SecurityMethods = () => {
     }
   };
 
-  // Send verification code for email/SMS setup
+  // Send verification code for email/SMS/google setup
   const handleSendVerificationCode = async () => {
+    // Google doesn't need to send a code - verification is done directly with user's authenticator app
+    if (verifyingMethod === 'google') {
+      // Just mark as sent so verification UI shows code input
+      setVerificationSent(true);
+      return;
+    }
+    
     const success = await sendVerificationCode(verifyingMethod);
     if (success) {
       setVerificationSent(true);
     }
   };
 
-  // Verify code for email/SMS setup
+  // Verify code for email/SMS/google setup
   const handleVerifyCode = async () => {
     if (!code) {
       return;
     }
 
+    // Verify the code based on the method
     const success = await verifyCode(verifyingMethod, code);
     if (success) {
       setShowVerification(false);
@@ -308,8 +489,51 @@ const SecurityMethods = () => {
   // Handle code input change
   const handleCodeChange = (e) => {
     const value = e.target.value;
-    if (/^\d*$/.test(value) && value.length <= 6) {
+    // Allow 8 digits for email/SMS, 6 for Google Auth
+    const maxLength = ['email', 'sms'].includes(verifyingMethod) ? 8 : 6;
+    if (/^\d*$/.test(value) && value.length <= maxLength) {
       setCode(value);
+    }
+  };
+
+  // Helper function to get verification title based on method
+  const getVerificationTitle = (methodId) => {
+    switch (methodId) {
+      case 'google': return t('auth.twoFactorAuth.verifyGoogle');
+      case 'email': return t('auth.twoFactorAuth.verifyEmail');
+      case 'sms': return t('auth.twoFactorAuth.verifySMS');
+      case 'db': return t('auth.twoFactorAuth.verifySetup');
+      default: return t('auth.twoFactorAuth.verifySetup');
+    }
+  };
+
+  // Helper function to get re-verification message based on method
+  const getReVerificationMessage = (methodId) => {
+    switch (methodId) {
+      case 'google': return t('auth.twoFactorAuth.googleReVerificationRequired');
+      case 'email': return t('auth.twoFactorAuth.emailReVerificationRequired');
+      case 'sms': return t('auth.twoFactorAuth.smsReVerificationRequired');
+      case 'db': return t('auth.twoFactorAuth.dbReVerificationRequired');
+      default: return t('auth.twoFactorAuth.reVerificationRequired');
+    }
+  };
+
+  // Helper function to get verification code input message based on method
+  const getVerificationCodeMessage = (methodId) => {
+    switch (methodId) {
+      case 'google': return t('auth.twoFactorAuth.enterGoogleCode');
+      case 'email': return t('auth.twoFactorAuth.enterEmailCode') + ' (8 digits)';
+      case 'sms': return t('auth.twoFactorAuth.enterSMSCode') + ' (8 digits)';
+      default: return t('auth.twoFactorAuth.enterSetupCode');
+    }
+  };
+
+  // Helper function to get verification send message based on method
+  const getVerificationSendMessage = (methodId) => {
+    switch (methodId) {
+      case 'email': return t('auth.twoFactorAuth.sendEmailCode');
+      case 'sms': return t('auth.twoFactorAuth.sendSMSCode');
+      default: return t('auth.twoFactorAuth.reVerificationRequired');
     }
   };
 
@@ -357,7 +581,7 @@ const SecurityMethods = () => {
           <Button 
             variant="contained" 
             color="error"
-            onClick={disableAll2FA}
+            onClick={handleDisableAll2FA}
             disabled={loading}
             sx={{ whiteSpace: 'nowrap' }}
           >
@@ -376,6 +600,26 @@ const SecurityMethods = () => {
         )}
       </StatusBanner>
       
+      {/* Confirmation Dialog */}
+      <SecurityMethodConfirmation 
+        open={showConfirmation}
+        onConfirm={() => {
+          confirmationData.onConfirm();
+          setShowConfirmation(false);
+        }}
+        onCancel={() => {
+          setShowConfirmation(false);
+          if (['email', 'sms'].includes(confirmationData.methodId) && 
+              confirmationData.action === 'enable') {
+            setShowVerification(false);
+          }
+        }}
+        isLastMethod={confirmationData.isLastMethod}
+        is2FADisable={confirmationData.is2FADisable}
+        methodName={confirmationData.methodName}
+        action={confirmationData.action}
+      />
+      
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
         {t('profile.twoFactorAuthDesc')}
         <Box component="span" sx={{ color: 'primary.main', fontWeight: 500 }}> {t('auth.twoFactorAuth.multiSelectDesc')}</Box>
@@ -386,18 +630,28 @@ const SecurityMethods = () => {
       ) : showVerification ? (
         <VerificationPanel>
           <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-            {getMethodIcon(verifyingMethod)}{' '}
-            {verifyingMethod === 'email' 
-              ? t('twoFactorAuth.verifyEmail') 
-              : t('twoFactorAuth.verifySMS')}
+            <MethodIcon>
+              {getMethodIcon(verifyingMethod)}
+            </MethodIcon>
+            {getVerificationTitle(verifyingMethod)}
           </Typography>
+          
+          {/* Add note about re-verification if needed */}
+          {previouslyEnabledMethods.includes(verifyingMethod) && 
+           !activeMethods.includes(verifyingMethod) && (
+            <Alert 
+              severity="info" 
+              icon={<FaInfoCircle />} 
+              sx={{ mb: 2 }}
+            >
+              {t('auth.twoFactorAuth.methodReEnableDescription')}
+            </Alert>
+          )}
           
           {!verificationSent ? (
             <>
               <Typography variant="body1" sx={{ mb: 2 }}>
-                {verifyingMethod === 'email'
-                  ? t('twoFactorAuth.sendEmailCode')
-                  : t('twoFactorAuth.sendSMSCode')}
+                {getVerificationSendMessage(verifyingMethod)}
               </Typography>
               <Button 
                 variant="contained"
@@ -405,22 +659,20 @@ const SecurityMethods = () => {
                 disabled={loading}
                 color="primary"
               >
-                {loading ? <CircularProgress size={24} color="inherit" /> : t('twoFactorAuth.sendCode')}
+                {loading ? <CircularProgress size={24} color="inherit" /> : t('auth.twoFactorAuth.sendCode')}
               </Button>
             </>
           ) : (
             <>
               <Typography variant="body1" sx={{ mb: 2 }}>
-                {verifyingMethod === 'email'
-                  ? t('twoFactorAuth.enterEmailCode')
-                  : t('twoFactorAuth.enterSMSCode')}
+                {getVerificationCodeMessage(verifyingMethod)}
               </Typography>
               <TextField
                 fullWidth
                 value={code}
                 onChange={handleCodeChange}
-                placeholder="000000"
-                inputProps={{ maxLength: 6 }}
+                placeholder={['email', 'sms'].includes(verifyingMethod) ? "00000000" : "000000"}
+                inputProps={{ maxLength: ['email', 'sms'].includes(verifyingMethod) ? 8 : 6 }}
                 sx={{ mb: 2 }}
                 autoFocus
               />
@@ -434,9 +686,9 @@ const SecurityMethods = () => {
                   variant="contained"
                   color="primary"
                   onClick={handleVerifyCode}
-                  disabled={loading || code.length < 4}
+                  disabled={loading || (['email', 'sms'].includes(verifyingMethod) ? code.length < 8 : code.length < 6)}
                 >
-                  {loading ? <CircularProgress size={24} color="inherit" /> : t('twoFactorAuth.verifyCode')}
+                  {loading ? <CircularProgress size={24} color="inherit" /> : t('auth.twoFactorAuth.verifyCode')}
                 </Button>
                 <Button
                   variant="outlined"
@@ -458,73 +710,201 @@ const SecurityMethods = () => {
             {t('auth.twoFactorAuth.multiSelectExplanation')}
           </Alert>
 
-          <Box sx={{ mb: 3 }}>
-            {availableMethods.map(method => {
-              // Prepare props for styled component to avoid DOM warnings
-              const cardProps = {
-                key: method.id,
-                selected: selectedMethods.includes(method.id),
-              };
-              
-              // Only add the unavailable prop if the method is unavailable
-              if (!method.available) {
-                cardProps.unavailable = 1;
-              }
-
-              return (
-                <StyledMethodCard {...cardProps}>
-                  <CardContent>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <MethodIcon>
-                        {getMethodIcon(method.id)}
-                      </MethodIcon>
-                      <Box sx={{ flexGrow: 1 }}>
-                        <Tooltip 
-                          title={method.description} 
-                          placement="top" 
-                          arrow
-                        >
-                          <Typography variant="h6" sx={{ cursor: 'help' }}>
-                            {method.name}
-                          </Typography>
-                        </Tooltip>
-                      </Box>
-                      <Switch
-                        checked={selectedMethods.includes(method.id)}
-                        onChange={() => method.available && toggleMethod(method.id)}
-                        disabled={!method.available || loading}
-                        color="primary"
+          {/* Security Methods Comparison */}
+          <Paper sx={{ p: 2, mb: 3, borderRadius: 1 }}>
+            <Typography variant="h6" sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+              <FaShieldAlt />
+              {t('auth.twoFactorAuth.methodComparisonTitle')}
+            </Typography>
+            
+            <Grid container spacing={2} sx={{ mb: 1 }}>
+              <Grid item xs={12} sm={6} md={3}>
+                <Box sx={{ 
+                  border: '1px solid',
+                  borderColor: 'success.main',
+                  borderRadius: 1,
+                  p: 2,
+                  height: '100%',
+                  backgroundColor: theme => theme.palette.mode === 'dark' ? 'rgba(76, 175, 80, 0.08)' : 'rgba(76, 175, 80, 0.04)'
+                }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                    <MethodIcon>{getMethodIcon('google')}</MethodIcon>
+                    <Box>
+                      <Typography variant="subtitle1">Google Authenticator</Typography>
+                      <Chip 
+                        label={t('auth.twoFactorAuth.recommendedMethod')}
+                        size="small"
+                        color="success"
+                        sx={{ fontSize: '0.7rem' }}
                       />
                     </Box>
-                    
-                    {selectedMethods.includes(method.id) && (
-                      <>
-                        <Divider sx={{ my: 2 }} />
-                        <FormControlLabel
-                          control={
-                            <Radio 
-                              checked={selectedPreferred === method.id}
-                              onChange={() => handlePreferredChange(method.id)}
-                              disabled={loading}
-                              color="primary"
-                            />
-                          }
-                          label={t('twoFactorAuth.preferredMethod')}
+                  </Box>
+                  <Typography variant="body2">{t('auth.twoFactorAuth.googleIsMostSecure')}</Typography>
+                </Box>
+              </Grid>
+              
+              <Grid item xs={12} sm={6} md={3}>
+                <Box sx={{ 
+                  border: '1px solid',
+                  borderColor: 'info.main',
+                  borderRadius: 1,
+                  p: 2,
+                  height: '100%',
+                  backgroundColor: theme => theme.palette.mode === 'dark' ? 'rgba(33, 150, 243, 0.08)' : 'rgba(33, 150, 243, 0.04)'
+                }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                    <MethodIcon>{getMethodIcon('email')}</MethodIcon>
+                    <Box>
+                      <Typography variant="subtitle1">Email</Typography>
+                      <Chip 
+                        label={t('auth.twoFactorAuth.strongSecurity')}
+                        size="small"
+                        color="info"
+                        sx={{ fontSize: '0.7rem' }}
+                      />
+                    </Box>
+                  </Box>
+                  <Typography variant="body2">{t('auth.twoFactorAuth.emailIsSecure')}</Typography>
+                </Box>
+              </Grid>
+              
+              <Grid item xs={12} sm={6} md={3}>
+                <Box sx={{ 
+                  border: '1px solid',
+                  borderColor: 'warning.main',
+                  borderRadius: 1,
+                  p: 2,
+                  height: '100%',
+                  backgroundColor: theme => theme.palette.mode === 'dark' ? 'rgba(255, 152, 0, 0.08)' : 'rgba(255, 152, 0, 0.04)'
+                }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                    <MethodIcon>{getMethodIcon('sms')}</MethodIcon>
+                    <Box>
+                      <Typography variant="subtitle1">SMS</Typography>
+                      <Chip 
+                        label={t('auth.twoFactorAuth.moderateSecurity')}
+                        size="small"
+                        color="warning"
+                        sx={{ fontSize: '0.7rem' }}
+                      />
+                    </Box>
+                  </Box>
+                  <Typography variant="body2">{t('auth.twoFactorAuth.smsIsModeratelySecure')}</Typography>
+                </Box>
+              </Grid>
+              
+              <Grid item xs={12} sm={6} md={3}>
+                <Box sx={{ 
+                  border: '1px solid',
+                  borderColor: 'error.main',
+                  borderRadius: 1,
+                  p: 2,
+                  height: '100%',
+                  backgroundColor: theme => theme.palette.mode === 'dark' ? 'rgba(244, 67, 54, 0.08)' : 'rgba(244, 67, 54, 0.04)'
+                }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                    <MethodIcon>{getMethodIcon('db')}</MethodIcon>
+                    <Box>
+                      <Typography variant="subtitle1">Database</Typography>
+                      <Chip 
+                        label={t('auth.twoFactorAuth.basicSecurity')}
+                        size="small"
+                        color="error"
+                        sx={{ fontSize: '0.7rem' }}
+                      />
+                    </Box>
+                  </Box>
+                  <Typography variant="body2">{t('auth.twoFactorAuth.dbIsBasicSecurity')}</Typography>
+                </Box>
+              </Grid>
+            </Grid>
+          </Paper>
+
+          <Box sx={{ mb: 3 }}>
+            {/* Sort methods by security level (highest to lowest) */}
+            {availableMethods
+              .sort((a, b) => getMethodSecurityLevel(b.id) - getMethodSecurityLevel(a.id))
+              .map(method => {
+                // Prepare props for styled component to avoid DOM warnings
+                const cardProps = {
+                  key: method.id,
+                  selected: selectedMethods.includes(method.id),
+                };
+                
+                // Only add the unavailable prop if the method is unavailable
+                if (!method.available) {
+                  cardProps.unavailable = 1;
+                }
+
+                const securityLevel = getMethodSecurityLevel(method.id);
+
+                return (
+                  <StyledMethodCard {...cardProps}>
+                    <CardContent>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <MethodIcon>
+                          {getMethodIcon(method.id)}
+                        </MethodIcon>
+                        <Box sx={{ flexGrow: 1 }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                            <Tooltip 
+                              title={method.description} 
+                              placement="top" 
+                              arrow
+                            >
+                              <Typography variant="h6" sx={{ cursor: 'help' }}>
+                                {method.name}
+                              </Typography>
+                            </Tooltip>
+                            <SecurityLevelIndicator level={securityLevel} small />
+                          </Box>
+                          <Typography variant="body2" color="text.secondary">
+                            {securityLevel === 3 
+                              ? t('auth.twoFactorAuth.mostSecureMethod')
+                              : securityLevel === 2 
+                                ? t('auth.twoFactorAuth.verySecureMethod')
+                                : securityLevel === 1
+                                  ? t('auth.twoFactorAuth.secureMethod')
+                                  : t('auth.twoFactorAuth.basicSecurityMethod')
+                            }
+                          </Typography>
+                        </Box>
+                        <Switch
+                          checked={selectedMethods.includes(method.id)}
+                          onChange={() => method.available && toggleMethod(method.id)}
+                          disabled={!method.available || loading}
+                          color="primary"
                         />
-                      </>
-                    )}
-                    
-                    {!method.available && (
-                      <Alert severity="warning" sx={{ mt: 2 }}>
-                        {t('twoFactorAuth.methodUnavailable')}{' '}
-                        {method.id === 'sms' && t('twoFactorAuth.addPhoneNumber')}
-                        {method.id === 'email' && t('twoFactorAuth.addEmail')}
-                      </Alert>
-                    )}
-                  </CardContent>
-                </StyledMethodCard>
-              );
-            })}
+                      </Box>
+                      
+                      {selectedMethods.includes(method.id) && (
+                        <>
+                          <Divider sx={{ my: 2 }} />
+                          <FormControlLabel
+                            control={
+                              <Radio 
+                                checked={selectedPreferred === method.id}
+                                onChange={() => handlePreferredChange(method.id)}
+                                disabled={loading}
+                                color="primary"
+                              />
+                            }
+                            label={t('auth.twoFactorAuth.preferredMethod')}
+                          />
+                        </>
+                      )}
+                      
+                      {!method.available && (
+                        <Alert severity="warning" sx={{ mt: 2 }}>
+                          {t('auth.twoFactorAuth.methodUnavailable')}{' '}
+                          {method.id === 'sms' && t('auth.twoFactorAuth.addPhoneNumber')}
+                          {method.id === 'email' && t('auth.twoFactorAuth.addEmail')}
+                        </Alert>
+                      )}
+                    </CardContent>
+                  </StyledMethodCard>
+                );
+              })}
           </Box>
           
           {selectedMethods.length > 0 && selectedMethods.length !== activeMethods.length || 

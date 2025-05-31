@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Group;
 use App\Models\Niveau;
+use App\Models\AcademicYear;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -21,11 +22,10 @@ class GroupFactory extends Factory
     {
         return [
             // 'MatriculeGP' handled by trait
-            'NameGP' => 'Group ' . $this->faker->randomLetter() . $this->faker->randomNumber(1),
-            'DescriptionGp' => $this->faker->optional()->sentence(),
-            'StatusGp' => $this->faker->randomElement(['Active', 'Archived', 'Planned']),
-            // Foreign key will be set in the seeder or using a state
-            'MatriculeNV' => Niveau::factory(), // Default: create a new Niveau if not specified
+            'MatriculeYR' => AcademicYear::factory(),
+            'NameGP' => $this->faker->words(2, true),
+            'DescriptionGP' => $this->faker->optional()->sentence(),
+            'MatriculeNV' => Niveau::factory(),
         ];
     }
 

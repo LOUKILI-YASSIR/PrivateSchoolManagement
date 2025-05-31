@@ -31,6 +31,7 @@ class Salle extends Model
         'StatusSL',
         'FloorSL',
         'ObservationSL',
+        'MatriculeYR', // Foreign key to yer_matricules table
     ];
 
     protected $casts = [
@@ -43,7 +44,10 @@ class Salle extends Model
     {
         return $this->hasMany(RegularTimeTable::class, 'MatriculeSL', 'MatriculeSL');
     }
-
+    public function academic_year()
+    {
+        return $this->belongsTo(AcademicYear::class, 'MatriculeYR', 'MatriculeYR');
+    }
     // Required method for GeneratesMatricule trait
     protected static function getMatriculePrefix()
     {

@@ -165,7 +165,7 @@ export const useProfileSecurity = () => {
    * Disable all 2FA methods for the user
    */
   const disableAll2FA = async () => {
-    if (!window.confirm(t('twoFactorAuth.confirmDisable'))) {
+    if (!window.confirm(t('auth.twoFactorAuth.confirmDisable'))) {
       return false;
     }
     
@@ -282,7 +282,8 @@ export const useProfileSecurity = () => {
       const response = await apiServices.postData('/verify2FA', {
         identifier: user.EmailUT,
         method,
-        code
+        code,
+        is_setup: true
       });
       
       if (response.error) {

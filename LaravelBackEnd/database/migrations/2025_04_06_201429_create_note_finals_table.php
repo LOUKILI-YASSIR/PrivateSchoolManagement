@@ -13,12 +13,14 @@ return new class extends Migration
     {
         Schema::create('note_finals', function (Blueprint $table) {
             $table->string('MatriculeNF')->primary();
+            $table->string('MatriculeYR');
             $table->string('MatriculeET');
             $table->float('GradeNF');
             $table->string('CommentaireNF')->nullable();
             $table->timestamps();
 
-            $table->foreign('MatriculeET')->references('MatriculeET')->on('etudiants')->onDelete('cascade');
+            $table->foreign('MatriculeET')->references('MatriculeET')->on('etudiants');
+            $table->foreign('MatriculeYR')->references('MatriculeYR')->on('academic_years');
         });
     }
 

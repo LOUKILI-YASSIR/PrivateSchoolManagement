@@ -28,7 +28,10 @@ export const usePostData = (apiName) => {
     mutationFn: (data) => postData(apiName, data),
     onSuccess: () => {
       queryClient.invalidateQueries([apiName]);
-    }
+    },
+    onError: (error) => {
+      console.error(`Error in ${apiName}:`, error);
+    },
   });
 };
 

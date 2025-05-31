@@ -11,29 +11,29 @@ export const useFormValidation = () => {
     const label = fieldConfig.props.label.replace(':', ' ');
     
     if (required && !value) {
-      setError(`${fieldConfig.label}`, { message: `${label} is required` });
+      setError(`${fieldConfig.label}`, { message: `${label} est requis` });
       return false;
     }
     if (minLength && value?.length < minLength.value) {
       setError(`${fieldConfig.label}`, {
-        message: `${label} must be at least ${minLength.value} characters`,
+        message: `${label} doit contenir au moins ${minLength.value} caractères`,
       });
       return false;
     }
     if (maxLength && value?.length > maxLength.value) {
       setError(`${fieldConfig.label}`, {
-        message: `${label} must be at most ${maxLength.value} characters`,
+        message: `${label} ne doit pas dépasser ${maxLength.value} caractères`,
       });
       return false;
     }
     if (pattern && !pattern.value.test(value)) {
       setError(`${fieldConfig.label}`, {
-        message: `${label} is not in the correct format`,
+        message: `${label} n'est pas dans le bon format`,
       });
       return false;
     }
     if (validate && !validate(value, getValues())) {
-      setError(`${fieldConfig.label}`, { message: `${label} is not valid` });
+      setError(`${fieldConfig.label}`, { message: `${label} n'est pas valide` });
       return false;
     }
     return true;
@@ -49,7 +49,13 @@ export const useFormValidation = () => {
     });
 
     if (!triggeredValid || !allFieldsValid.every(isValid => isValid)) {
-      message.error('Validation failed. Please correct the errors before proceeding.');
+      message.error({
+        content: 'Veuillez corriger les erreurs avant de continuer.',
+        duration: 3,
+        style: {
+          marginTop: '20vh',
+        },
+      });
       return false;
     }
     return true;

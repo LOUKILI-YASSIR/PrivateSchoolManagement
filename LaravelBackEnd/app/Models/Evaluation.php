@@ -25,6 +25,7 @@ class Evaluation extends Model
         'MatriculeEV',
         'MatriculeMT',
         'MatriculeEP',
+        'MatriculeYR',
         'NbrEV',
     ];
 
@@ -47,6 +48,11 @@ class Evaluation extends Model
     public function evaluationResults()
     {
         return $this->hasMany(EvaluationResult::class, 'MatriculeEV', 'MatriculeEV');
+    }
+
+    public function academicYear()
+    {
+        return $this->belongsTo(AcademicYear::class, 'MatriculeYR', 'MatriculeYR');
     }
 
     // Required method for GeneratesMatricule trait

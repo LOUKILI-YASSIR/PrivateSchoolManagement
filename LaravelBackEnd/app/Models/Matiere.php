@@ -23,12 +23,12 @@ class Matiere extends Model
 
     protected $fillable = [
         'MatriculeMT',
+        'MatriculeYR',
         'NameMT',
         'CodeMT',
         'DescriptionMT',
         'CoefficientMT',
         'MatriculeNV',
-        'MatriculePR',
     ];
 
     protected $casts = [
@@ -42,9 +42,9 @@ class Matiere extends Model
         return $this->belongsTo(Niveau::class, 'MatriculeNV', 'MatriculeNV');
     }
 
-    public function professeur()
+    public function professeurs()
     {
-        return $this->belongsTo(Professeur::class, 'MatriculePR', 'MatriculePR');
+        return $this->hasMany(Professeur::class, 'MatriculeMT', 'MatriculeMT');
     }
 
     public function evaluations()
@@ -60,6 +60,11 @@ class Matiere extends Model
     public function regularTimeTables()
     {
         return $this->hasMany(RegularTimeTable::class, 'MatriculeMT', 'MatriculeMT');
+    }
+
+    public function academicYear()
+    {
+        return $this->belongsTo(AcademicYear::class, 'MatriculeYR', 'MatriculeYR');
     }
 
     // Required method for GeneratesMatricule trait

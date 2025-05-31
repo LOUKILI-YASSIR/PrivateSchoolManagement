@@ -33,11 +33,34 @@ class EvaluationController extends Controller
             $evaluations = $this->model::with([
                 'matiere',
                 'evaluationType',
+                'matiere.niveau',
                 'evaluationResults'
-            ])
-            ->withCount('evaluationResults')
-            ->get();
+            ])->get();
+            foreach ($evaluations as $evaluation) {
+                $niveau = $evaluation->matiere->niveau;
+                if ($niveau) {
+                    $niveauName = $niveau->NomNV;
+                    $parentNiveau = Option::where($niveau->Matricule);
+            
+                    $fullNiveauName = $parentNiveau
+                        ? "{$niveauName} ({$parentNiveau->NomNV})"
+                        : $niveauName;
+            
+                    $evaluation->niveau_name = $fullNiveauName;
+                }
+                $results = $evaluation->evaluationResults;
 
+                if ($results && $results->count() > 0) {                
+                    // Min and Max GradeER
+                    $minGrade = $results->min('GradeER');
+                    $maxGrade = $results->max('GradeER');
+                
+                    // Assign to evaluation object for later use if needed
+                    $evaluation->min_grade = $minGrade;
+                    $evaluation->max_grade = $maxGrade;
+                }
+                unset($evaluation->evaluationResults);
+            }
             return $this->successResponse($evaluations);
         } catch (\Exception $e) {
             return $this->handleException($e);

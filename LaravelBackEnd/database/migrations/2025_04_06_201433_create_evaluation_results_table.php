@@ -15,12 +15,14 @@ return new class extends Migration
             $table->string('MatriculeER')->primary();
             $table->string('MatriculeET');
             $table->string('MatriculeEV');
+            $table->string('MatriculeYR');
             $table->float('GradeER');
             $table->string('CommentaireER')->nullable();
             $table->timestamps();
 
             $table->foreign('MatriculeET')->references('MatriculeET')->on('etudiants')->onDelete('cascade');
             $table->foreign('MatriculeEV')->references('MatriculeEV')->on('evaluations')->onDelete('cascade');
+            $table->foreign('MatriculeYR')->references('MatriculeYR')->on('academic_years');
         });
     }
 

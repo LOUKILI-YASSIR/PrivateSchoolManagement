@@ -7,15 +7,15 @@ import { getFormStepsEp } from "./EvaluationFormSteps";
 import { getFormStepsNv } from "./NiveauFormSteps";
 import { getFormStepsYr } from "./AnneeScolaireFormSteps";
 
-export const GetSteps = (TableName) => (
+export const GetSteps = (TableName, formContext,row) => (
     {
-        etudiants : getFormStepsEt(),
-        professeurs : getFormStepsPr(),
-        salles : getFormStepsSl(),
-        matieres : getFormStepsMt(),
-        groupes : getFormStepsGp(),
-        evaluations : getFormStepsEp(),
-        niveaux : getFormStepsNv(),
-        anneescolaire : getFormStepsYr(),
+        etudiants : getFormStepsEt(formContext,row),
+        professeurs : getFormStepsPr(formContext,row),
+        salles : getFormStepsSl(formContext,row),
+        matieres : getFormStepsMt(formContext,row),
+        groups : getFormStepsGp(formContext,row),
+        "evaluation-types" : getFormStepsEp(formContext,row),
+        niveaux : getFormStepsNv(formContext,row),
+        "academic-years" : getFormStepsYr(formContext,row),
     }[TableName] || [] // Default to an empty array if TableName is not found
 ) 

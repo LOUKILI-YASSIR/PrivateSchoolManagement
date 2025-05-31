@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\EvaluationResult;
 use App\Models\Etudiant;
 use App\Models\Evaluation;
+use App\Models\AcademicYear;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,15 +21,12 @@ class EvaluationResultFactory extends Factory
      */
     public function definition(): array
     {
-        // Get an existing evaluation to determine max grade
-        $evaluation = Evaluation::factory()->create(); // Create one if none passed
-        $maxGrade = $evaluation->evaluationType->MaxGradeEP ?? 20; // Default max 20
-
         return [
             // 'MatriculeER' handled by trait
+            'MatriculeYR' => AcademicYear::factory(),
             'MatriculeET' => Etudiant::factory(),
-            'MatriculeEV' => $evaluation->MatriculeEV,
-            'GradeER' => $this->faker->randomFloat(2, 0, $maxGrade), // Grade based on evaluation type max
+            'MatriculeEV' => Evaluation::factory(),
+            'GradeER' => $this->faker->randomFloat(2, 0, 20),
             'CommentaireER' => $this->faker->optional()->sentence(),
         ];
     }

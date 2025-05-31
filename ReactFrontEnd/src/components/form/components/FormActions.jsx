@@ -4,20 +4,23 @@ import { useFormContext } from '../context/FormContext';
 import { useFormSubmission } from '../hooks/useFormSubmission';
 import { useFormValidation } from '../hooks/useFormValidation';
 
-export default function FormActions({ steps, setButtons }) {
+export default function FormActions({ steps, setButtons, StepOpt, matricule, TypeOpt, setUserInfo }) {
   const { activeStep, setActiveStep, Traduction } = useFormContext();
   const { validateStep } = useFormValidation();
-  const { handleSubmit } = useFormSubmission(steps);
+  
+const { handleSubmit } = useFormSubmission({StepOpt, TypeOpt, matricule});
 
-  const handleNext = async () => {
+const handleNext = async () => {
     const currentStep = steps[activeStep];
     const isValid = await validateStep(currentStep.Fields);
     if (isValid) {
       setActiveStep(prev => prev + 1);
     }
+    setUserInfo(null)
   };
 
   const handlePrev = () => {
+    setUserInfo(null)
     setActiveStep(prev => prev - 1);
   };
 
@@ -46,7 +49,8 @@ export default function FormActions({ steps, setButtons }) {
 
     Btns.push({
       value: Traduction('actions.cancel'),
-      handleClose: true,
+      handleClick: ()=>setUserInfo(null),
+      handleCloseBefforClick : true,
     });
     setButtons(Btns);
   };

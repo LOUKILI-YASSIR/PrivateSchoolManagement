@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('regular_time_tables', function (Blueprint $table) {
-            $table->string('MatriculeRt')->primary();
+            $table->string('MatriculeRT')->primary();
+            $table->string('MatriculeYR');
             $table->string('MatriculeDW');
             $table->string('MatriculeTS');
             $table->string('MatriculeGP');
@@ -21,6 +22,7 @@ return new class extends Migration
             $table->string('MatriculeSL');
             $table->timestamps();
 
+            $table->foreign('MatriculeYR')->references('MatriculeYR')->on('academic_years');
             $table->foreign('MatriculeDW')->references('MatriculeDW')->on('day_weeks')->onDelete('cascade');
             $table->foreign('MatriculeTS')->references('MatriculeTS')->on('time_slots')->onDelete('cascade');
             $table->foreign('MatriculeGP')->references('MatriculeGP')->on('groups')->onDelete('cascade');

@@ -3,7 +3,7 @@ import { useAuth } from '../../utils/contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 import apiServices from '../../api/apiServices';
 import LoadingSpinner from '../common/LoadingSpinner';
-import { useActionMenu } from '../Menu/hooks/useActionMenu';
+import { useActionMenu } from '../menu/hooks/useActionMenu';
 import { 
   TextField, 
   Button, 
@@ -31,7 +31,7 @@ import { toggleDarkMode } from '../../Store/Slices/ThemeSlice';
 import DarkModeToggle from '../common/DarkModeToggle';
 import MenuCart from '../menu/CartMenu';
 import PHONE from '../Fields/PhoneField';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [loginMethod, setLoginMethod] = useState(0); // 0: username, 1: email, 2: phone
@@ -46,6 +46,7 @@ const Login = () => {
   const { login } = useAuth();
   const { t, i18n } = useTranslation();
   const langMenuAction = useActionMenu();
+  const nav = useNavigate();
   
   // Dark mode from Redux
   const isDarkMode = useSelector((state) => state?.theme?.darkMode || false);
@@ -142,18 +143,82 @@ const handleSubmit = async e => {
     const payload = { identifier: loginValue, PasswordUT: password };
     const response = await apiServices.postData('/login', payload);
     const data = response;
-    console.log(data)
-    if (data?.data?.access_token) {
-      // optionally persist identifier for UX
-      rememberMe ? storeIdentifier(loginValue) : clearIdentifier();
+    console.log(data);
+
+    // Save identifier if remember me is checked
+    if (rememberMe) {
+      storeIdentifier(loginValue);
+    } else {
+      clearIdentifier();
+    }
+
+    // Handle successful login with token
+    if (data.status === 'success' && data?.data?.access_token) {
       const token = data.data.access_token;
       const role = data.data.role;
-      if (data.message === 'must_change_password') {
-        login(token,role, true,{user:{UserNameUT:data.data.UserNameUT,CodeVerificationUT:data.data.CodeVerificationUT}});
-      }else{
-        login(token, role);
+      login(data.data.MatriculeUT, token, role );
+    }
+    // Handle password change requirement
+    else if (data.status === 'user' && data.message === 'must_change_password') {
+      nav('/YLSchool/reset-password', { 
+        state: { 
+          user: {
+            ...data.data.user,
+            MatriculeUT: data.data.MatriculeUT,
+            requires_password_change: true,
+            TypeUT: 'db'
+          } 
+        }
+      });
+    }
+    // Handle 2FA requirement
+    else if (data.status === 'error' && data.message === '2fa_required') {
+      handleTwoFactorAuthRedirect(data);
+    }
+    // Handle other errors
+    else if (data.status === 'error') {
+      setError('login.error.invalidCredentials');
+    } else {
+      setError('login.error.general');
+    }
+  } catch (err) {
+    console.error(err);
+    const errorResponse = err?.response?.data;
+    const statusCode = err?.response?.status;
+    
+    console.log(errorResponse);
+    
+    // Handle error responses with status code 403
+    if (statusCode === 403) {
+      // Handle password change requirement
+      if (errorResponse?.status === 'user' && errorResponse?.message === 'must_change_password') {
+        nav('/YLSchool/reset-password', { 
+          state: { 
+            user: {
+              ...errorResponse.data.user,
+              MatriculeUT: errorResponse.data.MatriculeUT,
+              requires_password_change: true,
+              TypeUT: 'db'
+            } 
+          }
+        });
+        return;
       }
-    } else if (data.status === 401) {
+      
+      // Handle 2FA requirement case
+      if (errorResponse?.message === '2fa_required') {
+        handleTwoFactorAuthRedirect(errorResponse);
+        return;
+      }
+    }
+    
+    // Handle other status codes
+    if (statusCode === 422) {
+      const msgs = errorResponse?.errors || {};
+      setError(Object.values(msgs).flat()[0] || 'login.error.invalidInput');
+    } else if (statusCode === 429) {
+      setError('login.error.tooManyAttempts');
+    } else if (statusCode === 401) {
       setError([
         'login.error.invalidUsernamePassword',
         'login.error.invalidEmailPassword',
@@ -162,18 +227,92 @@ const handleSubmit = async e => {
     } else {
       setError('login.error.general');
     }
-  } catch (err) {
-    const statusCode = err?.response?.status;
-    if (statusCode === 422) {
-      const msgs = err.response.data.errors || {};
-      setError(Object.values(msgs).flat()[0] || 'login.error.invalidInput');
-    } else if (statusCode === 429) {
-      setError('login.error.tooManyAttempts');
-    } else {
-      setError('login.error.general');
-    }
   } finally {
     setIsLoading(false);
+  }
+};
+
+// Helper function to handle 2FA authentication routing
+const handleTwoFactorAuthRedirect = (data) => {
+  console.log('Handling 2FA redirect with data:', data);
+  const methods = data.data?.methods || [];
+  
+  // Sort methods by security level (highest to lowest)
+  const sortedMethods = methods.sort((a, b) => {
+    const securityLevels = {
+      'google': 4,
+      'email': 3,
+      'sms': 2,
+      'db': 1
+    };
+    return securityLevels[b.id] - securityLevels[a.id];
+  });
+
+  if (sortedMethods && sortedMethods.length > 0) {
+    const firstMethod = sortedMethods[0];
+    
+    // Create verification flow data to track the sequence
+    const verificationFlow = {
+      allMethods: sortedMethods,
+      currentIndex: 0,
+      isLastMethod: sortedMethods.length === 1
+    };
+    
+    switch (firstMethod.id) {
+      case 'google':
+        // For Google authenticator, go to the Google auth page
+        nav('/YLSchool/reset-password-request-totp', { 
+          state: { 
+            user: {
+              ...data.data.user,
+              TypeUT: 'google'  
+            },
+            verificationFlow
+          }
+        });
+        break;
+        
+      case 'email':
+      case 'sms':
+        // For SMS or email verification, go to the email/SMS verification page
+        nav('/YLSchool/email-sms-reset-password', { 
+          state: { 
+            user: {
+              ...data.data.user,
+              TypeUT: firstMethod.id
+            },
+            verificationFlow,
+            type: firstMethod.id
+          }
+        });
+        break;
+        
+      case 'db':
+        // For db method, go to reset password request page
+        nav('/YLSchool/reset-password-request', { 
+          state: { 
+            user: {
+              ...data.data.user,
+              TypeUT: 'db'
+            },
+            verificationFlow
+          }
+        });
+        break;
+        
+      default:
+        // If multiple methods are available, let user choose
+        nav('/YLSchool/select-reset-password', { 
+          state: { 
+            user: data.data.user,
+            methods: sortedMethods,
+            verificationFlow
+          }
+        });
+    }
+  } else {
+    // If no methods available, show error
+    setError('login.error.no2FAMethods');
   }
 };
 

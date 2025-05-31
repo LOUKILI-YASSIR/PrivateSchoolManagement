@@ -1,4 +1,3 @@
-
 export const TYPE = {
     SELECT: "SELECT",
     TEXT: "TEXT",
@@ -9,6 +8,7 @@ export const TYPE = {
     IMAGE: "IMAGE",
     AUTO_COMPLETE_SELECT: "AUTO_COMPLETE_SELECT",
     NUMBER: "NUMBER",
+    MULTI_SELECT: "MULTI_SELECT",
   };
   
   export const DEFAULT = {

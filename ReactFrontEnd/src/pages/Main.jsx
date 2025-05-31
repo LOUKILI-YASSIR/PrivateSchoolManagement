@@ -4,7 +4,7 @@ import { TableTemplate } from "../components/table/Table.jsx";
 import Head from "./MainHead.jsx";
 import { MainProvider } from "../utils/contexts/MainContext.jsx";
 import { useSelector } from "react-redux";
-
+import TimeTableSection from "../components/dashboard/sections/TimeTableSection";
 export default function Main ({ApiName}) {
   const isDarkMode = useSelector((state) => state?.theme?.darkMode || false);
   
@@ -24,7 +24,13 @@ export default function Main ({ApiName}) {
           <Head/>
           <div className="p-6 pb-0">
             <div className="overflow-x-auto" style={{height:"100%"}}>
-              <TableTemplate/>
+              {
+              ApiName!="regular-timetables" 
+                ? <TableTemplate/> : 
+                  <TimeTableSection/>
+
+              }
+              
             </div>
           </div>
         </Card>

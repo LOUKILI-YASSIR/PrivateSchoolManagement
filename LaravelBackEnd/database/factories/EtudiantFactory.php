@@ -4,6 +4,9 @@ namespace Database\Factories;
 
 use App\Models\Etudiant;
 use App\Models\User;
+use App\Models\AcademicYear;
+use App\Models\Group;
+use App\Models\Niveau;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,23 +23,22 @@ class EtudiantFactory extends Factory
      */
     public function definition(): array
     {
-        // Create a User with the 'etudiant' role/status first
-        $user = User::factory()->etudiant()->create();
-
         return [
-            // 'MatriculeET' is handled by GeneratesMatricule trait
-            'MatriculeUT' => $user->MatriculeUT, // Assign the created user's ID
-            // 'MatriculeGP' will be set in the Seeder or via state
-            'EmailET' => $user->emailUT, // Use the user's email by default
-            'PhoneET' => $user->phoneUT, // Use the user's phone by default
-            'LienParenteTR' => $this->faker->randomElement(['Father', 'Mother', 'Guardian', 'Sibling']),
-            'ProfessionTR' => $this->faker->optional()->jobTitle(),
+            // 'MatriculeET' handled by trait
+            'MatriculeYR' => AcademicYear::factory(),
+            'EmailET' => $this->faker->unique()->safeEmail(),
+            'PhoneET' => $this->faker->phoneNumber(),
+            'LienParenteTR' => $this->faker->randomElement(['Father', 'Mother', 'Guardian']),
+            'ProfessionTR' => $this->faker->jobTitle(),
             'NomTR' => $this->faker->lastName(),
             'PrenomTR' => $this->faker->firstName(),
             'Phone1TR' => $this->faker->phoneNumber(),
             'Phone2TR' => $this->faker->optional()->phoneNumber(),
-            'EmailTR' => $this->faker->optional()->safeEmail(),
-            'ObservationTR' => $this->faker->optional()->paragraph(),
+            'EmailTR' => $this->faker->unique()->safeEmail(),
+            'ObservationTR' => $this->faker->optional()->sentence(),
+            'MatriculeUT' => User::factory(),
+            'MatriculeGP' => null,
+            'MatriculeNV' => Niveau::factory(),
         ];
     }
 
@@ -50,6 +52,19 @@ class EtudiantFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'MatriculeGP' => $groupMatricule,
+        ]);
+    }
+
+    /**
+     * Assign a specific niveau to the student.
+     *
+     * @param string $niveauMatricule
+     * @return static
+     */
+    public function forNiveau(string $niveauMatricule): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'MatriculeNV' => $niveauMatricule,
         ]);
     }
 }

@@ -122,7 +122,21 @@ const SelectResetPasswordType = () => {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
-      navigate(path, { state: { user } });
+      
+      // If this is a reset type selection from a login verification flow, 
+      // preserve the verification flow
+      if (state?.verificationFlow) {
+        navigate(path, { 
+          state: { 
+            user, 
+            verificationFlow: state.verificationFlow,
+            type: path.includes("email") ? "email" : path.includes("sms") ? "sms" : undefined
+          } 
+        });
+      } else {
+        // Regular password reset flow
+        navigate(path, { state: { user } });
+      }
     }, 300);
   };
 

@@ -24,6 +24,7 @@ class Attendance extends Model
 
     protected $fillable = [
         'MatriculeAT',
+        'MatriculeYR',
         'StatusAT',
         'IsJustifAT',
         'JustifAT',
@@ -53,6 +54,11 @@ class Attendance extends Model
     public function professeur()
     {
         return $this->belongsTo(Professeur::class, 'MatriculePR', 'MatriculePR')->withDefault();
+    }
+
+    public function academicYear()
+    {
+        return $this->belongsTo(AcademicYear::class, 'MatriculeYR', 'MatriculeYR');
     }
 
     // Required method for GeneratesMatricule trait

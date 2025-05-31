@@ -4,12 +4,12 @@ import {
   DAYWEEK,
   GROUPS,
   MATIERES,
-  NIVEAU,
-  PROFESSEUR,
+  NIVEAUX,
+  PROFESSEURS,
   REGULARTIMETABLE,
-  SALLE,
+  SALLES,
   TIMESLOT,
-  EVALUATION,
+  EVALUATION
 } from "../Steps/DefaultStates";
 
 export function CalcDefaultDate(ageStart) {
@@ -26,12 +26,12 @@ export const getDefaultState = () => ({
   DAYWEEK,
   GROUPS,
   MATIERES,
-  NIVEAU,
-  PROFESSEUR,
+  NIVEAUX,
+  PROFESSEURS,
   REGULARTIMETABLE,
-  SALLE,
+  SALLES,
   TIMESLOT,
-  EVALUATION,
+  "evaluation-types":EVALUATION,
 });
 
 
@@ -76,29 +76,47 @@ export const commonValidations = {
   required: (fieldLabel) => ({
     required: `${fieldLabel} is required`,
   }),
+
   minLength: (fieldLabel, length) => ({
     minLength: {
       value: length,
       message: `${fieldLabel} must be at least ${length} characters`,
     },
   }),
+
   maxLength: (fieldLabel, length) => ({
     maxLength: {
       value: length,
       message: `${fieldLabel} must be at most ${length} characters`,
     },
   }),
+
   pattern: (fieldLabel, regex, errorMessage) => ({
     pattern: {
       value: regex,
       message: errorMessage || `${fieldLabel} is not in the correct format`,
     },
   }),
+
   inArray: (fieldLabel, allowedOptions, errorMessage) => ({
     validate: (value) =>
       allowedOptions.includes(value) ||
       errorMessage ||
       `${fieldLabel} must be one of the allowed options`,
   }),
+
+  optionalArray: (fieldLabel, options = {}) => ({
+    validate: (value) => {
+      if (value == null || value.length === 0) return true; // optional
+      if (!Array.isArray(value)) return `${fieldLabel} must be an array`;
+
+      if (typeof options.validate === 'function') {
+        return options.validate(value);
+      }
+
+      return true;
+    },
+  }),
+
   combine: (...rules) => Object.assign({}, ...rules),
 };

@@ -4,6 +4,8 @@ namespace Database\Factories;
 
 use App\Models\Professeur;
 use App\Models\User;
+use App\Models\AcademicYear;
+use App\Models\Matiere;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,20 +21,17 @@ class ProfesseurFactory extends Factory
      */
     public function definition(): array
     {
-        // Create a User with the 'professeur' role/status first
-        $user = User::factory()->professeur()->create();
-
         return [
-            // 'MatriculePR' is handled by GeneratesMatricule trait
-            'MatriculeUT' => $user->MatriculeUT, // Assign the created user's ID
-            'CINPR' => $this->faker->unique()->numerify('########'), // Assuming 8 digits CIN
-            'CivilitePR' => $this->faker->randomElement(['Mr.', 'Mrs.', 'Ms.', 'Dr.']),
-            'Phone1PR' => $this->faker->phoneNumber(),
-            'Phone2PR' => $this->faker->optional()->phoneNumber(),
-            'DateEmbauchePR' => $this->faker->date(),
-            'SalairePR' => $this->faker->randomFloat(2, 30000, 150000),
-            'NomBanquePR' => $this->faker->optional()->company() . ' Bank',
-            'RIBPR' => $this->faker->optional()->iban('MA'), // Generate Moroccan IBAN
+            // 'MatriculePR' handled by trait
+            'MatriculeYR' => AcademicYear::factory(),
+            'CINPR' => $this->faker->unique()->numerify('########'),
+            'CivilitePR' => $this->faker->randomElement(['Mr', 'Mrs', 'Ms', 'Dr']),
+            'DateEmbauchePR' => $this->faker->dateTimeBetween('-5 years', 'now'),
+            'SalairePR' => $this->faker->randomFloat(2, 3000, 10000),
+            'NomBanquePR' => $this->faker->company(),
+            'RIBPR' => $this->faker->iban(),
+            'MatriculeUT' => User::factory(),
+            'MatriculeMT' => Matiere::factory(),
         ];
     }
 

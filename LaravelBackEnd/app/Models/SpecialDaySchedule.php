@@ -29,6 +29,7 @@ class SpecialDaySchedule extends Model
         'MatriculeTS',
         'LocationSS',
         'ActivityNameSS',
+        'MatriculeYR',
     ];
 
     // Added casts
@@ -41,6 +42,11 @@ class SpecialDaySchedule extends Model
     public function timeSlot()
     {
         return $this->belongsTo(TimeSlot::class, 'MatriculeTS', 'MatriculeTS');
+    }
+
+    public function academicYear()
+    {
+        return $this->belongsTo(AcademicYear::class, 'MatriculeYR', 'MatriculeYR');
     }
 
     // Required method for GeneratesMatricule trait

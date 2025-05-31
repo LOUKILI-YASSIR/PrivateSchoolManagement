@@ -16,16 +16,17 @@ return new class extends Migration
             $table->string('MatriculePR')->primary();
             $table->string('CINPR')->unique();
             $table->string('CivilitePR')->nullable();
-            $table->string('Phone1PR')->nullable();
-            $table->string('Phone2PR')->nullable();
             $table->date('DateEmbauchePR')->nullable();
             $table->float('SalairePR')->nullable();
             $table->string('NomBanquePR')->nullable();
             $table->string('RIBPR')->nullable();
+            $table->string('MatriculeYR');
+            $table->string('MatriculeMT')->nullable();
             $table->string('MatriculeUT');
             $table->timestamps();
-
+            $table->foreign("MatriculeMT")->references("MatriculeMT")->on("matieres")->onDelete("cascade");
             $table->foreign('MatriculeUT')->references('MatriculeUT')->on('users')->onDelete('cascade');
+            $table->foreign('MatriculeYR')->references('MatriculeYR')->on('academic_years');
         });
     }
 

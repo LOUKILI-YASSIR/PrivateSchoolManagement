@@ -57,7 +57,7 @@ trait CrudOperations
     /**
      * Get a specific record
      */
-    public function show(int $id): JsonResponse
+    public function show(string $id): JsonResponse
     {
         try {
             $record = $this->findRecord($id);
@@ -94,10 +94,10 @@ trait CrudOperations
     /**
      * Update a record
      */
-    public function update(Request $request, int $id): JsonResponse
+    public function update(Request $request, string $matricule): JsonResponse
     {
         try {
-            $record = $this->findRecord($id);
+            $record = $this->findRecord($matricule);
             if (!$record) {
                 return $this->notFoundResponse($this->getResourceName());
             }
@@ -120,7 +120,7 @@ trait CrudOperations
     /**
      * Delete a record
      */
-    public function destroy(int $id): JsonResponse
+    public function destroy(string $id): JsonResponse
     {
         try {
             $record = $this->findRecord($id);
@@ -151,7 +151,7 @@ trait CrudOperations
     /**
      * Find a record by ID, with optional relationships eager loading
      */
-    protected function findRecord(int $id)
+    protected function findRecord(string $matricule)
     {
         $query = $this->getModelClass()::query();
 
@@ -159,7 +159,7 @@ trait CrudOperations
             $query->with($this->getDefaultRelationships());
         }
 
-        return $query->find($id);
+        return $query->find($matricule);
     }
 
     /**

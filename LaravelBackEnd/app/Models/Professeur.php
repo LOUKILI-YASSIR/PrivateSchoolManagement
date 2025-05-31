@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\GeneratesMatricule;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Professeur extends Model
 {
@@ -23,15 +24,15 @@ class Professeur extends Model
 
     protected $fillable = [
         'MatriculePR',
+        'MatriculeYR',
         'CINPR',
         'CivilitePR',
-        'Phone1PR',
-        'Phone2PR',
         'DateEmbauchePR',
         'SalairePR',
         'NomBanquePR',
         'RIBPR',
         'MatriculeUT',
+        'MatriculeMT',
     ];
 
     protected $casts = [
@@ -46,9 +47,9 @@ class Professeur extends Model
         return $this->belongsTo(User::class, 'MatriculeUT', 'MatriculeUT');
     }
 
-    public function matieres()
+    public function matiere()
     {
-        return $this->hasMany(Matiere::class, 'MatriculePR', 'MatriculePR');
+        return $this->belongsTo(Matiere::class, 'MatriculeMT', 'MatriculeMT');
     }
 
     public function attendances()
@@ -65,6 +66,18 @@ class Professeur extends Model
     {
         return $this->hasMany(RegularTimeTable::class, 'MatriculePR', 'MatriculePR');
     }
+
+    public function academicYear()
+    {
+        return $this->belongsTo(AcademicYear::class, 'MatriculeYR', 'MatriculeYR');
+    }
+    public function groups(): BelongsToMany
+    {
+        return $this->belongsToMany(Group::class, 'groups_professeurs', 'MatriculePR', 'MatriculeGP')
+                    ->withTimestamps()
+                    ->withPivot('MatriculePG');
+    }
+
 
     // Required method for GeneratesMatricule trait
     protected static function getMatriculePrefix()

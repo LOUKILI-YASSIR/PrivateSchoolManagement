@@ -138,6 +138,9 @@ export default function ActionMenu({
         if (btn.handleClick) {
             btn.handleClick();
         }
+        if (btn.handleCloseBefforClick) {
+            forceClose();
+        }
     };
 
     /**

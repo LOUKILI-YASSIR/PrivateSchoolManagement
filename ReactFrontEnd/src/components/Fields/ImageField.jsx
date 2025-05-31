@@ -221,9 +221,6 @@ export default function IMAGE({
           })}
         />
       </div>
-      {errors && errors[fieldItem.label] && (
-        <span style={{ color: 'red', fontSize: '12px' }}>{errors[fieldItem.label]?.message}</span>
-      )}
     </div>
   );
 }

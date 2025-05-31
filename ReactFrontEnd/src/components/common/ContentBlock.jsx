@@ -5,7 +5,7 @@ import { Box, Typography } from '@mui/material';
 /**
  * ContentBlock component for consistent content styling across the application
  * @param {Object} props - Component props
- * @param {ReactNode} props.children - Content to be displayed inside the block
+ * @param {ReactNode} props.options - Content to be displayed inside the block
  * @param {ReactNode} props.title - Title to be displayed in the header
  * @param {ReactNode} props.rightElement - Element to be displayed on the right side of the header
  * @param {string} props.className - Additional class names

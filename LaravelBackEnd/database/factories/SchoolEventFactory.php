@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\SchoolEvent;
 use App\Models\TimeSlot;
+use App\Models\AcademicYear;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,6 +21,7 @@ class SchoolEventFactory extends Factory
     public function definition(): array
     {
         return [
+            'MatriculeYR' => AcademicYear::factory(),
             // 'MatriculeSE' handled by trait
             'NameSE' => $this->faker->words(4, true),
             'DescriptionSE' => $this->faker->sentence(),

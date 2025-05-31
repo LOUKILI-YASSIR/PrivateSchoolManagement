@@ -128,7 +128,74 @@ const CheckUserResetPassword = () => {
       const response = await apiServices.postData('/check-user', loginData);
 
       if (response.status === 'success') {
-        nav(`/YLSchool/select-reset-password`, { state: { user: {...response.data} } });
+        // Check if the user has 2FA methods
+        if (response.data.active_2fa_methods && response.data.active_2fa_methods.length > 0) {
+          const methods = response.data.active_2fa_methods.map(methodId => {
+            // Create a method object for the verification flow
+            // This should match the structure expected by other components
+            const methodNames = {
+              'google': 'Google Authenticator',
+              'email': 'Email Verification',
+              'sms': 'SMS Verification',
+              'db': 'Secret Code'
+            };
+            
+            return {
+              id: methodId,
+              name: methodNames[methodId] || methodId,
+              description: `Verify using ${methodNames[methodId] || methodId}`
+            };
+          });
+          
+          // Create verification flow object
+          const verificationFlow = {
+            allMethods: methods,
+            currentIndex: 0,
+            isLastMethod: methods.length === 1
+          };
+          
+          // Start with the first method
+          const firstMethod = methods[0];
+          
+          // Navigate to the appropriate verification method
+          switch (firstMethod.id) {
+            case 'google':
+              nav('/YLSchool/reset-password-request-totp', { 
+                state: { 
+                  user: {...response.data},
+                  verificationFlow
+                }
+              });
+              break;
+              
+            case 'email':
+            case 'sms':
+              nav('/YLSchool/email-sms-reset-password', { 
+                state: { 
+                  user: {...response.data},
+                  verificationFlow,
+                  type: firstMethod.id
+                }
+              });
+              break;
+              
+            case 'db':
+              nav('/YLSchool/reset-password-request', { 
+                state: { 
+                  user: {...response.data},
+                  verificationFlow
+                }
+              });
+              break;
+              
+            default:
+              // Fallback to regular reset password selection
+              nav(`/YLSchool/select-reset-password`, { state: { user: {...response.data} } });
+          }
+        } else {
+          // Just go to the selection screen if no 2FA methods
+          nav(`/YLSchool/select-reset-password`, { state: { user: {...response.data} } });
+        }
         setSuccess('resetPassword.success.linkSent');
       } else {
         setError('resetPassword.error.general');

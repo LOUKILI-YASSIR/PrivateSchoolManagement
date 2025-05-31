@@ -26,6 +26,7 @@ class NoteFinal extends Model
         'MatriculeET',
         'GradeNF',
         'CommentaireNF',
+        'MatriculeYR',
     ];
 
     protected $casts = [
@@ -37,6 +38,11 @@ class NoteFinal extends Model
     public function etudiant()
     {
         return $this->belongsTo(Etudiant::class, 'MatriculeET', 'MatriculeET');
+    }
+
+    public function academicYear()
+    {
+        return $this->belongsTo(AcademicYear::class, 'MatriculeYR', 'MatriculeYR');
     }
 
     // Required method for GeneratesMatricule trait

@@ -14,5 +14,8 @@ export const useHandlesData = (ApiName) => {
         },
       });
     },
+    handleSetGrade: (matricule, grades) => {
+      
+    }
   };
 };

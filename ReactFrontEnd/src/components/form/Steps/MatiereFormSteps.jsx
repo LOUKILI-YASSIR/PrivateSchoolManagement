@@ -63,10 +63,10 @@ export const getFormStepsMt = () => {
                     propsLabel: "Niveaux",
                     options: (isLoading || error || !data || data?.data?.length === 0
                       ? [] // Fallback to empty array if data is not ready
-                      : data?.data.map((niveau) => ({
+                      : data?.data?.map((niveau) => ({
                           value: niveau.MatriculeNV,
                           label: niveau.NomNV+(niveau.parent?.NomNV ? ` (${niveau.parent?.NomNV})` : ""),
-                      }))),
+                      })) || []),
                     validation: commonValidations.required("Niveaux")
                   }),
                 generateField({

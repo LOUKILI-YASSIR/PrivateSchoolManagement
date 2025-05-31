@@ -15,11 +15,12 @@ return new class extends Migration
             $table->string('MatriculeGP')->primary();
             $table->string('NameGP');
             $table->string('DescriptionGP')->nullable();
-            $table->string('StatusGP')->nullable();
+            $table->string('MatriculeYR');
             $table->string('MatriculeNV');
             $table->timestamps();
 
-            $table->foreign('MatriculeNV')->references('MatriculeNV')->on('niveaux')->onDelete('cascade');
+            $table->foreign('MatriculeNV')->references('MatriculeNV')->on('niveaux');
+            $table->foreign('MatriculeYR')->references('MatriculeYR')->on('academic_years');
         });
     }
 

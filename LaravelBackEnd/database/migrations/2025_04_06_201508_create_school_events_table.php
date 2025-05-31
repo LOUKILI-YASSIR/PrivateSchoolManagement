@@ -19,9 +19,11 @@ return new class extends Migration
             $table->string('LocationSE')->nullable();
             $table->date('DateSE');
             $table->string('MatriculeTS')->nullable();
+            $table->string('MatriculeYR');
             $table->timestamps();
 
             $table->foreign('MatriculeTS')->references('MatriculeTS')->on('time_slots')->onDelete('cascade');
+            $table->foreign('MatriculeYR')->references('MatriculeYR')->on('academic_years');
         });
     }
 

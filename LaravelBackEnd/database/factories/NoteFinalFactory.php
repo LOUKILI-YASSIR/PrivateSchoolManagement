@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\NoteFinal;
 use App\Models\Etudiant;
+use App\Models\AcademicYear;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,9 +21,10 @@ class NoteFinalFactory extends Factory
     public function definition(): array
     {
         return [
-            // 'matriculeNF' handled by trait
+            // 'MatriculeNF' handled by trait
+            'MatriculeYR' => AcademicYear::factory(),
             'MatriculeET' => Etudiant::factory(),
-            'GradeNF' => $this->faker->randomFloat(2, 5, 20), // Final grade, maybe slightly higher avg
+            'GradeNF' => $this->faker->randomFloat(2, 0, 20),
             'CommentaireNF' => $this->faker->optional()->sentence(),
         ];
     }

@@ -1,11 +1,14 @@
 <?php
 
 namespace App\Http\Controllers\API;
-
+use App\Models\Evaluation;
+use App\Models\EvaluationResult;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Traits\CrudOperations;
 use App\Models\EvaluationType;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class EvaluationTypeController extends Controller
 {
@@ -23,6 +26,15 @@ class EvaluationTypeController extends Controller
 
     // Define resource name for messages
     protected string $resourceName = 'Evaluation Type';
+    public function index(Request $request)
+{
+    $evaluationTypes = EvaluationType::withCount("evaluations")->get();
+    return response()->json([
+        'success' => true,
+        'data' => $evaluationTypes,
+        'message' => 'Evaluation types retrieved successfully.'
+    ]);
+}
 
     // Methods provided by CrudOperations trait
 }

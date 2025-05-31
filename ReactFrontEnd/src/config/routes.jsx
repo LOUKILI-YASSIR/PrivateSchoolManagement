@@ -4,13 +4,35 @@ import Main from "../pages/Main";
 import DashBoard from "../pages/DashBoard";
 import ErrorPage from "../components/errors/Errors";
 import Login from "../components/Auth/Login";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import ResetPasswordRequest from "../components/Auth/ResetPasswordRequest";
 import ResetPassword from "../components/Auth/ResetPassword";
 import SelectResetPasswordType from "../components/Auth/SelectResetPasswordType";
 import EmailSmsResetPassword from "../components/Auth/EmailSmsResetPassword";
 import CheckUserResetPassword from "../components/Auth/CheckUserResetPassword";
 import GoogleAuthResetPassword from "../components/Auth/GoogleAuthResetPassword";
+
+// Custom wrapper components to handle route context
+const GoogleAuthWrapper = () => {
+  const location = useLocation();
+  const isFromLogin = location.state?.verificationFlow !== undefined;
+  
+  return <GoogleAuthResetPassword isFromLogin={isFromLogin} />;
+};
+
+const EmailSmsWrapper = ({ type }) => {
+  const location = useLocation();
+  const isFromLogin = location.state?.verificationFlow !== undefined;
+  
+  return <EmailSmsResetPassword type={type} isFromLogin={isFromLogin} />;
+};
+
+const ResetPasswordRequestWrapper = () => {
+  const location = useLocation();
+  const isFromLogin = location.state?.verificationFlow !== undefined;
+  
+  return <ResetPasswordRequest isFromLogin={isFromLogin} />;
+};
 
 const routes = [
   {
@@ -55,7 +77,7 @@ const routes = [
       },
       {
         path: "Evaluations",
-        element: <Main ApiName="evaluations" />
+        element: <Main ApiName="evaluation-types" />
       },
       {
         path: "TimeTables",
@@ -73,7 +95,7 @@ const routes = [
   },
   {
     path: "/YLSchool/reset-password-request",
-    element: <ResetPasswordRequest />
+    element: <ResetPasswordRequestWrapper />
   },
   {
     path: "/YLSchool/reset-password",
@@ -85,11 +107,11 @@ const routes = [
   },
   {
     path: "/YLSchool/reset-password-request-sms",
-    element: <EmailSmsResetPassword type="sms" />
+    element: <EmailSmsWrapper type="sms" />
   },
   {
     path: "/YLSchool/reset-password-request-email",
-    element: <EmailSmsResetPassword type="email" />
+    element: <EmailSmsWrapper type="email" />
   },
   {
     path: "/YLSchool/check-user-reset-password",
@@ -97,7 +119,7 @@ const routes = [
   },
   {
     path: "/YLSchool/reset-password-request-totp",
-    element: <GoogleAuthResetPassword />
+    element: <GoogleAuthWrapper />
   },
   {
     path: "/",

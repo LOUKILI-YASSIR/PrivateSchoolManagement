@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('time_table_exceptions', function (Blueprint $table) {
             $table->string('MatriculeTE')->primary();
+            $table->string('MatriculeYR');
             $table->string('ExceptionTypeTE');
             $table->date('ExceptionDateTE');
             $table->boolean('IsFullDayTE')->default(false);
@@ -23,6 +24,7 @@ return new class extends Migration
 
             $table->foreign('MatriculeTS')->references('MatriculeTS')->on('time_slots')->onDelete('cascade');
             $table->foreign('NewMatriculeTS')->references('MatriculeTS')->on('time_slots')->onDelete('set null');
+            $table->foreign('MatriculeYR')->references('MatriculeYR')->on('academic_years');
         });
     }
 

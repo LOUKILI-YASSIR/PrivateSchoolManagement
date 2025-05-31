@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\Evaluation;
 use App\Models\Matiere;
 use App\Models\EvaluationType;
+use App\Models\AcademicYear;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -21,7 +22,7 @@ class EvaluationFactory extends Factory
     public function definition(): array
     {
         return [
-            // 'MatriculeEV' handled by trait
+            'MatriculeYR' => AcademicYear::factory(),
             'MatriculeMT' => Matiere::factory(),
             'MatriculeEP' => EvaluationType::factory(),
             'NbrEV' => $this->faker->numberBetween(1, 5), // e.g., Evaluation #1, #2 etc.
