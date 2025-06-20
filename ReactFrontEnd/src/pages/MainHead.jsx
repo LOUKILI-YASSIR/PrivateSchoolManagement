@@ -10,7 +10,7 @@ import { Button, Tooltip } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFileExport, faDownload } from "@fortawesome/free-solid-svg-icons";
 
-export default function Head () {
+export default function Head ( {userRole}) {
     const { data, TableName } = useContext(MainContext);
     const { fileExtension, IndexExportType } = useSelector(state=>state.Export);
     const isDarkMode = useSelector((state) => state?.theme?.darkMode || false);
@@ -101,7 +101,8 @@ export default function Head () {
           }}
         >
           <div className="h4">{Traduction(`${TableName}.list`)}</div>
-          <div className="flex items-center gap-2">
+          { userRole === "admin" && (
+<div className="flex items-center gap-2">
               <Tooltip title={Traduction("actions.quickExport", "Quick Export")}>
                   <span>
                       <Button
@@ -117,7 +118,7 @@ export default function Head () {
                               icon={isExporting ? faDownload : faFileExport}
                               className={`mr-2 ${isExporting ? 'animate-bounce' : ''}`}
                           />
-                          {isExporting ? Traduction("actions.exporting", "Exporting...") : Traduction("actions.exportTo", `Export to ${fileExtension.toUpperCase()}`)}
+                          {isExporting ? Traduction("actions.exporting", "Exporting...") : Traduction("actions.exportTo", { type: fileExtension.toUpperCase() })}
                       </Button>
                   </span>
               </Tooltip>
@@ -134,6 +135,7 @@ export default function Head () {
                 className="export-dialog"
               />
           </div>
+          )}
         </div>
     );
 }

@@ -15,8 +15,8 @@ export const useFormContext = () => {
   return context;
 };
 
-export const FormProvider = ({ children, matricule = null, row = null, setUserInfo }) => {
-  const { TableName } = useContext(MainContext);
+export const FormProvider = ({ children, matricule = null, row = null, setUserInfo, ExtraTableName = null }) => {
+  const { TableName = null } = useContext(MainContext) || {}; // make sure context is not null
   const { t: Traduction } = useTranslation();
   const isDarkMode = useSelector((state) => state?.theme?.darkMode || false);
   const [activeStep, setActiveStep] = useState(0);
@@ -26,12 +26,13 @@ export const FormProvider = ({ children, matricule = null, row = null, setUserIn
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' });
 
-  const defaultState = getDefaultState()[TableName.toUpperCase().replace(/\-\_\s/g,"")];
+const defaultState = getDefaultState()[
+  (TableName ? TableName : ExtraTableName).toUpperCase().replace(/[-_\s]/g, "")
+];
   const stateInit = {
     ...defaultState,
     ...row,
   };
-  console.log("stateInit",stateInit)
   const formMethods = useForm({
     mode: 'all',
     defaultValues: stateInit || {},

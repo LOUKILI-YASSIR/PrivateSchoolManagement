@@ -1,5 +1,6 @@
 import React, { createContext, useEffect, useState, useMemo, useCallback, useContext } from "react";
 import { useFetchData } from "../../api/queryHooks.jsx";
+import { useAuth } from "./AuthContext.jsx";
 
 export const MainContext = createContext();
 
@@ -12,6 +13,8 @@ export const useMainContext = () => {
 };
 
 export const MainProvider = ({ ApiName, children, columns: propColumns }) => {
+  const { userRole } = useAuth();
+  const MatriculeUT = sessionStorage.getItem("userID");
   const { 
     data: fetchResponse, 
     isLoading: isFetching, 
@@ -19,7 +22,7 @@ export const MainProvider = ({ ApiName, children, columns: propColumns }) => {
     isError,
     error, 
     refetch
-  } = useFetchData(ApiName);
+  } = userRole === "admin" ? useFetchData(ApiName) : useFetchData(ApiName+"/"+MatriculeUT);
 
   const [tableData, setTableData] = useState([]);
   const [Data,setData] = useState([]);

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('MatriculeNV');
             $table->string('MatriculeYR');
             $table->timestamps();
-
+            $table->integer('max_sessions_per_week')->default(0);
             $table->foreign('MatriculeNV')->references('MatriculeNV')->on('niveaux')->onDelete('cascade');
             $table->foreign('MatriculeYR')->references('MatriculeYR')->on('academic_years');
         });

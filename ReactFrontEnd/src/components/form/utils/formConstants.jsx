@@ -9,6 +9,7 @@ export const TYPE = {
     AUTO_COMPLETE_SELECT: "AUTO_COMPLETE_SELECT",
     NUMBER: "NUMBER",
     MULTI_SELECT: "MULTI_SELECT",
+    TIME_SLOT: "TIME_SLOT"
   };
   
   export const DEFAULT = {

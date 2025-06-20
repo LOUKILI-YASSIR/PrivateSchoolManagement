@@ -200,6 +200,27 @@ export const professeursColumns = (Traduction, FilterModeOptions) => [
     },
   },
   {
+  header: Traduction("Professeur.daily_hours_limit"),
+  accessorKey: "daily_hours_limit",
+  filterFn: "between", // يسمح بتصفية من - إلى
+  filterVariant: "range-slider", // شريط تمرير للفلترة
+  columnFilterModeOptions: [...FilterModeOptions["range"]],
+  size: 180,
+  minSize: 120,
+  Cell: ({ renderedCellValue }) => {
+    if (renderedCellValue === null || renderedCellValue === undefined) {
+      return renderEmptyCell(); // دالة تعرض "-" أو شيء فارغ
+    }
+
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'start', gap: '6px', width: '100%' }}>
+        <span style={{ fontWeight: 500 }}>{renderedCellValue}</span>
+        <span style={{ color: '#888', fontSize: '0.85em' }}>{Traduction("General.hours")}</span>
+      </div>
+    );
+  }
+},
+  {
     header: Traduction("Data.lieunaissance"),
     accessorKey: "user.LieuNaissancePL",
     filterFn: "fuzzy",

@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('NomBanquePR')->nullable();
             $table->string('RIBPR')->nullable();
             $table->string('MatriculeYR');
+            $table->integer('daily_hours_limit')->default(0);
             $table->string('MatriculeMT')->nullable();
             $table->string('MatriculeUT');
             $table->timestamps();

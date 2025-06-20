@@ -56,14 +56,14 @@ class GroupController extends Controller
                 ->withCount('etudiants')
                 ->withCount('professeurs')
                 ->get();
-        
+
             // Simplify niveau data to include only direct niveau name
             $groups = $groups->map(function ($group) {
                 $groupData = $group->toArray();
                 $groupData['niveauName'] = $group->niveau ? $group->niveau->NomNV : null;
                 return $groupData;
             });
-        
+
             return $this->successResponse($groups);
         } catch (\Exception $e) {
             return $this->handleException($e);
@@ -167,7 +167,7 @@ public function update(Request $request, $id)
 
             if(!empty($currentStudentIds)){
                 Etudiant::whereIn('MatriculeET', $currentStudentIds)
-                    ->update(['MatriculeGP' => $group->MatriculeGP, 'MatriculeNV' => $validatedData['MatriculeNV'] ?? null]);                
+                    ->update(['MatriculeGP' => $group->MatriculeGP, 'MatriculeNV' => $validatedData['MatriculeNV'] ?? null]);
             }
 
             if (!empty($studentsToAdd)) {
@@ -270,13 +270,13 @@ public function update(Request $request, $id)
      *
      * @return array
      */
-    public function getAllGroupsNamesArray()
-    {
-        $noms = Group::pluck('NameGP')->toArray();
-        return [
-            'noms' => $noms,
-        ];
-    }
+public function getAllGroupsNamesArray()
+{
+    $groups = Group::select('NameGP', 'MatriculeGP')->get();
+    return [
+        'groups' => $groups,
+    ];
+}
 
     public function getAllGroupsSelect($MatriculePR = null)
     {
@@ -336,4 +336,133 @@ public function getGroupsByNiveau($MatriculeNV = null)
         return $this->handleException($e);
     }
 }
+public function getFrontFormDataMerged($MatriculeGP = null)
+{
+    try {
+        // 1. جلب جميع المستويات
+        $niveaux = DB::table('niveaux')
+            ->select('MatriculeNV', 'NomNV')
+            ->get();
+
+        // 2. جلب أسماء كل المجموعات
+        $groupNames = Group::pluck('NameGP')->toArray();
+        $countET=Etudiant::count();
+        if($countET>0){
+        // 3. الطلاب الغير مرتبطين
+        $unassignedEtudiants = Etudiant::with('user')
+            ->whereNull('MatriculeGP')
+            ->get()
+            ->map(function ($etudiant) {
+                return [
+                    'MatriculeET' => $etudiant->MatriculeET,
+                    'FullNameET'  => $etudiant->user
+                        ? "{$etudiant->user->PrenomPL} {$etudiant->user->NomPL}"
+                        : 'Unknown',
+                ];
+            });
+        // 4. الطلاب المرتبطين بالمجموعة المحددة
+        $selectedEtudiants = $MatriculeGP
+            ? Etudiant::with('user')
+                ->where('MatriculeGP', $MatriculeGP)
+                ->get()
+                ->map(function ($etudiant) {
+                    return [
+                        'MatriculeET' => $etudiant->MatriculeET,
+                        'FullNameET'  => $etudiant?->user
+                            ? "{$etudiant?->user?->PrenomPL} {$etudiant?->user?->NomPL}"
+                            : 'Unknown',
+                    ];
+                })
+            : collect([]);
+        // دمج الطلاب
+        $etudiants = array_merge(
+    $unassignedEtudiants->toArray(),
+            $selectedEtudiants->toArray()
+        );
+    }
+    $countPr= Professeur::count();
+    if($countPr> 0){
+            // 5. الأساتذة الغير مرتبطين بأي مجموعة
+        $unassignedProfesseurs = Professeur::doesntHave('groups')
+            ->with('user')
+            ->get()
+            ->map(function ($prof) {
+                return [
+                    'MatriculePR' => $prof->MatriculePR,
+                    'FullNamePR'  => $prof->user
+                        ? "{$prof->user->PrenomPL} {$prof->user->NomPL}"
+                        : 'Unknown',
+                ];
+            });
+
+        // 6. الأساتذة المرتبطين بالمجموعة المحددة
+        $selectedProfesseurs = $MatriculeGP
+            ? GroupProfesseur::with('professeur.user')
+                ->where('MatriculeGP', $MatriculeGP)
+                ->get()
+                ->map(function ($gp) {
+                    $prof = $gp->professeur;
+                    return [
+                        'MatriculePR' => $prof->MatriculePR,
+                        'FullNamePR'  => $prof && $prof->user
+                            ? "{$prof->user->PrenomPL} {$prof->user->NomPL}"
+                            : 'Unknown',
+                    ];
+                })
+            : collect([]);
+
+        // دمج الأساتذة
+        $professeurs = array_merge(
+    $unassignedProfesseurs->toArray(),
+            $selectedProfesseurs->toArray()
+        );
+
+            }
+        return response()->json([
+            'niveaux'       => $niveaux,
+            'noms'    => $groupNames,
+            'etudiants'     => $etudiants ?? [],
+            'selectedET'    => $selectedEtudiants ?? [],
+            'professeurs'   => $professeurs ?? [],
+            'selectedPR'    => $selectedProfesseurs ?? [],
+        ]);
+    } catch (\Exception $e) {
+        Log::error($e->getMessage());
+        return response()->json(['error' => 'Erreur lors de la récupération des données'], 500);
+    }
+}
+public function show($matricule)
+{
+    $professeur = Professeur::where('MatriculeUT', $matricule)->first();
+
+    if (!$professeur) {
+        return response()->json(['error' => 'Professeur non trouvé'], 404);
+    }
+
+    $groups = $professeur->groups()
+        ->with(['niveau'])
+        ->withCount(['etudiants', 'professeurs'])
+        ->get()
+        ->map(function ($group) {
+            $niveau = $group->niveau;
+
+            // تحويل كائن niveau إلى مصفوفة وتغيير المفتاح
+            $niveauData = $niveau
+                ? array_merge(
+                    $niveau->toArray(),
+                    ['niveauName' => $niveau->NomNV]
+                )
+                : null;
+
+            return array_merge(
+                $group->toArray(),
+                ['niveau' => $niveauData]
+            );
+        })
+        ->values();
+
+    return response()->json($groups);
+}
+
+
 }

@@ -7,6 +7,7 @@ import EMAIL from "../../Fields/EmailField.jsx"
 import DATE from "../../Fields/DateField.jsx"
 import IMAGE from "../../Fields/ImageField.jsx"
 import MULTI_SELECT from "../../Fields/MultiSelectField.jsx"
+import TIME_SLOT from "../../Fields/TimeSlot.jsx"
 
 export const FieldComponents = {
   TEXT,
@@ -18,4 +19,5 @@ export const FieldComponents = {
   DATE,
   IMAGE,
   MULTI_SELECT,
+  TIME_SLOT,
 };

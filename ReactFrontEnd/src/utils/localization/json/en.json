@@ -497,7 +497,9 @@
     "deleteSelected": "Delete selected {{NomTable}}",
     "download": "Download in",
     "export": "Export",
-    "RefreshData": "Refresh Data"
+    "RefreshData": "Refresh Data",
+    "exporting": "Exporting...",
+    "exportTo": "Export to {{type}}"
   },
   "export": {
     "title": "Export",
@@ -604,7 +606,7 @@
   "regular-timetables": {
     "list": "Timetable list"
   },
-  "Data": { 
+  "Data": {
     "matricule": "Registration number",
     "image": "Image",
     "civilite": "Civility",
@@ -654,7 +656,7 @@
     "ProfPhone1": "Professor Phone 1",
     "ProfPhone2": "Professor Phone 2",
     "capacity": "Capacity",
-    "location": "Location", 
+    "location": "Location",
     "resources": "Resources",
     "floor": "Floor",
     "scheduledClasses": "Scheduled Classes",
@@ -694,7 +696,36 @@
     "tuteurEmail": "Guardian Email",
     "in": "in",
     "attendanceSummary": "Attendance Summary",
-    "attendance": "Attendance"
+    "attendance": "Attendance",
+    "finalNotesCount": "Final Notes Count",
+    "subjectsCount": "Subjects Count",
+    "sallesCount": "Rooms Count",
+    "niveauxCount": "Levels Count",
+    "regularTimeTablesCount": "Regular Time Tables Count",
+    "specialScheldulesCount": "Special Schedules Count",
+    "TimeTablesExceptionsCount": "Time Table Exceptions Count",
+    "schoolEventsCount": "School Events Count",
+    "teacherVocationsCount": "Teacher Vacations Count",
+    "notesCount": "Notes Count",
+    "evaluationsCount": "Evaluations Count",
+    "evaluationResultsCount": "Evaluation Results Count",
+    "gradeAdjustmentsCount": "Grade Adjustments Count",
+    "attendancesCount": "Attendances Count",
+    "successRate": "Success Rate",
+    "boysPercentage": "Boys Percentage",
+    "girlsPercentage": "Girls Percentage",
+    "passedCount": "Passed Count",
+    "failedCount": "Failed Count",
+    "NomBanquePR": "Bank Name",
+    "RIBPR": "Bank Account Number",
+    "NomMatiere": "Subject Name",
+    "CoefficientMatiere": "Subject Coefficient",
+    "TotalVocationDays": "Total Vacation Days",
+    "VacationOccurrences": "Vacation Occurrences",
+    "gradeRange": "Grade Range",
+    "professeurCount": "Teachers Count",
+    "CodeEvaluation": "Evaluation Code",
+    "descriptionEvaluation": "Evaluation Description"
   },
   "Inputs" : {
     "nationalite" : {
@@ -806,7 +837,7 @@
     "welcome": "Welcome",
     "stats": "Stats",
     "recentActivity": "Recent Activity"
-  }, 
+  },
   "resetPassword": {
     "error": {
       "general": "An error occurred while resetting your password. Please try again.",
@@ -851,7 +882,38 @@
       "useManualEntry": "Use manual entry instead",
       "enterCode": "Enter the 6-digit code from your authentication app",
       "copied": "Secret key copied to clipboard!"
-    }
+    },
+    "selectMethod": "Select Method",
+    "authApp": {
+      "titre": "Authenticator App",
+      "description": "Use your authenticator app to verify your identity"
+    },
+    "dbCode": {
+      "titre": "Security Question",
+      "description": "Answer your security question to verify your identity"
+    },
+    "email": {
+      "titre": "Email Verification",
+      "description": "Receive a verification code via email",
+      "verifyTitle": "Email Verification",
+      "verifyDescription": "Enter the verification code sent to your email"
+    },
+    "sms": {
+      "titre": "SMS Verification",
+      "description": "Receive a verification code via SMS",
+      "verifyTitle": "SMS Verification",
+      "verifyDescription": "Enter the verification code sent to your phone"
+    },
+    "success": {
+      "emailCodeSent": "Verification code has been sent to your email",
+      "smsCodeSent": "Verification code has been sent to your phone"
+    },
+    "wait": "Please wait...",
+    "title": "Reset Password",
+    "subtitle": "Choose a new password for your account",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "reset": "Reset Password"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -923,5 +985,180 @@
       "profession": "Profession",
       "contactDetails": "Contact Details"
     }
+  },
+  "formSteps": {
+    "timeSlot": {
+      "title": "Time Slot",
+      "addNew": "Add New Time Slot",
+      "edit": "Edit Time Slot",
+      "show": "Show Time Slots",
+      "hide": "Hide Time Slots",
+      "hour": "Hour",
+      "minute": "Minute",
+      "startTime": "Start Time",
+      "endTime": "End Time",
+      "errors": {
+        "selectBothTimes": "Please select both start and end times",
+        "endAfterStart": "End time must be after start time",
+        "updateFailed": "Failed to update time slot",
+        "deleteFailed": "Failed to delete time slot"
+      },
+      "success": {
+        "saved": "Time slot saved successfully",
+        "updated": "Time slot updated successfully",
+        "deleted": "Time slot deleted successfully"
+      }
+    },
+    "matiere": {
+      "title": "Subject Information",
+      "name": "Name",
+      "code": "Code",
+      "coefficient": "Coefficient",
+      "level": "Level",
+      "description": "Description",
+      "teachers": "Teachers",
+      "totalExams": "Total Number of Exams",
+      "examDetails": "Exam Details",
+      "examType": "Exam Type",
+      "examCount": "Number of Exams",
+      "errors": {
+        "nameRequired": "Name cannot be empty",
+        "nameExists": "This name is already used",
+        "invalidName": "Invalid name format",
+        "codeRequired": "Code is required",
+        "invalidCode": "Invalid code format",
+        "positiveCoefficient": "Coefficient must be positive",
+        "levelRequired": "Level is required",
+        "descriptionRequired": "Description is required",
+        "descriptionLength": "Description must not exceed 500 characters",
+        "positiveExams": "Number must be greater than 0",
+        "examSumMismatch": "Sum of exams ({{sum}}) must equal {{total}}",
+        "percentageSumMismatch": "Sum of percentages must equal 100% (current: {{current}}%)"
+      }
+    },
+    "teacher": {
+      "title": "Personal Information",
+      "civility": "Civility",
+      "profilePhoto": "Profile Photo",
+      "lastName": "Last Name",
+      "firstName": "First Name",
+      "gender": "Gender",
+      "birthDate": "Birth Date",
+      "birthPlace": "Birth Place",
+      "address": "Address",
+      "city": "City",
+      "postalCode": "Postal Code",
+      "country": "Country",
+      "phone": "Phone",
+      "email": "Email",
+      "subjects": "Subjects",
+      "groups": "Groups",
+      "errors": {
+        "civilityRequired": "Civility is required",
+        "invalidCivility": "Civility must be Mr., Mrs., or Miss",
+        "profilePhotoRequired": "Profile photo is required",
+        "lastNameRequired": "Last name is required",
+        "invalidLastName": "Last name must start with a capital letter, contain only valid names, and have a single space between words",
+        "firstNameRequired": "First name is required",
+        "invalidFirstName": "First name must start with a capital letter, contain only valid names, and have a single space between words",
+        "genderRequired": "Gender is required",
+        "invalidGender": "Gender must be Male or Female",
+        "birthDateRequired": "Birth date is required",
+        "futureBirthDate": "Birth date cannot be in the future",
+        "underage": "You must be at least 18 years old",
+        "birthPlaceRequired": "Birth place is required",
+        "addressRequired": "Address is required",
+        "cityRequired": "City is required",
+        "postalCodeRequired": "Postal code is required",
+        "invalidPostalCode": "Invalid postal code format",
+        "countryRequired": "Country is required",
+        "phoneRequired": "Phone number is required",
+        "phoneExists": "This phone number is already used by another user",
+        "invalidPhonePrefix": "Number must start with a valid country prefix",
+        "invalidPhoneFormat": "Phone number format is not valid for the selected country",
+        "emailRequired": "Email is required",
+        "emailExists": "This email address is already used by another user",
+        "nameCombinationExists": "This combination of first and last name is already used by another user"
+      }
+    }
+  },
+  "TimeTableManagement": {
+    "title": "Time Table Management",
+    "generateTimeTable": "Generate Time Table",
+    "timeSlots": "Time Slots",
+    "daysOfWeek": "Days of Week",
+    "timeTable": "Time Table",
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday",
+    "selectGroup": "Select Group",
+    "endTimeMustBeAfterStartTime": "End time must be after start time",
+    "pleaseSelectBothStartAndEndTimes": "Please select both start and end times",
+    "timeSlotUpdatedSuccessfully": "Time slot updated successfully",
+    "failedToUpdateTimeSlot": "Failed to update time slot",
+    "timeSlotSavedSuccessfully": "Time slot saved successfully",
+    "timeSlotDeletedSuccessfully": "Time slot deleted successfully",
+    "failedToDeleteTimeSlot": "Failed to delete time slot",
+    "hour": "Hour",
+    "minute": "Minute",
+    "hideTimeSlots": "Hide Time Slots",
+    "showTimeSlots": "Show Time Slots",
+    "addNewTimeSlot": "Add New Time Slot",
+    "editTimeSlot": "Edit Time Slot",
+    "startTime": "Start Time",
+    "endTime": "End Time",
+    "update": "Update",
+    "noTimeSlotsAvailable": "No time slots available",
+    "edit": "Edit",
+    "delete": "Delete",
+    "pleaseSelectAtLeastOneDay": "Please select at least one day",
+    "daysSavedSuccessfully": "Days saved successfully",
+    "failedToSaveDays": "Failed to save days",
+    "configureDays": "Configure Days",
+    "save": "Save",
+    "selectDays": "Select Days",
+    "configureTimeSlots": "Configure Time Slots",
+    "loadingDays": "Loading days",
+    "loadingTimeSlots": "Loading time slots"
+  },
+  "timeSlots": {
+    "title": "Time Slots",
+    "startTime": "Start Time",
+    "endTime": "End Time",
+    "addTimeSlot": "Add Time Slot",
+    "editTimeSlot": "Edit Time Slot",
+    "deleteTimeSlot": "Delete Time Slot",
+    "confirmDelete": "Are you sure you want to delete this time slot?",
+    "validation": {
+      "startTimeRequired": "Start time is required",
+      "endTimeRequired": "End time is required",
+      "invalidTimeRange": "End time must be after start time",
+      "overlappingTimeSlot": "This time slot overlaps with an existing one"
+    }
+  },
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "filter": "Filter",
+    "noResults": "No results found",
+    "error": "An error occurred",
+    "success": "Operation completed successfully",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "finish": "Finish",
+    "close": "Close",
+    "yes": "Yes",
+    "no": "No"
   }
 }

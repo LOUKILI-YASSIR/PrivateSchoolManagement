@@ -7,19 +7,19 @@ import FormActions from './components/FormActions';
 import { GetSteps } from './Steps/SelectedSteps';
 import { Snackbar, Alert } from '@mui/material';
 
-const FormContent = ({ matricule = null, row = null, setButtons, setUserInfo }) => {
+const FormContent = ({ ExtraTableName = null ,refetch, matricule = null, row = null, setButtons, setUserInfo }) => {
   
-  const { TableName } = useContext(MainContext);
+  const { TableName = null } = useContext(MainContext) || {}; // make sure context is not null
   const formContext = useFormContext();
   const { notification, handleCloseNotification } = formContext;
-  const steps = GetSteps(TableName, formContext,row);
+  const steps = GetSteps(TableName ? TableName : ExtraTableName, formContext,row);
   
   return (
     <>
       <form>
-        <FormStepper steps={steps} />
+        <FormStepper steps={steps}  />
         <FormFields steps={steps} row={row} matricule={matricule}/>
-        <FormActions steps={steps} setButtons={setButtons} matricule={matricule} setUserInfo={setUserInfo} TypeOpt={row && typeof row === "object" ? "EDIT" : "ADD"}/>
+        <FormActions ExtraTableName={ExtraTableName} refetch={refetch} steps={steps} setButtons={setButtons} matricule={matricule} setUserInfo={setUserInfo} TypeOpt={row && typeof row === "object" ? "EDIT" : "ADD"}/>
       </form>
       {notification && (
         <Snackbar

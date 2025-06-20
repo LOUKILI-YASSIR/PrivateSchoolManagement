@@ -188,7 +188,9 @@
     "deleteSelected": "Eliminar {{NomTable}} seleccionados",
     "download": "Descargar en",
     "export": "Exportar",
-    "RefreshData": "Actualizar datos"
+    "RefreshData": "Actualizar datos",
+    "exporting": "Exportando...",
+    "exportTo": "Exportar a {{type}}"
   },
   "export": {
     "title": "Exportar",
@@ -385,7 +387,35 @@
     "tuteurEmail": "Correo del Tutor",
     "in": "en",
     "attendanceSummary": "Resumen de Asistencia",
-    "attendance": "Asistencia"
+    "attendance": "Asistencia",
+    "finalNotesCount": "Número de notas finales",
+    "subjectsCount": "Número de materias",
+    "sallesCount": "Número de aulas",
+    "niveauxCount": "Número de niveles",
+    "regularTimeTablesCount": "Número de horarios regulares",
+    "specialScheldulesCount": "Número de horarios especiales",
+    "TimeTablesExceptionsCount": "Número de excepciones de horario",
+    "schoolEventsCount": "Número de eventos escolares",
+    "teacherVocationsCount": "Número de vacaciones de profesores",
+    "notesCount": "Número de notas",
+    "evaluationResultsCount": "Número de resultados de evaluación",
+    "gradeAdjustmentsCount": "Número de ajustes de calificaciones",
+    "attendancesCount": "Número de asistencias",
+    "successRate": "Tasa de éxito",
+    "boysPercentage": "Porcentaje de niños",
+    "girlsPercentage": "Porcentaje de niñas",
+    "passedCount": "Número de aprobados",
+    "failedCount": "Número de suspensos",
+    "NomBanquePR": "Nombre del banco",
+    "RIBPR": "Número de cuenta bancaria",
+    "NomMatiere": "Nombre de la materia",
+    "CoefficientMatiere": "Coeficiente de la materia",
+    "TotalVocationDays": "Total de días de vacaciones",
+    "VacationOccurrences": "Ocurrencias de vacaciones",
+    "gradeRange": "Rango de calificaciones",
+    "professeurCount": "Número de profesores",
+    "CodeEvaluation": "Código de evaluación",
+    "descriptionEvaluation": "Descripción de la evaluación"
   },
   "Inputs": {
     "nationalite": {}
@@ -478,7 +508,6 @@
     "year": "Año",
     "percentage": "Porcentaje",
     "performance": "Rendimiento",
-    "success": "Éxito",
     "failure": "Fracaso",
     "from": "Desde",
     "to": "Hasta"
@@ -504,7 +533,42 @@
     "requestSubtitle": "Introduzca su dirección de correo electrónico, nombre de usuario o número de teléfono para recibir un enlace de restablecimiento.",
     "returnToLogin": "Volver al inicio de sesión",
     "sending": "Enviando…",
-    "sendLink": "Enviar enlace de restablecimiento"
+    "sendLink": "Enviar enlace de restablecimiento",
+    "selectMethod": "Seleccionar método",
+    "authApp": {
+      "title": "Aplicación de autenticación",
+      "description": "Use su aplicación de autenticación para verificar su identidad"
+    },
+    "dbCode": {
+      "title": "Pregunta de seguridad",
+      "description": "Responda a su pregunta de seguridad para verificar su identidad"
+    },
+    "email": {
+      "title": "Verificación por correo electrónico",
+      "description": "Reciba un código de verificación por correo electrónico"
+    },
+    "sms": {
+      "title": "Verificación por SMS",
+      "description": "Reciba un código de verificación por SMS"
+    },
+    "email": {
+      "verifyTitle": "Verificación por correo electrónico",
+      "verifyDescription": "Ingrese el código de verificación enviado a su correo electrónico"
+    },
+    "sms": {
+      "verifyTitle": "Verificación por SMS",
+      "verifyDescription": "Ingrese el código de verificación enviado a su teléfono"
+    },
+    "success": {
+      "emailCodeSent": "El código de verificación ha sido enviado a su correo electrónico",
+      "smsCodeSent": "El código de verificación ha sido enviado a su teléfono"
+    },
+    "wait": "Por favor espere...",
+    "title": "Restablecer contraseña",
+    "subtitle": "Elija una nueva contraseña para su cuenta",
+    "newPassword": "Nueva contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "reset": "Restablecer contraseña"
   },
   "students": {
     "status": {
@@ -640,5 +704,180 @@
     "next": "Siguiente",
     "previous": "Anterior",
     "cancel": "Cancelar"
+  },
+  "formSteps": {
+    "timeSlot": {
+      "title": "Franja Horaria",
+      "addNew": "Añadir Nueva Franja",
+      "edit": "Editar Franja",
+      "show": "Mostrar Franjas",
+      "hide": "Ocultar Franjas",
+      "hour": "Hora",
+      "minute": "Minuto",
+      "startTime": "Hora de Inicio",
+      "endTime": "Hora de Fin",
+      "errors": {
+        "selectBothTimes": "Por favor seleccione la hora de inicio y fin",
+        "endAfterStart": "La hora de fin debe ser posterior a la hora de inicio",
+        "updateFailed": "Error al actualizar la franja horaria",
+        "deleteFailed": "Error al eliminar la franja horaria"
+      },
+      "success": {
+        "saved": "Franja horaria guardada con éxito",
+        "updated": "Franja horaria actualizada con éxito",
+        "deleted": "Franja horaria eliminada con éxito"
+      }
+    },
+    "matiere": {
+      "title": "Información de la Materia",
+      "name": "Nombre",
+      "code": "Código",
+      "coefficient": "Coeficiente",
+      "level": "Nivel",
+      "description": "Descripción",
+      "teachers": "Profesores",
+      "totalExams": "Número Total de Exámenes",
+      "examDetails": "Detalles de Exámenes",
+      "examType": "Tipo de Examen",
+      "examCount": "Número de Exámenes",
+      "errors": {
+        "nameRequired": "El nombre no puede estar vacío",
+        "nameExists": "Este nombre ya está en uso",
+        "invalidName": "Formato de nombre inválido",
+        "codeRequired": "El código es requerido",
+        "invalidCode": "Formato de código inválido",
+        "positiveCoefficient": "El coeficiente debe ser positivo",
+        "levelRequired": "El nivel es requerido",
+        "descriptionRequired": "La descripción es requerida",
+        "descriptionLength": "La descripción no debe exceder 500 caracteres",
+        "positiveExams": "El número debe ser mayor que 0",
+        "examSumMismatch": "La suma de exámenes ({{sum}}) debe ser igual a {{total}}",
+        "percentageSumMismatch": "La suma de porcentajes debe ser igual a 100% (actual: {{current}}%)"
+      }
+    },
+    "teacher": {
+      "title": "Información Personal",
+      "civility": "Tratamiento",
+      "profilePhoto": "Foto de Perfil",
+      "lastName": "Apellido",
+      "firstName": "Nombre",
+      "gender": "Género",
+      "birthDate": "Fecha de Nacimiento",
+      "birthPlace": "Lugar de Nacimiento",
+      "address": "Dirección",
+      "city": "Ciudad",
+      "postalCode": "Código Postal",
+      "country": "País",
+      "phone": "Teléfono",
+      "email": "Correo Electrónico",
+      "subjects": "Materias",
+      "groups": "Grupos",
+      "errors": {
+        "civilityRequired": "El tratamiento es requerido",
+        "invalidCivility": "El tratamiento debe ser Sr., Sra. o Srta.",
+        "profilePhotoRequired": "La foto de perfil es requerida",
+        "lastNameRequired": "El apellido es requerido",
+        "invalidLastName": "El apellido debe comenzar con mayúscula, contener solo nombres válidos y tener un solo espacio entre palabras",
+        "firstNameRequired": "El nombre es requerido",
+        "invalidFirstName": "El nombre debe comenzar con mayúscula, contener solo nombres válidos y tener un solo espacio entre palabras",
+        "genderRequired": "El género es requerido",
+        "invalidGender": "El género debe ser Hombre o Mujer",
+        "birthDateRequired": "La fecha de nacimiento es requerida",
+        "futureBirthDate": "La fecha de nacimiento no puede ser en el futuro",
+        "underage": "Debes tener al menos 18 años",
+        "birthPlaceRequired": "El lugar de nacimiento es requerido",
+        "addressRequired": "La dirección es requerida",
+        "cityRequired": "La ciudad es requerida",
+        "postalCodeRequired": "El código postal es requerido",
+        "invalidPostalCode": "Formato de código postal inválido",
+        "countryRequired": "El país es requerido",
+        "phoneRequired": "El número de teléfono es requerido",
+        "phoneExists": "Este número de teléfono ya está siendo usado por otro usuario",
+        "invalidPhonePrefix": "El número debe comenzar con un prefijo de país válido",
+        "invalidPhoneFormat": "El formato del número no es válido para el país seleccionado",
+        "emailRequired": "El correo electrónico es requerido",
+        "emailExists": "Esta dirección de correo electrónico ya está siendo usada por otro usuario",
+        "nameCombinationExists": "Esta combinación de nombre y apellido ya está siendo usada por otro usuario"
+      }
+    }
+  },
+  "TimeTableManagement": {
+    "title": "Gestión de horarios",
+    "generateTimeTable": "Generar horario",
+    "timeSlots": "Franjas horarias",
+    "daysOfWeek": "Días de la semana",
+    "timeTable": "Horario",
+    "monday": "Lunes",
+    "tuesday": "Martes",
+    "wednesday": "Miércoles",
+    "thursday": "Jueves",
+    "friday": "Viernes",
+    "saturday": "Sábado",
+    "sunday": "Domingo",
+    "selectGroup": "Seleccionar grupo",
+    "endTimeMustBeAfterStartTime": "La hora de fin debe ser posterior a la hora de inicio",
+    "pleaseSelectBothStartAndEndTimes": "Por favor seleccione la hora de inicio y fin",
+    "timeSlotUpdatedSuccessfully": "Franja horaria actualizada con éxito",
+    "failedToUpdateTimeSlot": "Error al actualizar la franja horaria",
+    "timeSlotSavedSuccessfully": "Franja horaria guardada con éxito",
+    "timeSlotDeletedSuccessfully": "Franja horaria eliminada con éxito",
+    "failedToDeleteTimeSlot": "Error al eliminar la franja horaria",
+    "hour": "Hora",
+    "minute": "Minuto",
+    "hideTimeSlots": "Ocultar franjas horarias",
+    "showTimeSlots": "Mostrar franjas horarias",
+    "addNewTimeSlot": "Añadir nueva franja horaria",
+    "editTimeSlot": "Editar franja horaria",
+    "startTime": "Hora de inicio",
+    "endTime": "Hora de fin",
+    "update": "Actualizar",
+    "noTimeSlotsAvailable": "No hay franjas horarias disponibles",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "pleaseSelectAtLeastOneDay": "Por favor seleccione al menos un día",
+    "daysSavedSuccessfully": "Días guardados con éxito",
+    "failedToSaveDays": "Error al guardar los días",
+    "configureDays": "Configurar días",
+    "save": "Guardar",
+    "selectDays": "Seleccionar días",
+    "configureTimeSlots": "Configurar franjas horarias",
+    "loadingDays": "Cargando días",
+    "loadingTimeSlots": "Cargando franjas horarias"
+  },
+  "timeSlots": {
+    "title": "Franjas Horarias",
+    "startTime": "Hora de Inicio",
+    "endTime": "Hora de Fin",
+    "addTimeSlot": "Añadir Franja",
+    "editTimeSlot": "Editar Franja",
+    "deleteTimeSlot": "Eliminar Franja",
+    "confirmDelete": "¿Está seguro de que desea eliminar esta franja horaria?",
+    "validation": {
+      "startTimeRequired": "La hora de inicio es obligatoria",
+      "endTimeRequired": "La hora de fin es obligatoria",
+      "invalidTimeRange": "La hora de fin debe ser posterior a la hora de inicio",
+      "overlappingTimeSlot": "Esta franja se superpone con una existente"
+    }
+  },
+  "common": {
+    "loading": "Cargando...",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "add": "Añadir",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "noResults": "No se encontraron resultados",
+    "error": "Ha ocurrido un error",
+    "success": "Operación completada con éxito",
+    "confirm": "Confirmar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "finish": "Finalizar",
+    "close": "Cerrar",
+    "yes": "Sí",
+    "no": "No"
   }
 }

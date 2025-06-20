@@ -344,7 +344,7 @@ const GoogleAuthResetPassword = ({ isFromLogin }) => {
         {/* Back Button */}
         <IconButton
           component={Link}
-          to="/YLSchool/select-reset-password"
+          to={state?.fromLogin ? '/YLSchool/Login' :  "/YLSchool/select-reset-password"}
           sx={{
             position: 'absolute',
             top: 20,

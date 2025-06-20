@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Traits\CrudOperations;
 use App\Models\Niveau;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -156,5 +157,13 @@ class NiveauController extends Controller
         } catch (\Exception $e) {
             return $this->handleException($e);
         }
+    }
+    public function getAllNiveauxWithGroups()
+    {
+        return Niveau::with("groups.professeurs.user")->get()->toArray();
+    }
+    public function getAllNiveauxWithGroupsByUsed($userid = null)
+    {
+        return User::with("professeur.groups")->where("MatriculeUT",$userid)->first()?->professeur?->groups?->toArray() ?? [];
     }
 }

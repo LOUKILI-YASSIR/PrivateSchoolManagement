@@ -4,11 +4,11 @@ import { useFormContext } from '../context/FormContext';
 import { useFormSubmission } from '../hooks/useFormSubmission';
 import { useFormValidation } from '../hooks/useFormValidation';
 
-export default function FormActions({ steps, setButtons, StepOpt, matricule, TypeOpt, setUserInfo }) {
-  const { activeStep, setActiveStep, Traduction } = useFormContext();
+export default function FormActions({ ExtraTableName = null ,refetch, steps, setButtons, StepOpt, matricule, TypeOpt, setUserInfo }) {
+  const { activeStep, setActiveStep, Traduction, setIsSubmitting } = useFormContext();
   const { validateStep } = useFormValidation();
   
-const { handleSubmit } = useFormSubmission({StepOpt, TypeOpt, matricule});
+const { handleSubmit } = useFormSubmission({ExtraTableName, StepOpt, TypeOpt, matricule});
 
 const handleNext = async () => {
     const currentStep = steps[activeStep];
@@ -42,7 +42,17 @@ const handleNext = async () => {
     } else {
       Btns.push({
         value: Traduction('form.submit'),
-        handleClick: handleSubmit,
+        handleClick: () => {
+          handleSubmit().then(() => {
+            setIsSubmitting(true);
+            refetch();
+          
+            // After 5 seconds, set isSubmitting to false
+            setTimeout(() => {
+              setIsSubmitting(false);
+            }, 5000); // 5000 ms = 5 seconds
+          });
+        },
         color: 'primary',
       });
     }

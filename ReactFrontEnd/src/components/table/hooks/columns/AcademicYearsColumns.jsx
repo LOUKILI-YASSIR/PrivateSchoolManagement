@@ -585,7 +585,7 @@ export const AcademicYearsColumns = (Traduction, FilterModeOptions) => [
       ...FilterModeOptions["comparison"],
       ...FilterModeOptions["range"],
     ],
-    size: 150,
+    size: 240,
     Cell: ({ renderedCellValue }) => {
       if (renderedCellValue === undefined || renderedCellValue === null) return renderEmptyCell();
       const color = renderedCellValue >= 50 ? '#4caf50' : '#f44336';

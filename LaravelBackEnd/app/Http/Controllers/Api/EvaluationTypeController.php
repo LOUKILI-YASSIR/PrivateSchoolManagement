@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Traits\CrudOperations;
 use App\Models\EvaluationType;
+use App\Models\User;
 use Illuminate\Support\Facades\Log;
 
 class EvaluationTypeController extends Controller
@@ -35,6 +36,26 @@ class EvaluationTypeController extends Controller
         'message' => 'Evaluation types retrieved successfully.'
     ]);
 }
-
+public function show($matriculeUT)
+{
+    $user = User::with(['etudiant.niveau.matieres.evaluations.evaluationType','professeur.matiere.evaluations.evaluationType'])->where('MatriculeUT', $matriculeUT)->first();
+    $matieres = [];
+    $evaluations = [];
+    if($user->RoleUT === "etudiant"){
+        $matieres = $user->etudiant->niveau->matieres;
+        Log::info("ev: ",$matieres->toArray());
+        foreach($matieres as $mt){
+            foreach($mt->evaluations as $ev){
+                array_push($evaluations,$ev->evaluationType);
+            };
+        };
+    }else if($user->RoleUT === "professeur"){
+        foreach($user->professeur->matiere->evaluations as $ev){
+            Log::info("ev: ".(string) $ev);
+            array_push($evaluations,$ev->evaluationType);
+        };
+    };
+    return response()->json($evaluations);
+}
     // Methods provided by CrudOperations trait
 }

@@ -1,12 +1,12 @@
 export const PROFESSEURS = {
-  CINPR: '', // National ID number
+  CINPR: 'AAAAAAAAAAA', // National ID number
   CivilitePR: 'M.', // Civility (M., Mme, Mlle)
   EmailPR: 'a@gmail.com', // Professor's email
-  PhonePR: '+212123456789', // Professor's phone number
+  PhonePR: '+212623456789', // Professor's phone number
   DateEmbauchePR: '', // Hire date
   Salaire: 0, // Salary (numeric)
   NomBanquePR: '', // Bank name
-  RIBPR: '', // Bank RIB
+  RIBPR: 'ADHUPAZIODHOPAZIHDOIPJA', // Bank RIB
   NomPL: '', // Last name
   PrenomPL: '', // First name
   GenrePL: 'Homme', // Gender (Homme, Femme)
@@ -14,9 +14,13 @@ export const PROFESSEURS = {
   VillePL: 'Meknes', // City
   CodePostalPL: '50000', // Postal code
   PaysPL: 'MA', // Country
-  NationalitePR: 'MA', // Nationality
-  LieuNaissancePL: '', // Place of birth
-  DateNaissancePL: '', // Date of birth
+  NationalitePL: 'MA', // Nationality
+  LieuNaissancePL: 'Meknes', // Place of birth
+  DateNaissancePL: '11/11/2001', // Date of birth
+  DateEmbauchePR: '11/11/2001', // Date of birth
   ObservationPL: '', // Observations
-  ProfileFileNamePL: '/uploads/default.jpg'
+  ProfileFileNamePL: '/uploads/default.jpg',
+  SalairePR:111,
+  NomBanquePR:"Barid",
+  'daily_hours_limit': 2
 };

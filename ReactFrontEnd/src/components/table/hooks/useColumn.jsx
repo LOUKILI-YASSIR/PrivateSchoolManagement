@@ -32,17 +32,17 @@ export const useColumns = (data, TableName) => {
     };
 
     const tables = {
-      etudiants: etudiantsColumns(Traduction, FilterModeOptions),
-      professeurs: professeursColumns(Traduction, FilterModeOptions),
-      groups: groupColumns(Traduction, FilterModeOptions),
-      "academic-years": AcademicYearsColumns(Traduction, FilterModeOptions),
-      salles: sallesColumns(Traduction, FilterModeOptions),
-      matieres: matiereColumns(Traduction, FilterModeOptions),
-      "evaluation-types": evaluationsColumns(Traduction, FilterModeOptions),
-      niveaux: niveauxColumns(Traduction, FilterModeOptions),
+      etudiants: () => etudiantsColumns(Traduction, FilterModeOptions),
+      professeurs: () => professeursColumns(Traduction, FilterModeOptions),
+      groups: () => groupColumns(Traduction, FilterModeOptions),
+      "academic-years": () => AcademicYearsColumns(Traduction, FilterModeOptions),
+      salles: () => sallesColumns(Traduction, FilterModeOptions),
+      matieres: () => matiereColumns(Traduction, FilterModeOptions),
+      "evaluation-types": () => evaluationsColumns(Traduction, FilterModeOptions),
+      niveaux: () => niveauxColumns(Traduction, FilterModeOptions),
     };
 
-    return tables[TableName] || { columns: [], visibility: {} };
+    return tables[TableName]() || { columns: [], visibility: {} };
   }, [data, TableName, Traduction]);
 
   return result;

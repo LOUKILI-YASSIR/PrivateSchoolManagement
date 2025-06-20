@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Traits\CrudOperations;
+use App\Models\User;
 use App\Models\Evaluation;
 use Illuminate\Http\Request;
 
@@ -40,21 +41,18 @@ class EvaluationController extends Controller
                 $niveau = $evaluation->matiere->niveau;
                 if ($niveau) {
                     $niveauName = $niveau->NomNV;
-                    $parentNiveau = Option::where($niveau->Matricule);
-            
-                    $fullNiveauName = $parentNiveau
-                        ? "{$niveauName} ({$parentNiveau->NomNV})"
-                        : $niveauName;
-            
+
+                    $fullNiveauName = $niveauName;
+
                     $evaluation->niveau_name = $fullNiveauName;
                 }
                 $results = $evaluation->evaluationResults;
 
-                if ($results && $results->count() > 0) {                
+                if ($results && $results->count() > 0) {
                     // Min and Max GradeER
                     $minGrade = $results->min('GradeER');
                     $maxGrade = $results->max('GradeER');
-                
+
                     // Assign to evaluation object for later use if needed
                     $evaluation->min_grade = $minGrade;
                     $evaluation->max_grade = $maxGrade;

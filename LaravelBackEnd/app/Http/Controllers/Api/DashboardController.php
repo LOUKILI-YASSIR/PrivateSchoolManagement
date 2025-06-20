@@ -9,7 +9,10 @@ use App\Models\Professeur;
 use App\Models\Matiere;
 use App\Models\Attendance;
 use App\Models\Evaluation;
-use App\Models\EmploiDuTemps;
+use App\Models\RegularTimeTable;
+use App\Models\Group;
+use App\Models\DayWeek;
+use App\Models\TimeSlot;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -18,186 +21,108 @@ use Exception;
 
 class DashboardController extends Controller
 {
-    public function adminDashboard(): JsonResponse
+
+      //  { name: 'Garçons', value: 60 },
+    //{ name: 'Filles', value: 40 }
+    public function adminDashboard()
     {
         try {
             $stats = [
-                'total_students' => User::where('RoleUT', 'etudiant')->count(),
-                'total_teachers' => User::where('RoleUT', 'professeur')->count(),
-                'total_subjects' => Matiere::count(),
-                'total_staff' => User::where('RoleUT', 'admin')->count(),
+                'totalStudents' => Etudiant::count(),
+                'totalTeachers' => Professeur::count(),
+                'totalSubjects' => Matiere::count(),
+                'totalGroups' => Group::count(),
             ];
 
             $genderDistribution = [
-                'male' => User::where('RoleUT', 'etudiant')->where('sexe', 'Homme')->count(),
-                'female' => User::where('RoleUT', 'etudiant')->where('sexe', 'Femelle')->count(),
+                [
+                    'name' => 'male',
+                    'value' => Etudiant::whereHas('user', function ($query) {
+                                   $query->where('GenrePL', 'Homme');
+                               })->count()
+                ],
+                [
+                    'name' => 'female',
+                    'value' => Etudiant::whereHas('user', function ($query) {
+                                   $query->where('GenrePL', 'Femelle');
+                               })->count()
+                ],
             ];
-
-            $recentActivities = [];
-            try {
-                $recentActivities = EmploiDuTemps::latest()
-                    ->take(5)
-                    ->get();
-            } catch (Exception $e) {
-                Log::error('Recent Activities Error: ' . $e->getMessage());
-            }
-
-            $upcomingEvents = [];
-            try {
-                $upcomingEvents = EmploiDuTemps::where('date', '>=', now())
-                    ->orderBy('date')
-                    ->take(5)
-                    ->get();
-            } catch (Exception $e) {
-                Log::error('Upcoming Events Error: ' . $e->getMessage());
-            }
-
-            return $this->successResponse([
+            return [
                 'stats' => $stats,
                 'gender_distribution' => $genderDistribution,
-                'recent_activities' => $recentActivities,
-                'upcoming_events' => $upcomingEvents,
-            ], 'retrieved');
+            ];
         } catch (Exception $e) {
             return $this->handleException($e);
         }
     }
 
-    public function studentDashboard($studentId): JsonResponse
+    public function studentDashboard($studentId)
     {
-        try {
-            // Try to find the student record - could be user ID or student matricule
-            $student = null;
-            
-            // First, try to find by Etudiant matricule
-            $student = Etudiant::with(['class', 'grades', 'attendances'])
-                ->where('MatriculeET', $studentId)
-                ->first();
-                
-            // If not found, try to find by User matricule
-            if (!$student) {
-                $user = User::where('MatriculeUT', $studentId)->first();
-                if ($user && $user->role === 'etudiant') {
-                    $student = Etudiant::with(['class', 'grades', 'attendances'])
-                        ->where('MatriculeUT', $user->id)
-                        ->first();
+        try{
+            $student = Etudiant::whereHas("user",function ($q ) use ($studentId){
+                $q->where("MatriculeUT", $studentId);
+            })->with("group")->first();
+            return [
+                "student" => $student,
+                "selectedGroup" => $student->group->MatriculeGP ?? "null",
+                "timeSlotsData" => TimeSlot::all()->toArray(),
+                "daysData" => DayWeek::all()->toArray(),
+            ];
+        } catch (Exception $e) {
+            return $this->handleException($e);
+        }
+    }
+
+public function professeurDashboard($professorId)
+{
+    try {
+        // تحميل الأستاذ مع المجموعات والطلاب والمستخدمين المرتبطين
+        $professeur = User::with("professeur.groups.etudiants.user")
+            ->where("MatriculeUT", $professorId)
+            ->first()
+            ?->professeur;
+
+        if (!$professeur) {
+            return response()->json(['error' => 'Professeur non trouvé'], 404);
+        }
+
+        $totalStudents = 0;
+        $genderCount = ["male" => 0, "female" => 0];
+
+        foreach ($professeur->groups as $group) {
+            foreach ($group->etudiants as $etudiant) {
+                $totalStudents++;
+                $genre = strtolower($etudiant->user->GenrePL ?? '');
+
+                if ($genre === 'homme') {
+                    $genderCount["male"]++;
+                } elseif ($genre === 'femelle') {
+                    $genderCount["female"]++;
                 }
             }
-            
-            if (!$student) {
-                return $this->notFoundResponse('student');
-            }
-
-            $attendance = Attendance::where('student_id', $student->id)
-                ->latest()
-                ->take(10)
-                ->get();
-
-            $recentGrades = Evaluation::where('student_id', $student->id)
-                ->with('subject')
-                ->latest()
-                ->take(5)
-                ->get();
-
-            $upcomingClasses = [];
-            if ($student->class) {
-                $upcomingClasses = $student->class->schedule()
-                    ->where('date', '>=', now())
-                    ->orderBy('date')
-                    ->take(5)
-                    ->get();
-            }
-
-            return $this->successResponse([
-                'student_info' => $student,
-                'attendance' => $attendance,
-                'recent_grades' => $recentGrades,
-                'upcoming_classes' => $upcomingClasses,
-            ], 'retrieved');
-        } catch (Exception $e) {
-            return $this->handleException($e);
         }
+
+        $stats = [
+            'totalStudents' => $totalStudents,
+            'totalGroups' => $professeur->groups->count(),
+        ];
+
+        $genderDistribution = [
+            ['name' => 'male', 'value' => $genderCount["male"]],
+            ['name' => 'female', 'value' => $genderCount["female"]],
+        ];
+
+        return [
+            'stats' => $stats,
+            'gender_distribution' => $genderDistribution,
+            "selectedGroup" => $professeur->MatriculePR ?? "null",
+        ];
+    } catch (Exception $e) {
+        return $this->handleException($e);
     }
+}
 
-    public function professorDashboard($professorId): JsonResponse
-    {
-        try {
-            Log::info('Professor Dashboard Request for ID: ' . $professorId);
-            
-            // Try to find the professor record - could be user ID or professor matricule
-            $professor = null;
-            
-            // First check if the user exists
-            $user = User::where('MatriculeUT', $professorId)->first();
-            if ($user) {
-                Log::info('User found with MatriculeUT: ' . $professorId);
-                if ($user->role === 'professeur') {
-                    // Try to find professor record connected to this user
-                    $professor = Professeur::where('MatriculeUT', $user->id)
-                        ->orWhere('MatriculeUT', $user->id)
-                        ->first();
-                }
-            }
-            
-            // If still not found, try with professor matricule directly
-            if (!$professor) {
-                $professor = Professeur::with(['subjects', 'classes'])
-                    ->where('MatriculePR', $professorId)
-                    ->first();
-                
-                Log::info('Attempted direct professor lookup with MatriculePR: ' . $professorId . ', result: ' . ($professor ? 'found' : 'not found'));
-            }
-            
-            // If professor not found, return mock data instead of error
-            if (!$professor) {
-                Log::warning('Professor not found for ID: ' . $professorId);
-                return $this->successResponse([
-                    'professor_info' => [
-                        'name' => 'Professor',
-                        'totalStudents' => 0,
-                        'subjects' => []
-                    ],
-                    'class_overview' => [],
-                    'upcoming_schedule' => []
-                ], 'retrieved');
-            }
-
-            // Load relationships if needed
-            if (!$professor->relationLoaded('subjects') || !$professor->relationLoaded('classes')) {
-                $professor->load(['subjects', 'classes']);
-            }
-
-            // Get class overview
-            $classOverview = [];
-            try {
-                $classOverview = $professor->classes()
-                    ->with(['students', 'subject'])
-                    ->get();
-            } catch (Exception $e) {
-                Log::error('Error loading class overview: ' . $e->getMessage());
-            }
-
-            // Get upcoming schedule
-            $upcomingSchedule = [];
-            try {
-                $upcomingSchedule = $professor->schedule()
-                    ->where('date', '>=', now())
-                    ->orderBy('date')
-                    ->take(5)
-                    ->get();
-            } catch (Exception $e) {
-                Log::error('Error loading upcoming schedule: ' . $e->getMessage());
-            }
-
-            return $this->successResponse([
-                'professor_info' => $professor,
-                'class_overview' => $classOverview,
-                'upcoming_schedule' => $upcomingSchedule,
-            ], 'retrieved');
-        } catch (Exception $e) {
-            return $this->handleException($e);
-        }
-    }
 
     public function getAttendance($role, $userId): JsonResponse
     {
@@ -243,7 +168,7 @@ class DashboardController extends Controller
     public function getEvents($role, $userId): JsonResponse
     {
         try {
-            $events = EmploiDuTemps::where(function ($query) use ($role, $userId) {
+            $events = RegularTimeTable::where(function ($query) use ($role, $userId) {
                 if ($role === 'student') {
                     $query->where('student_id', $userId);
                 } elseif ($role === 'professor') {
@@ -337,7 +262,7 @@ class DashboardController extends Controller
                 'class_id' => 'required_if:type,class|exists:class_rooms,id',
             ]);
 
-            $event = EmploiDuTemps::create($validatedData);
+            $event = RegularTimeTable::create($validatedData);
             return $this->successResponse(['event' => $event], 'created');
         } catch (Exception $e) {
             return $this->handleException($e);

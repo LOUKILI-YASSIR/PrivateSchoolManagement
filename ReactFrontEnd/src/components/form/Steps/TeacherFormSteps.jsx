@@ -2,86 +2,60 @@ import { isValidNumber } from 'libphonenumber-js';
 import { useFormOptions } from '../utils/hooks';
 import { commonValidations, generateField } from '../utils/formUtils';
 import { countryPhonePrefixes, generateCountryOptions, postalCodeValidators } from '../utils/countryUtils';
-import { useFetchData, usePostData } from '../../../api/queryHooks';
-import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useFetchData } from '../../../api/queryHooks';
+import { useMemo, useCallback, useEffect } from 'react';
 
 export const getFormStepsPr = (formContext, row) => {
   const {
     TYPE: { SELECT, TEXT, DATE, TEXTAREA, EMAIL, PHONE, IMAGE, NUMBER, AUTO_COMPLETE_SELECT, MULTI_SELECT },
   } = useFormOptions();
 
-  const [EmailsPhonesData, setEmailsPhonesData] = useState({});
-  const [MatieresData, setMatieresData] = useState([]);
-  const [GroupsData, setGroupsData] = useState([]);
-  const [SelectedGroups, setSelectedGroups] = useState([]);
-  const [EmailsPhonesLoading, setEmailsPhonesLoading] = useState(false);
-  const [MatieresLoading, setMatieresLoading] = useState(false);
-  const { data: EmailsPhonesDT, isLoading: EmailsPhonesLD } = useFetchData("getemailsphonesusernames/professeur");
-  const { data: MatieresDT, isLoading: MatieresLD } = useFetchData("matieres");
-const { data: GroupDT } = useFetchData(
-  row?.MatriculePR ? `getgroupsselect/${row.MatriculePR}` : "getgroupsselect"
-);
-  //console.log(SelectedGroups,GroupsData,MatieresData);
-  useEffect(() => setEmailsPhonesData(EmailsPhonesDT), [EmailsPhonesDT]);
-  useEffect(() => setEmailsPhonesLoading(EmailsPhonesLD), [EmailsPhonesLD]);
-  useEffect(() => setMatieresData(MatieresDT), [MatieresDT]);
-  useEffect(() => setMatieresLoading(MatieresLD), [MatieresLD]);
-  useEffect(() => {
-    if (GroupDT && GroupDT.groups) {
-      setGroupsData(GroupDT.groups);
-      setSelectedGroups(
-        row?.groups?.map(group => group.MatriculeGP) ||
-        GroupDT?.selectedGP?.map((group) => group.MatriculeGP) ||
-        []
-      );
-    }
-  }, [GroupDT]);
-
-  let FilteredEmailsPhonesData = null;
-  if (row && typeof row === "object" && EmailsPhonesData) {
-    FilteredEmailsPhonesData = {
-      emails: EmailsPhonesData.emails?.filter(email => email !== row.EmailPR) || [],
-      phones: EmailsPhonesData.phones?.filter(phone => phone !== row.PhonePR) || [],
-      noms: EmailsPhonesData.noms?.filter(nom => nom !== row.NomPL) || [],
-      prenoms: EmailsPhonesData.prenoms?.filter(prenom => prenom !== row.PrenomPL) || [],
-    };
-  }
-  const { formMethods } = formContext;
+  const { formMethods, isSubmitting } = formContext;
   const { watch } = formMethods;
 
   // Watch for country changes to fetch cities
   const selectedCountry = watch("PaysPL");
+  const MatriculePR = row?.MatriculePR || "";
 
-  // Fetch cities based on selected country
-  const { data: citiesData, isLoading: citiesLoading } = useQuery({
-    queryKey: ['cities', selectedCountry],
-    queryFn: async () => {
-      if (!selectedCountry) return { cities: [] };
-      const response = await axios.get(`localhost:3000/ville/${selectedCountry}`);
-      return response.data;
-    },
-    enabled: !!selectedCountry,
-  });
+  // Unified data fetching similar to student form
+  const { data: FormData, refetch } = useFetchData(
+    `getfromprofesseurs/${selectedCountry}${MatriculePR ? `/${MatriculePR}` : ""}`
+  );
+  useEffect(()=>{if(isSubmitting) refetch();},[isSubmitting])
+  // Memoize filtered data to prevent recalculation on every render
+  const FilteredEmailsPhonesData = useMemo(() => {
+    if (!row || !FormData?.EmailsPhonesData) return null;
+    return {
+      emails: FormData?.EmailsPhonesData?.emails?.filter(email => email !== row.EmailPR) || [],
+      phones: FormData?.EmailsPhonesData?.phones?.filter(phone => phone !== row.PhonePR) || [],
+      noms: FormData?.EmailsPhonesData?.noms?.filter(nom => nom !== row.NomPL) || [],
+      prenoms: FormData?.EmailsPhonesData?.prenoms?.filter(prenom => prenom !== row.PrenomPL) || [],
+    };
+  }, [row, FormData?.EmailsPhonesData]);
 
-  const validateTELEPHONE = (value, index, role) => {
+  // Memoize validation functions to prevent recreation on every render
+  const validateTELEPHONE = useCallback((value, context, index, role) => {
     const errorTargets = document.querySelectorAll(".react-tel-input .special-label");
     const telephoneLabel = errorTargets[index];
+    
+    // Clear any previous error classes
     telephoneLabel?.classList.remove("special-label-error");
 
+    // If the value is empty, consider it valid (handled elsewhere if required)
     if (!value?.trim()) return true;
 
+    // Check if phone number already exists
     if (FilteredEmailsPhonesData) {
       if (FilteredEmailsPhonesData?.phones && FilteredEmailsPhonesData.phones.includes(value)) {
         telephoneLabel?.classList.add("special-label-error");
         return "Ce numéro de téléphone est déjà utilisé par un autre utilisateur";
       }
-    } else if (EmailsPhonesData?.phones && EmailsPhonesData.phones.includes(value)) {
+    } else if (FormData?.EmailsPhonesData?.phones && FormData?.EmailsPhonesData.phones.includes(value)) {
       telephoneLabel?.classList.add("special-label-error");
       return "Ce numéro de téléphone est déjà utilisé par un autre utilisateur";
     }
 
+    // Determine the country by matching the phone number's starting prefix
     const matchingEntry = countryPhonePrefixes.find(
       ([prefix, isoCountry]) => value.startsWith(prefix)
     );
@@ -90,27 +64,31 @@ const { data: GroupDT } = useFetchData(
       return "Le numéro doit commencer par un préfixe de pays valide";
     }
 
+    // Extract the ISO country code from the mapping (second element)
     const countryCode = matchingEntry[1].toUpperCase();
+
+    // Validate the phone number using libphonenumber-js and the determined country code
     if (!isValidNumber(value, countryCode)) {
       telephoneLabel?.classList.add("special-label-error");
       return "Le format du numéro n'est pas valide pour le pays sélectionné";
     }
 
     return true;
-  };
+  }, [FilteredEmailsPhonesData, FormData?.EmailsPhonesData]);
 
-  const validateEmail = (value) => {
+  const validateEmail = useCallback((value) => {
+    // Check if email already exists
     if (FilteredEmailsPhonesData) {
       if (FilteredEmailsPhonesData?.emails && FilteredEmailsPhonesData.emails.includes(value)) {
         return "Cette adresse email est déjà utilisée par un autre utilisateur";
       }
-    } else if (EmailsPhonesData?.emails && EmailsPhonesData.emails.includes(value)) {
+    } else if (FormData?.EmailsPhonesData?.emails && FormData?.EmailsPhonesData.emails.includes(value)) {
       return "Cette adresse email est déjà utilisée par un autre utilisateur";
     }
     return true;
-  };
+  }, [FilteredEmailsPhonesData, FormData?.EmailsPhonesData]);
 
-  const validateNom = (value) => {
+  const validateNom = useCallback((value) => {
     const prenom = watch("PrenomPL");
     if (FilteredEmailsPhonesData) {
       if (FilteredEmailsPhonesData?.noms && FilteredEmailsPhonesData?.prenoms) {
@@ -120,17 +98,17 @@ const { data: GroupDT } = useFetchData(
           }
         }
       }
-    } else if (EmailsPhonesData?.noms && EmailsPhonesData?.prenoms) {
-      for (let i = 0; i < EmailsPhonesData.noms.length; i++) {
-        if (EmailsPhonesData.noms[i] === value && EmailsPhonesData.prenoms[i] === prenom) {
+    } else if (FormData?.EmailsPhonesData?.noms && FormData?.EmailsPhonesData?.prenoms) {
+      for (let i = 0; i < FormData?.EmailsPhonesData.noms.length; i++) {
+        if (FormData?.EmailsPhonesData.noms[i] === value && FormData?.EmailsPhonesData.prenoms[i] === prenom) {
           return "Cette combinaison de nom et prénom est déjà utilisée par un autre utilisateur";
         }
       }
     }
     return true;
-  };
+  }, [FilteredEmailsPhonesData, FormData?.EmailsPhonesData, watch]);
 
-  const validatePrenom = (value) => {
+  const validatePrenom = useCallback((value) => {
     const nom = watch("NomPL");
     if (FilteredEmailsPhonesData) {
       if (FilteredEmailsPhonesData?.noms && FilteredEmailsPhonesData?.prenoms) {
@@ -140,17 +118,49 @@ const { data: GroupDT } = useFetchData(
           }
         }
       }
-    } else if (EmailsPhonesData?.noms && EmailsPhonesData?.prenoms) {
-      for (let i = 0; i < EmailsPhonesData.prenoms.length; i++) {
-        if (EmailsPhonesData.prenoms[i] === value && EmailsPhonesData.noms[i] === nom) {
+    } else if (FormData?.EmailsPhonesData?.noms && FormData?.EmailsPhonesData?.prenoms) {
+      for (let i = 0; i < FormData?.EmailsPhonesData.prenoms.length; i++) {
+        if (FormData?.EmailsPhonesData.prenoms[i] === value && FormData?.EmailsPhonesData.noms[i] === nom) {
           return "Cette combinaison de nom et prénom est déjà utilisée par un autre utilisateur";
         }
       }
     }
     return true;
-  };
+  }, [FilteredEmailsPhonesData, FormData?.EmailsPhonesData, watch]);
 
-  return [
+  // Memoize options to prevent recreating arrays on every render
+  const countryOptions = useMemo(() => generateCountryOptions(), []);
+
+  const villeOptions = FormData?.villes?.cities
+    ? FormData?.villes?.cities?.map(city => ({
+        value: city.name,
+        label: city.name
+      }))
+    : [];
+
+  const matieresOptions = (!FormData?.matieres || FormData?.matieres?.length === 0)
+    ? []
+    : FormData?.matieres?.map((matiere) => ({
+        value: matiere.MatriculeMT,
+        label: matiere.NameMT,
+      }));
+
+  const groupOptions = (!FormData?.groups?.groups || FormData?.groups?.groups?.length === 0)
+    ? []
+    : FormData?.groups?.groups?.map((group) => ({
+        value: group.MatriculeGP,
+        label: group.NameGP,
+      }));
+
+  // Get selected groups for editing mode
+  const selectedGroups = useMemo(() => {
+    return row?.groups?.map(group => group.MatriculeGP) ||
+           FormData?.groups?.selectedGP?.map((group) => group.MatriculeGP) ||
+           [];
+  }, [row, FormData?.groups?.selectedGP]);
+
+  // Memoize the entire form steps to prevent recreation
+  return useMemo(() => [
     {
       title: "Informations personnelles",
       Fields: [
@@ -263,12 +273,12 @@ const { data: GroupDT } = useFetchData(
           type: SELECT,
           label: "NationalitePL",
           propsLabel: "Nationalité",
-          options: generateCountryOptions(),
+          options: countryOptions,
           validation: commonValidations.combine(
             commonValidations.required("Nationalité"),
             commonValidations.inArray(
               "Nationalité",
-              generateCountryOptions().map(option => option.value),
+              countryOptions.map(option => option.value),
               "Nationalité doit être dans la liste des pays"
             )
           ),
@@ -323,12 +333,12 @@ const { data: GroupDT } = useFetchData(
           type: SELECT,
           label: "PaysPL",
           propsLabel: "Pays",
-          options: generateCountryOptions(),
+          options: countryOptions,
           validation: commonValidations.combine(
             commonValidations.required("Pays"),
             commonValidations.inArray(
               "Pays",
-              generateCountryOptions().map(option => option.value),
+              countryOptions.map(option => option.value),
               "Pays doit être dans la liste des pays"
             )
           ),
@@ -337,12 +347,7 @@ const { data: GroupDT } = useFetchData(
           type: SELECT,
           label: "VillePL",
           propsLabel: "Ville",
-          options: citiesLoading || !citiesData?.cities
-            ? []
-            : citiesData?.cities?.map(city => ({
-                value: city.name,
-                label: city.name,
-              })) || [],
+          options: villeOptions,
           validation: commonValidations.required("Ville"),
         }),
         generateField({
@@ -373,9 +378,7 @@ const { data: GroupDT } = useFetchData(
           enablePlaceholder: true,
           extraProps: { maxLength: 321, rows: 3 },
           validation: commonValidations.combine(
-            commonValidations.required("Adresse"),
             commonValidations.maxLength("Adresse", 321),
-            commonValidations.minLength("Adresse", 5)
           ),
         }),
       ],
@@ -406,7 +409,7 @@ const { data: GroupDT } = useFetchData(
           type: TEXT,
           label: "SalairePR",
           propsLabel: "Salaire",
-          propsType:"number",
+          propsType: "number",
           validation: commonValidations.combine(
             commonValidations.required("Salaire"),
             commonValidations.pattern(
@@ -466,32 +469,38 @@ const { data: GroupDT } = useFetchData(
           type: SELECT,
           label: "MatriculeMT",
           propsLabel: "Matières",
-          options: (MatieresLoading || !MatieresData || MatieresData?.data?.length === 0 ? [] 
-          : MatieresData?.data?.map(matiere => ({
-              value: matiere.MatriculeMT,
-              label: matiere.NameMT,
-          }))),
+          options: matieresOptions,
         }),
         generateField({
-            type: MULTI_SELECT,
-            label: "Groups",
-            propsLabel: "Groups",
-            options: (!GroupsData?.length
-                ? []
-                : GroupsData.map((group) => ({
-                    value: group.MatriculeGP,
-                    label: group.NameGP
-                }))),
-            value: SelectedGroups || [],
-            validation: commonValidations.combine(
-                commonValidations.optionalArray("Groups", {
-                  validate: (value) =>
-                    value.every(id => GroupsData.some(p => p.MatriculeGP === id)) ||
-                    "All selected groups must exist",
-                })
-            ),
+          type: MULTI_SELECT,
+          label: "Groups",
+          propsLabel: "Groups",
+          options: groupOptions,
+          value: selectedGroups,
+          validation: commonValidations.combine(
+            commonValidations.optionalArray("Groups", {
+              validate: (value) =>
+                value.every(id => groupOptions.some(p => p.value === id)) ||
+                "All selected groups must exist",
+            })
+          ),
         }),
+        generateField({
+          type: TEXT,
+          label: "daily_hours_limit",
+          propsType: "number",
+          propsLabel: "Number of Daily Teaching Seance",
+          enablePlaceholder: true,
+          value:row?.daily_hours_limit,
+          validation: commonValidations.combine(
+              commonValidations.required("Number of Daily Teaching Seance "),
+              { 
+                  validate: (value, context) => value => 1 && value <= FormData?.CountTimeSlot ?
+                              true : 'Error: Value must be a number greater than 0 and liter then or equal '+FormData?.CountTimeSlot+'.'
+                },
+            )
+        }), 
       ],
     }
-  ];
+  ]) 
 };

@@ -45,12 +45,10 @@ export default function MultiSelectField({ register, fieldItem, handleChange, er
     const [showFilterOptions, setShowFilterOptions] = useState(false);
     const [filterMode, setFilterMode] = useState('all');
     const [expandedObjects, setExpandedObjects] = useState({});
-
     const filterOptions = [
         { value: 'all', label: 'All Columns' },
         { value: 'optional', label: 'Optional Fields' }
     ];
-
     const handleSearchQueryChange = (e) => {
         e.stopPropagation();
         setSearchQuery(e.target.value);
@@ -299,7 +297,7 @@ useEffect(() => {
             <Select
                 {...register(fieldItem.label, fieldItem.validation)}
                 multiple
-                onChange={(e) => handleChange(e, fieldItem.label)}
+                onChange={(e) => handleChange({ target:{ value:e.target.value}}, fieldItem.label)}
                 label={fieldItem.props.label}
                 fullWidth
                 value={currentValue}

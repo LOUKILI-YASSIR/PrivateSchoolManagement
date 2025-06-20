@@ -264,7 +264,7 @@ const ResetPasswordRequest = ({ isFromLogin }) => {
         </Box>
         {/* Back Button */}
         <IconButton
-          onClick={() => nav('/YLSchool/select-reset-password', { state : { user }})}
+          onClick={() => state?.fromLogin ? nav('/YLSchool/Login') : nav('/YLSchool/select-reset-password', { state: { user } })}
 
           sx={{
             position: 'absolute',

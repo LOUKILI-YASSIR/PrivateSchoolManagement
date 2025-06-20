@@ -200,7 +200,7 @@ const SelectResetPasswordType = () => {
         {/* Back Button */}
         <IconButton
           component={Link}
-          to="/YLSchool/check-user-reset-password"
+          to={state?.fromLogin ? '/YLSchool/Login' :  "/YLSchool/select-reset-password"}
           sx={{
             position: 'absolute',
             top: 20,
@@ -217,7 +217,7 @@ const SelectResetPasswordType = () => {
         <Paper
           elevation={3}
           sx={{
-            maxWidth: 750,
+            maxWidth: 1100,
             width: '100%',
             p: { xs: 3, sm: 4 },
             display: 'flex',
@@ -255,7 +255,7 @@ const SelectResetPasswordType = () => {
 
           <Box
             sx={{
-              width: '100%',
+              width: '1000px',
               display: 'grid',
               gap: 2,
               gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },

@@ -25,6 +25,7 @@ class Matiere extends Model
         'MatriculeMT',
         'MatriculeYR',
         'NameMT',
+        'max_sessions_per_week',
         'CodeMT',
         'DescriptionMT',
         'CoefficientMT',

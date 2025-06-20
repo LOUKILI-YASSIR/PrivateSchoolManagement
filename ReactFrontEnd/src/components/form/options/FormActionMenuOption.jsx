@@ -1,4 +1,4 @@
-import { faUserPlus, } from "@fortawesome/free-solid-svg-icons";
+import { faCog, faUserPlus, } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconButton, Tooltip } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
@@ -39,6 +39,29 @@ export const getFromActionMenu = (actionType, tableName, t, tableNameTranslated)
                     <EditIcon />
                     <div className="pl-2">{t ? t('actions.edit') : 'Edit'}</div>
                 </span>
+            ),
+            Btns: [
+                {
+                    handleClose: true,
+                    value: t ? t('actions.cancel') : 'Cancel'
+                },
+                {
+                    handleClick: () => {
+                        console.log("Form submitted");
+                    },
+                    handleClose: true,
+                    value: t ? t('form.submit') : 'Submit',
+                }
+            ]
+        },
+        CONFIG: {
+            Title: t ? t('form.config_title', { entity: tableNameTranslated }) : `Config ${tableNameTranslated}`,
+            MainBtn: ({ClickToOpen}) => (
+                <Tooltip title={actionText}>
+                    <IconButton style={{ borderRadius: "5px" }} className='px-3' onClick={ClickToOpen}>
+                        <FontAwesomeIcon icon={faCog} className="h5 mt-2 text-black"/>
+                    </IconButton>
+                </Tooltip>
             ),
             Btns: [
                 {

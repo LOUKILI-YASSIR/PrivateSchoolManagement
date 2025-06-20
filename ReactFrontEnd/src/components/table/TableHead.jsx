@@ -11,7 +11,7 @@ import FormWrapper from "../form/FormWrapper";
 import { useSelector } from "react-redux";
 import { MainContext } from "../../utils/contexts/MainContext";
 
-const TableHead = ({ tableData, handleDelete, refetch }) => {
+const TableHead = ({ tableData, handleDelete, refetch,userRole }) => {
   const { AddOption, DeleteOption, RefreshOption, TableName } = GetInfoTable();
   const FromActionMenu = getFromActionMenu(AddOption).ADD; // ActionMenu config for adding
   const { DeleteSelected } = UseTableHead(tableData, handleDelete);
@@ -46,7 +46,7 @@ const TableHead = ({ tableData, handleDelete, refetch }) => {
         </IconButton>
       </Tooltip>
 
-      {!["regular-timetables"].includes(TableName) && (
+      {!["regular-timetables"].includes(TableName) && userRole === "admin" && (
         <Fragment>
           <ActionMenu 
             contentOptions={BoxOptionDeleteByN} 
@@ -59,7 +59,9 @@ const TableHead = ({ tableData, handleDelete, refetch }) => {
             }}
           />
           {/* Replace ActionMenu with FormWrapper */}
-          <FormWrapper matricule={null} row={null} typeOpt="ADD" />
+          {userRole === "admin" && (
+          <FormWrapper refetch={refetch} matricule={null} row={null} typeOpt="ADD" />
+          )}
         </Fragment>
       )}
     </Box>

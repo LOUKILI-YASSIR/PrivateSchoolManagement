@@ -1,13 +1,18 @@
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import Dashboard from "../components/dashboard/Dashboard.jsx";
 import { useAuth } from "../utils/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const AppDashBoard = () => {
   const { userRole } = useAuth();
-  
-  // Log the current user role
-  console.log("Current user role:", userRole);
-  
+  const nav = useNavigate();
+
+  useEffect(() => {
+    if (!userRole || !["admin", "etudiant", "professeur"].includes(userRole)) {
+      nav("/YLSchool/Login");
+    }
+  }, [userRole, nav]);
+
   // Render different dashboard content based on user role
   const renderDashboardContent = () => {
     switch (userRole) {

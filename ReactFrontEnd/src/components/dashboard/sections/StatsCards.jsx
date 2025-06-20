@@ -2,24 +2,26 @@ import React from 'react';
 import { Card } from "react-bootstrap";
 import { Grid, Box } from '@mui/material';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import CountUp from 'react-countup';
+
 import { 
   faUsers, 
   faChalkboardTeacher, 
   faBookOpen,
   faUserTie,
-  faSquarePollVertical 
+  faSquarePollVertical ,
+  faPeopleRoof
 } from "@fortawesome/free-solid-svg-icons";
 import styles from '../Dashboard.module.css';
 
-const CARDS_CONFIG = [
+const CARDS_CONFIG = (students,teachers,groups,matieres)=>[
   {
     id: 'students',
     title: 'Total Étudiants',
     key: 'totalStudents',
     icon: faUsers,
     variant: 'yellow',
-    active: 3643,
-    inactive: 11,
+    active: students,
     description: 'Nombre total d\'étudiants inscrits'
   },
   {
@@ -28,19 +30,17 @@ const CARDS_CONFIG = [
     key: 'totalTeachers',
     icon: faChalkboardTeacher,
     variant: 'green',
-    active: 254,
-    inactive: 30,
+    active: teachers,
     description: 'Nombre total d\'enseignants actifs'
   },
   {
-    id: 'staff',
-    title: 'Total Personnel',
-    key: 'totalStaff',
-    icon: faUserTie,
+    id: 'g',
+    title: 'Total Groups',
+    key: 'totalGroups',
+    icon: faPeopleRoof,
     variant: 'blue',
-    active: 161,
-    inactive: 2,
-    description: 'Nombre total de membres du personnel'
+    active: groups,
+    description: 'Nombre total de groups'
   },
   {
     id: 'subjects',
@@ -48,8 +48,7 @@ const CARDS_CONFIG = [
     key: 'totalSubjects',
     icon: faBookOpen,
     variant: 'red',
-    active: 81,
-    inactive: 1,
+    active: matieres,
     description: 'Nombre total de matières enseignées'
   }
 ];
@@ -68,7 +67,9 @@ const StatCard = ({ title, count, icon, variant, active, inactive, description, 
           <h3 className={`${styles.cardTitle} ${isDarkMode ? styles.darkText : ''}`}>{title}</h3>
         </div>
         <div className={styles.cardCount}>
-          <h2 className={`${styles.countValue} ${isDarkMode ? styles.darkText : ''}`}>{count || active}</h2>
+            <h2 className={`${styles.countValue} ${isDarkMode ? styles.darkText : ''}`}>
+              <CountUp start={0} end={count || active} duration={1.5} separator="," />
+            </h2>
         </div>
         <hr className={`${styles.divider} ${isDarkMode ? styles.darkDivider : ''}`} />
         <div className={styles.cardDescription}>
@@ -84,23 +85,23 @@ const StatCard = ({ title, count, icon, variant, active, inactive, description, 
 };
 
 const StatsCards = ({ stats, isDarkMode }) => {
-  // Use mock data values if no props provided
-  const totalStudents = stats?.total_students || 3643;
-  const totalTeachers = stats?.total_teachers || 254;
-  const totalStaff = stats?.total_staff || 161;
-  const totalSubjects = stats?.total_subjects || 81;
+  const { totalStudents = 0, totalTeachers = 0, totalGroups = 0, totalSubjects = 0 } = stats || {};
 
   const counts = {
     totalStudents,
     totalTeachers,
-    totalStaff,
+    totalGroups,
     totalSubjects
   };
-
   return (
     <Box sx={{ mb: 4 }} >
       <Grid container spacing={4} style={{marginLeft:"-50px"}}>
-        {CARDS_CONFIG.map((config) => (
+        {CARDS_CONFIG(
+            totalStudents,
+            totalTeachers,
+            totalGroups,
+            totalSubjects
+        ).map((config) => (
           <Grid item xs={12} sm={6} md={3} key={config.id}>
             <Box sx={{ height: '100%', p: 1 }}>
               <StatCard

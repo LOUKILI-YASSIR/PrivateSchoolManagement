@@ -645,6 +645,10 @@ video {
   margin-bottom: 1rem;
 }
 
+.ml-\[365px\] {
+  margin-left: 365px;
+}
+
 .mr-2 {
   margin-right: 0.5rem;
 }
@@ -727,6 +731,10 @@ video {
 
 .w-12 {
   width: 3rem;
+}
+
+.w-\[730px\] {
+  width: 730px;
 }
 
 .w-\[calc\(100\%-300px\)\] {
@@ -975,6 +983,11 @@ video {
 
 .italic {
   font-style: italic;
+}
+
+.text-black {
+  --tw-text-opacity: 1;
+  color: rgb(0 0 0 / var(--tw-text-opacity, 1));
 }
 
 .text-blue-600 {

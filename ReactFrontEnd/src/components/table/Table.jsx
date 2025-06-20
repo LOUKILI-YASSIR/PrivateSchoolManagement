@@ -8,6 +8,7 @@ import { getActionOptionsMenu } from "./options/TableActionMenuOption.jsx";
 import { useSelector } from "react-redux";
 import { ThemeProvider, createTheme } from '@mui/material';
 import { createTableConfig, createTableTheme } from './config/tableConfig.jsx';
+import { useAuth } from "../../utils/contexts/AuthContext.jsx";
 
 export const TableTemplate = () => {
     const {
@@ -22,9 +23,10 @@ export const TableTemplate = () => {
         extraErrors = {},     
         OnDrowRows
     } = useTable();
+        const { userRole } = useAuth();
     
     const isDarkMode = useSelector((state) => state?.theme?.darkMode || false);
-    const { ActionOption, LanguageOption, TableOptions } = GetInfoTable(TableName);
+    const { ActionOption, LanguageOption, TableOptions } = GetInfoTable( userRole);
     const customColumns  = useColumns(data, TableName, extraData);
     const Handels = useHandlesData(TableName);
     const { BoxOptionDeleteBy1, BoxOptionGrade } = getActionOptionsMenu();
@@ -52,12 +54,13 @@ export const TableTemplate = () => {
                         refetch={refetch}
                         hasErrors={hasErrors}
                         isLoading={isTableLoading}
+                        userRole={userRole}
                     />
                 )}
                 muiPaginationProps={pagination}
                 localization={LanguageOption}
                 renderRowActionMenuItems={({ row, table, closeMenu }) =>
-                    ActionOption?.(table, row.original, Handels, closeMenu, BoxOptionDeleteBy1, BoxOptionGrade)
+                    ActionOption?.(table, row.original, Handels, closeMenu, BoxOptionDeleteBy1, BoxOptionGrade, refetch)
                 }
                 muiTablePaperProps={style.paper}
                 muiTableContainerProps={{

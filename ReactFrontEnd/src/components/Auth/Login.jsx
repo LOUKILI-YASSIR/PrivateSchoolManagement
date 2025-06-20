@@ -267,6 +267,7 @@ const handleTwoFactorAuthRedirect = (data) => {
               ...data.data.user,
               TypeUT: 'google'  
             },
+            fromLogin:true,
             verificationFlow
           }
         });
@@ -282,9 +283,10 @@ const handleTwoFactorAuthRedirect = (data) => {
               TypeUT: firstMethod.id
             },
             verificationFlow,
+            fromLogin:true,
             type: firstMethod.id
           }
-        });
+        }); 
         break;
         
       case 'db':
@@ -295,6 +297,7 @@ const handleTwoFactorAuthRedirect = (data) => {
               ...data.data.user,
               TypeUT: 'db'
             },
+            fromLogin:true,
             verificationFlow
           }
         });
@@ -306,7 +309,8 @@ const handleTwoFactorAuthRedirect = (data) => {
           state: { 
             user: data.data.user,
             methods: sortedMethods,
-            verificationFlow
+            verificationFlow,
+            fromLogin:true,
           }
         });
     }

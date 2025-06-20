@@ -30,8 +30,8 @@ class TimeSlot extends Model
 
     // Casts for time columns
     protected $casts = [
-        'StartTimeTS' => 'datetime:H:i:s',
-        'EndTimeTS' => 'datetime:H:i:s',
+        'StartTimeTS' => 'datetime:H:i',
+        'EndTimeTS' => 'datetime:H:i',
     ];
 
     // Relationships

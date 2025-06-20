@@ -3,7 +3,8 @@ export const MATIERES = {
     NameMT: '',
     CodeMT: '',
     DescriptionMT: '',
-    CoefficientMT: 0,
+    CoefficientMT: 1,
     MatriculeNV: '',
+    max_sessions_per_week: 0
 };
 

@@ -1,0 +1,10 @@
+Express.js Project Structure:
+├── 📄 .gitignore
+├── 📖 Nouveau document texte (2).txt
+├── 📖 Nouveau document texte.txt
+├── 📄 Watcher.py
+└── 📂 src
+    ├── 📂 api
+    │   ├── 📜 middleware.js
+    │   └── 📜 routes.js
+    └── 📜 server.js

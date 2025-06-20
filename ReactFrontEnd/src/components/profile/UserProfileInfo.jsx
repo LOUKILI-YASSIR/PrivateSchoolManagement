@@ -61,7 +61,7 @@ const UserProfileInfo = () => {
             <ListItemIcon><FaUser /></ListItemIcon>
             <ListItemText 
               primary="Username" 
-              secondary={user.username || 'Not set'} 
+              secondary={user.UserNameUT || 'Not set'} 
             />
           </ListItem>
           

@@ -1,0 +1,154 @@
+Laravel Project Structure:
+├── 📄 .editorconfig
+├── 📄 .gitattributes
+├── 📄 .gitignore
+├── 📂 .vscode
+│   └── 🔧 settings.json
+├── 📝 README-AUTH.md
+├── 📝 README.md
+├── 📄 Watcher.py
+├── 📂 app
+│   ├── 📂 Http
+│   │   ├── 📂 Controllers
+│   │   │   ├── 📂 Api
+│   │   │   │   ├── 🐘 AcademicYearController.php
+│   │   │   │   ├── 🐘 AuthController.php
+│   │   │   │   ├── 🐘 DashboardController.php
+│   │   │   │   ├── 🐘 DayWeekController.php
+│   │   │   │   ├── 🐘 EtudiantController.php
+│   │   │   │   ├── 🐘 EvaluationController.php
+│   │   │   │   ├── 🐘 EvaluationTypeController.php
+│   │   │   │   ├── 🐘 GroupController.php
+│   │   │   │   ├── 🐘 MatiereController.php
+│   │   │   │   ├── 🐘 NiveauController.php
+│   │   │   │   ├── 🐘 ProfesseurController.php
+│   │   │   │   ├── 🐘 RegularTimeTableController.php
+│   │   │   │   ├── 🐘 SalleController.php
+│   │   │   │   ├── 🐘 TimeSlotController.php
+│   │   │   ├── 🐘 Controller.php
+│   │   │   ├── 📝 README.md
+│   │   │   ├── 🐘 TimeTableController.php
+│   │   │   └── 🐘 UserController.php
+│   │   ├── 🐘 Kernel.php
+│   │   └── 📂 Middleware
+│   │       ├── 🐘 AuthenticateApi.php
+│   │       ├── 🐘 CheckRole.php
+│   │       └── 🐘 Cors.php
+│   ├── 📂 Models
+│   │   ├── 🐘 AcademicYear.php
+│   │   ├── 🐘 DayWeek.php
+│   │   ├── 🐘 Etudiant.php
+│   │   ├── 🐘 Evaluation.php
+│   │   ├── 🐘 EvaluationType.php
+│   │   ├── 🐘 Group.php
+│   │   ├── 🐘 GroupProfesseur.php
+│   │   ├── 🐘 Matiere.php
+│   │   ├── 🐘 Niveau.php
+│   │   ├── 🐘 Professeur.php
+│   │   ├── 🐘 RegularTimeTable.php
+│   │   ├── 🐘 Salle.php
+│   │   ├── 🐘 TimeSlot.php
+│   │   └── 🐘 User.php
+│   ├── 📂 Providers
+│   │   ├── 🐘 AppServiceProvider.php
+│   │   ├── 🐘 AuthServiceProvider.php
+│   │   ├── 🐘 CustomMiddlewareServiceProvider.php
+│   │   ├── 🐘 EventServiceProvider.php
+│   │   └── 🐘 RouteServiceProvider.php
+│   ├── 📂 Services
+│   │   ├── 📂 GeneticAlgorithm
+│   │   │   ├── 🐘 FitnessEvaluator.php
+│   │   │   ├── 🐘 TimetableChromosome.php
+│   │   │   ├── 🐘 TimetableGene.php
+│   │   │   └── 🐘 TimetablePopulation.php
+│   │   └── 🐘 TimetableGenerator.php
+│   └── 📂 Traits
+│       ├── 🐘 CrudOperations.php
+│       └── 🐘 GeneratesMatricule.php
+├── 📄 artisan
+├── 📂 bootstrap
+│   ├── 🐘 app.php
+│   ├── 📂 cache
+│   │   ├── 📄 .gitignore
+│   │   ├── 🐘 packages.php
+│   │   └── 🐘 services.php
+│   └── 🐘 providers.php
+├── 📄 cls
+├── 🔧 composer.json
+├── 📂 config
+│   ├── 🐘 app.php
+│   ├── 🐘 auth.php
+│   ├── 🐘 cache.php
+│   ├── 🐘 cors.php
+│   ├── 🐘 database.php
+│   ├── 🐘 filesystems.php
+│   ├── 🐘 logging.php
+│   ├── 🐘 mail.php
+│   ├── 🐘 queue.php
+│   ├── 🐘 sanctum.php
+│   ├── 🐘 services.php
+│   └── 🐘 session.php
+├── 📂 database
+│   ├── 📄 .gitignore
+│   ├── 📂 factories
+│   │   ├── 🐘 AcademicYearFactory.php
+│   │   ├── 🐘 DayWeekFactory.php
+│   │   ├── 🐘 EtudiantFactory.php
+│   │   ├── 🐘 EvaluationFactory.php
+│   │   ├── 🐘 EvaluationTypeFactory.php
+│   │   ├── 🐘 GroupFactory.php
+│   │   ├── 🐘 GroupsProfesseursFactory.php
+│   │   ├── 🐘 MatiereFactory.php
+│   │   ├── 🐘 NiveauFactory.php
+│   │   ├── 🐘 ProfesseurFactory.php
+│   │   ├── 🐘 RegularTimeTableFactory.php
+│   │   ├── 🐘 SalleFactory.php
+│   │   ├── 🐘 TimeSlotFactory.php
+│   │   └── 🐘 UserFactory.php
+│   ├── 📂 migrations
+│   │   ├── 🐘 0001_01_01_000000_create_users_table.php
+│   │   ├── 🐘 0001_01_01_000001_create_academic_years_table.php
+│   │   ├── 🐘 0001_01_01_000001_create_cache_table.php
+│   │   ├── 🐘 0001_01_01_000002_create_jobs_table.php
+│   │   ├── 🐘 2025_03_25_120659_create_personal_access_tokens_table.php
+│   │   ├── 🐘 2025_04_01_222238_create_sessions_table.php
+│   │   ├── 🐘 2025_04_06_201345_create_niveaux_table.php
+│   │   ├── 🐘 2025_04_06_201352_create_evaluation_types_table.php
+│   │   ├── 🐘 2025_04_06_201357_create_matieres_table.php
+│   │   ├── 🐘 2025_04_06_201358_create_professeurs_table.php
+│   │   ├── 🐘 2025_04_06_201400_create_groups_table.php
+│   │   ├── 🐘 2025_04_06_201405_create_etudiants_table.php
+│   │   ├── 🐘 2025_04_06_201420_create_evaluations_table.php
+│   │   ├── 🐘 2025_04_06_201450_create_salles_table.php
+│   │   ├── 🐘 2025_04_06_201454_create_day_weeks_table.php
+│   │   ├── 🐘 2025_04_06_201458_create_time_slots_table.php
+│   │   ├── 🐘 2025_04_06_201504_create_regular_time_tables_table.php
+│   │   └── 🐘 2025_05_28_123552_create_groups_professeurs_table.php
+│   └── 📂 seeders
+│       ├── 🐘 AcademicYearSeeder.php
+│       ├── 🐘 AdminUserSeeder.php
+│       ├── 🐘 AttendanceSeeder.php
+│       ├── 🐘 DatabaseSeeder.php
+│       ├── 🐘 DayWeekSeeder.php
+│       ├── 🐘 EtudiantSeeder.php
+│       ├── 🐘 EvaluationSeeder.php
+│       ├── 🐘 EvaluationTypeSeeder.php
+│       ├── 🐘 GroupSeeder.php
+│       ├── 🐘 GroupsProfesseursSeeder.php
+│       ├── 🐘 MatiereSeeder.php
+│       ├── 🐘 NiveauSeeder.php
+│       ├── 🐘 ProfesseurSeeder.php
+│       ├── 🐘 RegularTimeTableSeeder.php
+│       ├── 🐘 SalleSeeder.php
+│       ├── 🐘 TimeSlotSeeder.php
+│       └── 🐘 UserSeeder.php
+├── 🔧 package.json
+├── 📄 php
+├── 📜 postcss.config.js
+├── 📄 prepareBindings($bindings)
+├── 📂 routes
+│   ├── 🐘 api.php
+│   ├── 🐘 auth.php
+│   ├── 🐘 console.php
+│   └── 🐘 web.php
+└── 📜 vite.config.js

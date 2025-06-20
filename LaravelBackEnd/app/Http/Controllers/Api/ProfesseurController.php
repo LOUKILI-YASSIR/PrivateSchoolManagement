@@ -10,10 +10,14 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\AcademicYear;
+use App\Models\Group;
 use App\Models\GroupProfesseur;
+use App\Models\Matiere;
+use App\Models\TimeSlot;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -23,35 +27,41 @@ class ProfesseurController extends Controller
 
     protected string $model = Professeur::class;
 
-protected array $validationRules = [
-    // User validation rules
-    'EmailPR' => 'required|email|max:255|unique:users,EmailUT',
-    'PhonePR' => 'nullable|string|max:20',
-    'NomPL' => 'required|string|max:255',
-    'PrenomPL' => 'required|string|max:255',
-    'GenrePL' => 'required|string|in:Femme,Homme',
-    'AdressPL' => 'nullable|string|max:255',
-    'VillePL' => 'nullable|string|max:255',
-    'CodePostalPL' => 'nullable|string|max:20',
-    'PaysPL' => 'nullable|string|max:255',
-    'NationalitePL' => 'nullable|string|max:255',
-    'LieuNaissancePL' => 'nullable|string|max:255',
-    'DateNaissancePL' => 'nullable|date',
-    'ObservationPL' => 'nullable|string',
-    'ProfileFileNamePL' => 'nullable|string|max:255',
-    
-    // Professeur validation rules
-    'CINPR' => 'required|string|max:255|unique:professeurs,CINPR',
-    'CivilitePR' => 'nullable|string|max:255',
-    'DateEmbauchePR' => 'nullable|date',
-    'SalairePR' => 'nullable|numeric',
-    'NomBanquePR' => 'nullable|string|max:255',
-    'RIBPR' => 'nullable|string|max:255',
-    'MatriculeMT' => 'nullable|string|exists:matieres,MatriculeMT', // Changed to nullable
-    'MatriculeYR' => 'required|string|exists:academic_years,MatriculeYR',
-    'Groups' => 'nullable|array',
-    'Groups.*' => 'exists:groups,MatriculeGP',
-];
+protected array $validationRules = [];
+
+public function __construct()
+{
+    $maxTimeSlots = TimeSlot::count();
+
+    $this->validationRules = [
+        'EmailPR' => 'required|email|max:255|unique:users,EmailUT',
+        'PhonePR' => 'nullable|string|max:20',
+        'daily_hours_limit' => 'nullable|integer|min:0|max:' . $maxTimeSlots,
+        'NomPL' => 'required|string|max:255',
+        'PrenomPL' => 'required|string|max:255',
+        'GenrePL' => 'required|string|in:Femme,Homme',
+        'AdressPL' => 'nullable|string|max:255',
+        'VillePL' => 'nullable|string|max:255',
+        'CodePostalPL' => 'nullable|string|max:20',
+        'PaysPL' => 'nullable|string|max:255',
+        'NationalitePL' => 'nullable|string|max:255',
+        'LieuNaissancePL' => 'nullable|string|max:255',
+        'DateNaissancePL' => 'nullable|date',
+        'ObservationPL' => 'nullable|string',
+        'ProfileFileNamePL' => 'nullable|string|max:255',
+        'CINPR' => 'required|string|max:255|unique:professeurs,CINPR',
+        'CivilitePR' => 'nullable|string|max:255',
+        'DateEmbauchePR' => 'nullable|date',
+        'SalairePR' => 'nullable|numeric',
+        'NomBanquePR' => 'nullable|string|max:255',
+        'RIBPR' => 'nullable|string|max:255',
+        'MatriculeMT' => 'nullable|string|exists:matieres,MatriculeMT',
+        'MatriculeYR' => 'required|string|exists:academic_years,MatriculeYR',
+        'Groups' => 'nullable|array',
+        'Groups.*' => 'exists:groups,MatriculeGP',
+    ];
+}
+
     protected static function getMatriculePrefix()
     {
         return 'PR';
@@ -156,6 +166,7 @@ public function index(): \Illuminate\Http\JsonResponse
             'RIBPR' => $validatedData['RIBPR'],
             'MatriculeMT' => $validatedData['MatriculeMT'] ?? null,
             'MatriculeYR' => $validatedData['MatriculeYR'],
+            'daily_hours_limit' => $validatedData['daily_hours_limit'] ?? 0,
             'MatriculeUT' => $user->MatriculeUT,
         ]);
         $professeur->save();
@@ -257,6 +268,7 @@ public function update(Request $request, $matricule): \Illuminate\Http\JsonRespo
 
         // Update Professeur data
         $professeur->update([
+            'daily_hours_limit' => $validatedData['daily_hours_limit'],
             'CINPR' => $validatedData['CINPR'],
             'CivilitePR' => $validatedData['CivilitePR'] ?? null,
             'PhonePR' => $validatedData['PhonePR'] ?? null,
@@ -390,4 +402,140 @@ public function update(Request $request, $matricule): \Illuminate\Http\JsonRespo
             return response()->json(['error' => 'An error occurred while fetching professeurs'], 500);
         }
     }
+    public function getAllProfesseursSelectMT($MatriculeMT = null)
+{
+    try {
+        // Professeurs non assignés à une matière
+        $unassignedProfesseurs = Professeur::whereNull('MatriculeMT')
+            ->get()
+            ->map(function ($prof) {
+                return [
+                    'MatriculePR' => $prof->MatriculePR,
+                    'FullNamePR' => $prof->user 
+                        ? "{$prof->user->PrenomPL} {$prof->user->NomPL}" 
+                        : 'Inconnu',
+                ];
+            });
+
+        // Professeurs déjà assignés à la matière spécifiée
+        $selectedProfesseurs = $MatriculeMT
+            ? Professeur::where('MatriculeMT', $MatriculeMT)
+                ->get()
+                ->map(function ($prof) {
+                    return [
+                        'MatriculePR' => $prof->MatriculePR,
+                        'FullNamePR' => $prof->user 
+                            ? "{$prof->user->PrenomPL} {$prof->user->NomPL}" 
+                            : 'Inconnu',
+                    ];
+                })
+            : collect([]);
+
+        // Fusionner les deux collections
+        $professeurs = $unassignedProfesseurs->merge($selectedProfesseurs);
+
+        return [
+            'professeurs' => $professeurs,
+            'selectedPR' => $selectedProfesseurs,
+        ];
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Erreur lors de la récupération des professeurs'], 500);
+    }
+}
+public function getFormInformation($selectedCountry = null, $MatriculePR = null)
+{
+    try {
+        // Get all professeurs with their users
+        $professeurs = Professeur::with('user')->get();
+
+        // Get groups assigned to selected professeur
+        $selectedGroupsRaw = $MatriculePR
+            ? GroupProfesseur::with('group')->where('MatriculePR', $MatriculePR)->get()
+            : collect();
+
+        // Extract selected group models
+        $selectedGroups = $selectedGroupsRaw->pluck('group')->filter();
+
+        // Merge groups
+        $groups = Group::all();
+
+        // Get niveaux
+        $niveaux = DB::table('niveaux')->select('MatriculeNV', 'NomNV')->get();
+
+        // Get villes
+        $villes = [];
+        if ($selectedCountry) {
+            $response = Http::get("http://localhost:3000/ville/{$selectedCountry}");
+            if ($response->successful()) {
+                $villes = $response->json();
+            }
+        }
+        // 🟡 Get niveaux IDs from selected groups, or all if none selected
+        $niveauxIds = collect();
+
+        if ($selectedGroups->isNotEmpty()) {
+            $niveauxIds = $selectedGroups
+                ->pluck('MatriculeNV')
+                ->filter()
+                ->unique()
+                ->values();
+        } else {
+            // Get all niveaux MatriculeNV
+            $niveauxIds = DB::table('niveaux')->pluck('MatriculeNV');
+        }
+
+        Log::info('niveauxIds:', ['ids' => $niveauxIds->toArray()]);
+
+        // 🟢 Get matieres related to selected niveaux only
+$matieres = Matiere::when( $niveauxIds,function ($query) use ($niveauxIds) {
+    // فلترة بالمستويات المختارة
+    if ($niveauxIds->isNotEmpty()) {
+        $query->whereIn('MatriculeNV', $niveauxIds);
+    }
+
+})->get()
+->map(function ($matiere) {
+    return [
+        'MatriculeMT' => $matiere->MatriculeMT,
+        'NameMT'      => $matiere->NameMT,
+        'MatriculeNV' => $matiere->MatriculeNV,
+    ];
+});
+
+
+
+
+        return [
+            "EmailsPhonesData" => [
+                "noms"    => $professeurs->pluck("user.NomPL")->filter()->values(),
+                "prenoms" => $professeurs->pluck("user.PrenomPL")->filter()->values(),
+                "emails"  => $professeurs->pluck("user.EmailUT")->filter()->values(),
+                "phones"  => $professeurs->pluck("user.PhoneUT")->filter()->values(),
+            ],
+            "groups" => [
+                'groups' => $groups->map(function ($group) {
+                    return [
+                        'MatriculeGP' => $group->MatriculeGP,
+                        'NameGP'      => $group->NameGP ?? 'Inconnu',
+                    ];
+                }),
+                'selectedGP' => $selectedGroups->map(function ($group) {
+                    return [
+                        'MatriculeGP' => $group->MatriculeGP,
+                        'NameGP'      => $group->NameGP ?? 'Inconnu',
+                    ];
+                }),
+            ],
+            "niveaux"  => $niveaux,
+            "villes"   => $villes,
+            "matieres" => $matieres,
+            "CountTimeSlot" => TimeSlot::count()
+        ];
+    } catch (\Exception $e) {
+        Log::error($e->getMessage());
+        return $this->handleException($e);
+    }
+}
+
+
 }

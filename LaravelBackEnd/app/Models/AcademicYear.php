@@ -41,7 +41,10 @@ class AcademicYear extends Model
     ];
 
     // Relationships
-
+    static function currentYear()
+    {
+        return self::where('IsCurrentYR', true)->first();
+    }
     public function user()
     {
         return $this->belongsTo(User::class, 'MatriculeUT', 'MatriculeUT');

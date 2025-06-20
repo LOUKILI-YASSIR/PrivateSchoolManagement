@@ -31,6 +31,7 @@ class Professeur extends Model
         'SalairePR',
         'NomBanquePR',
         'RIBPR',
+        "daily_hours_limit",
         'MatriculeUT',
         'MatriculeMT',
     ];

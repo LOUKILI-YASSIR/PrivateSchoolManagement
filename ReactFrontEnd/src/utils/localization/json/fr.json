@@ -185,7 +185,9 @@
     "deleteSelected": "Supprimer la sélection de {{NomTable}}",
     "download": "Télécharger en ",
     "export": "Exporter",
-    "RefreshData": "Actualiser les données"
+    "RefreshData": "Actualiser les données",
+    "exporting": "Exportation...",
+    "exportTo": "Exporter en {{type}}"
   },
   "export": {
     "title": "Exporter",
@@ -264,9 +266,14 @@
     "subject": "Matières",
     "level": "Niveaux",
     "room": "Salles",
-    "group": "Groupes",
-    "evaluation": "Évaluations",
-    "timetable": "Emplois du Temps"
+    "groups": "Groupes",
+    "evaluations": "Évaluations",
+    "timetable": "Emplois du Temps",
+    "academic-years": "Année Scolaire",
+    "matieres": "Matières"
+  },
+  "evaluation-types":{
+    "list": "Liste des évaluations"
   },
   "etudiants": {
     "list": "Liste des étudiants"
@@ -274,7 +281,7 @@
   "professeurs": {
     "list": "Liste des professeurs"
   },
-  "matiere": {
+  "matieres": {
     "list": "Liste des matières"
   },
   "niveaux": {
@@ -283,7 +290,7 @@
   "salles": {
     "list": "Liste des salles"
   },
-  "groupes": {
+  "groups": {
     "list": "Liste des groupes"
   },
   "evaluations": {
@@ -292,7 +299,11 @@
   "regular-timetables": {
     "list": "Liste des emplois du temps"
   },
+  "academic-years": {
+    "list": "Liste des années scolaires"
+  },
   "Data": { 
+    "matieres": "matieres",
     "matricule": "Matricule",
     "image": "Image",
     "civilite": "Civilité",
@@ -332,9 +343,9 @@
     "resultsCount": "Nombre de Résultats",
     "code": "Code",
     "coefficient": "Coefficient",
+    "academic-years": "Année Scolaire",
     "niveau": "Niveau",
     "professor": "Professeur",
-    "evaluationsCount": "Nombre d'Évaluations",
     "type": "Type",
     "parent": "Parent",
     "groupsCount": "Nombre de Groupes",
@@ -384,7 +395,36 @@
     "attendanceSummary": "Résumé de Présence",
     "attendance": "Présence",
     "firstNote": "Première Note",
-    "lastNote": "Dernière Note"
+    "lastNote": "Dernière Note",
+    "finalNotesCount": "Nombre de notes finales",
+    "subjectsCount": "Nombre de matières",
+    "sallesCount": "Nombre de salles",
+    "niveauxCount": "Nombre de niveaux",
+    "regularTimeTablesCount": "Nombre d'emplois du temps réguliers",
+    "specialScheldulesCount": "Nombre d'emplois du temps spéciaux",
+    "TimeTablesExceptionsCount": "Nombre d'exceptions d'emploi du temps",
+    "schoolEventsCount": "Nombre d'événements scolaires",
+    "teacherVocationsCount": "Nombre de vacances des enseignants",
+    "notesCount": "Nombre de notes",
+    "evaluationsCount": "Nombre d'évaluations",
+    "evaluationResultsCount": "Nombre de résultats d'évaluation",
+    "gradeAdjustmentsCount": "Nombre d'ajustements de notes",
+    "attendancesCount": "Nombre de présences",
+    "successRate": "Taux de réussite",
+    "boysPercentage": "Pourcentage de garçons",
+    "girlsPercentage": "Pourcentage de filles",
+    "passedCount": "Nombre de réussites",
+    "failedCount": "Nombre d'échecs",
+    "NomBanquePR": "Nom de la banque",
+    "RIBPR": "Numéro de compte bancaire",
+    "NomMatiere": "Nom de la matière",
+    "CoefficientMatiere": "Coefficient de la matière",
+    "TotalVocationDays": "Nombre total de jours de vacances",
+    "VacationOccurrences": "Occurrences de vacances",
+    "gradeRange": "Échelle de notes",
+    "professeurCount": "Nombre de professeurs",
+    "CodeEvaluation": "Code d'évaluation",
+    "descriptionEvaluation": "Description de l'évaluation"
   },
   "charts": {
     "genderDistribution": "Distribution par Genre",
@@ -425,7 +465,17 @@
     "edit": "Modifier",
     "delete": "Supprimer",
     "loading": "Chargement...",
-    "search": "Rechercher..."
+    "search": "Rechercher...",
+    "filter": "Filtrer",
+    "noResults": "Aucun résultat trouvé",
+    "confirm": "Confirmer",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "finish": "Terminer",
+    "close": "Fermer",
+    "yes": "Oui",
+    "no": "Non"
   },
   "months": {
     "jan": "Jan",
@@ -483,8 +533,15 @@
     "cancel": "Annuler"
   },
   "resetPassword": {
+    "authApp": {
+      "title": "Application d'authentification",
+      "description": "Utilisez votre application d'authentification pour vérifier votre identité"
+    },
+    "dbCode": {
+      "title": "Question de sécurité",
+      "description": "Répondez à votre question de sécurité pour vérifier votre identité"
+    },
     "error": {
-      "general": "Une erreur est survenue lors de la réinitialisation de votre mot de passe. Veuillez réessayer.",
       "invalidCode": "Code de vérification invalide. Veuillez réessayer.",
       "tooManyAttempts": "Trop de tentatives. Veuillez réessayer plus tard.",
       "qrCodeNotGenerated": "Impossible de générer le code QR. Veuillez réessayer.",
@@ -492,12 +549,6 @@
       "2faSetupFailed": "Échec de la configuration de l'authentification à deux facteurs. Veuillez réessayer.",
       "copyFailed": "Échec de la copie dans le presse-papiers.",
       "general": "Une erreur s'est produite. Veuillez réessayer."
-    },
-    "success": {
-      "linkSent": "Un lien de réinitialisation a été envoyé à votre adresse e-mail.",
-      "qrCodeGenerated": "Code QR généré avec succès.",
-      "2faSetupInitiated": "Configuration de l'authentification à deux facteurs initiée.",
-      "copied": "Copié dans le presse-papiers !"
     },
     "loading": "Chargement…",
     "verifying": "Vérification...",
@@ -526,7 +577,34 @@
       "useManualEntry": "Utilisez la saisie manuelle à la place",
       "enterCode": "Saisissez le code à 6 chiffres depuis votre application d'authentification",
       "copied": "Clé secrète copiée dans le presse-papiers !"
-    }
+    },
+    "selectMethod": "Sélectionner une méthode",
+    "email": {
+      "title": "Vérification par email",
+      "description": "Recevez un code de vérification par email",
+      "verifyTitle": "Vérification par email",
+      "verifyDescription": "Entrez le code de vérification envoyé à votre email"
+    },
+    "sms": {
+      "title": "Vérification par SMS",
+      "description": "Recevez un code de vérification par SMS",
+      "verifyTitle": "Vérification par SMS",
+      "verifyDescription": "Entrez le code de vérification envoyé à votre téléphone"
+    },
+    "success": {
+      "emailCodeSent": "Le code de vérification a été envoyé à votre email",
+      "smsCodeSent": "Le code de vérification a été envoyé à votre téléphone",
+      "linkSent": "Un lien de réinitialisation a été envoyé à votre adresse e-mail.",
+      "qrCodeGenerated": "Code QR généré avec succès.",
+      "2faSetupInitiated": "Configuration de l'authentification à deux facteurs initiée.",
+      "copied": "Copié dans le presse-papiers !"
+    },
+    "wait": "Veuillez patienter...",
+    "title": "Réinitialiser le mot de passe",
+    "subtitle": "Choisissez un nouveau mot de passe pour votre compte",
+    "newPassword": "Nouveau mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "reset": "Réinitialiser le mot de passe"
   },
   "twoFactorAuth": {
     "title": "Authentification à Deux Facteurs",
@@ -773,6 +851,213 @@
       "relationship": "Relation",
       "profession": "Profession",
       "contactDetails": "Coordonnées"
+    }
+  },
+  "formSteps": {
+    "timeSlot": {
+      "title": "Créneau Horaire",
+      "addNew": "Ajouter un Nouveau Créneau",
+      "edit": "Modifier le Créneau",
+      "show": "Afficher les Créneaux",
+      "hide": "Masquer les Créneaux",
+      "hour": "Heure",
+      "minute": "Minute",
+      "startTime": "Heure de Début",
+      "endTime": "Heure de Fin",
+      "errors": {
+        "selectBothTimes": "Veuillez sélectionner l'heure de début et de fin",
+        "endAfterStart": "L'heure de fin doit être après l'heure de début",
+        "updateFailed": "Échec de la mise à jour du créneau",
+        "deleteFailed": "Échec de la suppression du créneau"
+      },
+      "success": {
+        "saved": "Créneau enregistré avec succès",
+        "updated": "Créneau mis à jour avec succès",
+        "deleted": "Créneau supprimé avec succès"
+      }
+    },
+    "matiere": {
+      "title": "Informations sur la Matière",
+      "name": "Nom",
+      "code": "Code",
+      "coefficient": "Coefficient",
+      "level": "Niveau",
+      "description": "Description",
+      "teachers": "Professeurs",
+      "totalExams": "Nombre Total d'Examens",
+      "examDetails": "Détails des Examens",
+      "examType": "Type d'Examen",
+      "examCount": "Nombre d'Examens",
+      "errors": {
+        "nameRequired": "Le nom ne peut pas être vide",
+        "nameExists": "Ce nom est déjà utilisé",
+        "invalidName": "Format de nom invalide",
+        "codeRequired": "Le code est requis",
+        "invalidCode": "Format de code invalide",
+        "positiveCoefficient": "Le coefficient doit être positif",
+        "levelRequired": "Le niveau est requis",
+        "descriptionRequired": "La description est requise",
+        "descriptionLength": "La description ne doit pas dépasser 500 caractères",
+        "positiveExams": "Le nombre doit être supérieur à 0",
+        "examSumMismatch": "La somme des examens ({{sum}}) doit être égale à {{total}}",
+        "percentageSumMismatch": "La somme des pourcentages doit être égale à 100% (actuel : {{current}}%)"
+      }
+    },
+    "teacher": {
+      "title": "Informations Personnelles",
+      "civility": "Civilité",
+      "profilePhoto": "Photo de Profil",
+      "lastName": "Nom",
+      "firstName": "Prénom",
+      "gender": "Genre",
+      "birthDate": "Date de Naissance",
+      "birthPlace": "Lieu de Naissance",
+      "address": "Adresse",
+      "city": "Ville",
+      "postalCode": "Code Postal",
+      "country": "Pays",
+      "phone": "Téléphone",
+      "email": "Email",
+      "subjects": "Matières",
+      "groups": "Groupes",
+      "errors": {
+        "civilityRequired": "La civilité est requise",
+        "invalidCivility": "La civilité doit être M., Mme ou Mlle",
+        "profilePhotoRequired": "La photo de profil est requise",
+        "lastNameRequired": "Le nom est requis",
+        "invalidLastName": "Le nom doit commencer par une lettre majuscule, contenir uniquement des noms valides et avoir un seul espace entre les mots",
+        "firstNameRequired": "Le prénom est requis",
+        "invalidFirstName": "Le prénom doit commencer par une lettre majuscule, contenir uniquement des noms valides et avoir un seul espace entre les mots",
+        "genderRequired": "Le genre est requis",
+        "invalidGender": "Le genre doit être Homme ou Femme",
+        "birthDateRequired": "La date de naissance est requise",
+        "futureBirthDate": "La date de naissance ne peut pas être dans le futur",
+        "underage": "Vous devez avoir au moins 18 ans",
+        "birthPlaceRequired": "Le lieu de naissance est requis",
+        "addressRequired": "L'adresse est requise",
+        "cityRequired": "La ville est requise",
+        "postalCodeRequired": "Le code postal est requis",
+        "invalidPostalCode": "Format de code postal invalide",
+        "countryRequired": "Le pays est requis",
+        "phoneRequired": "Le numéro de téléphone est requis",
+        "phoneExists": "Ce numéro de téléphone est déjà utilisé par un autre utilisateur",
+        "invalidPhonePrefix": "Le numéro doit commencer par un préfixe de pays valide",
+        "invalidPhoneFormat": "Le format du numéro n'est pas valide pour le pays sélectionné",
+        "emailRequired": "L'email est requis",
+        "emailExists": "Cette adresse email est déjà utilisée par un autre utilisateur",
+        "nameCombinationExists": "Cette combinaison de nom et prénom est déjà utilisée par un autre utilisateur"
+      }
+    }
+  },
+  "Time Table Management":"Gestion de l'emploi du temps",
+  "Days of Week": "Jours de la semaine",
+  "Time Slots": "Créneaux horaires",
+  "Time Table": "Emploi du temps",
+  "Monday": "Lundi",
+  "Tuesday": "Mardi",
+  "Wednesday": "Mercredi",
+  "Thursday": "Jeudi",
+  "Friday": "Vendredi",
+  "Saturday": "Samedi",
+  "Sunday": "Dimanche",
+  "monday": "Lundi",
+  "tuesday": "Mardi",
+  "wednesday": "Mercredi",
+  "thursday": "Jeudi",
+  "friday": "Vendredi",
+  "saturday": "Samedi",
+  "sunday": "Dimanche",
+  "Loading configuration...":"Chargement de la configuration...",
+  "Select Group": "Sélectionner un groupe",
+  "End Time Must Be After Start Time": "L'heure de fin doit être après l'heure de début",
+  "Please Select Both Start and End Times": "Veuillez sélectionner l'heure de début et de fin",
+  "Time Slot Updated Successfully": "Créneau horaire mis à jour avec succès",
+  "Failed to Update Time Slot": "Échec de la mise à jour du créneau horaire",
+  "Time Slot Saved Successfully": "Créneau horaire enregistré avec succès",
+  "Time Slot Deleted Successfully": "Créneau horaire supprimé avec succès",
+  "Failed to Delete Time Slot": "Échec de la suppression du créneau horaire",
+  "Hour": "Heure",
+  "Minute": "Minute",
+  "Hide Time Slots": "Masquer les créneaux horaires",
+  "Show Time Slots": "Afficher les créneaux horaires",
+  "Add New Time Slot": "Ajouter un nouveau créneau",
+  "Edit Time Slot": "Modifier le créneau",
+  "Start Time": "Heure de début",
+  "End Time": "Heure de fin",
+  "Update": "Mettre à jour",
+  "No Time Slots Available": "Aucun créneau horaire disponible",
+  "Edit": "Modifier",
+  "Delete": "Supprimer",
+  "Please Select At Least One Day": "Veuillez sélectionner au moins un jour",
+  "Days Saved Successfully": "Jours enregistrés avec succès",
+  "Failed to Save Days": "Échec de l'enregistrement des jours",
+  "Configure Days": "Configurer les jours",
+  "Save": "Enregistrer",
+  "Select Days": "Sélectionner les jours",
+  "Configure Time Slots": "Configurer les créneaux horaires",
+  "Loading Days": "Chargement des jours",
+  "Loading Time Slots": "Chargement des créneaux horaires",
+  "Loading Schedule": "Chargement de l'emploi du temps",
+  "Schedule Loaded Successfully": "Emploi du temps chargé avec succès",
+  "Schedule Load Failed": "Échec du chargement de l'emploi du temps",
+  "No Schedule Available": "Aucun emploi du temps disponible",
+  "timeTableManagement": "Gestion des emplois du temps",
+  "TimeTableManagement": {
+    "title": "Gestion des emplois du temps",
+    "generateTimeTable": "Générer l'emploi du temps",
+    "timeSlots": "Créneaux horaires",
+    "daysOfWeek": "Jours de la semaine",
+    "timeTable": "Emploi du temps",
+    "monday": "Lundi",
+    "tuesday": "Mardi",
+    "wednesday": "Mercredi",
+    "thursday": "Jeudi",
+    "friday": "Vendredi",
+    "saturday": "Samedi",
+    "sunday": "Dimanche",
+    "selectGroup": "Sélectionner un groupe",
+    "endTimeMustBeAfterStartTime": "L'heure de fin doit être après l'heure de début",
+    "pleaseSelectBothStartAndEndTimes": "Veuillez sélectionner l'heure de début et de fin",
+    "timeSlotUpdatedSuccessfully": "Créneau horaire mis à jour avec succès",
+    "failedToUpdateTimeSlot": "Échec de la mise à jour du créneau horaire",
+    "timeSlotSavedSuccessfully": "Créneau horaire enregistré avec succès",
+    "timeSlotDeletedSuccessfully": "Créneau horaire supprimé avec succès",
+    "failedToDeleteTimeSlot": "Échec de la suppression du créneau horaire",
+    "hour": "Heure",
+    "minute": "Minute",
+    "hideTimeSlots": "Masquer les créneaux horaires",
+    "showTimeSlots": "Afficher les créneaux horaires",
+    "addNewTimeSlot": "Ajouter un nouveau créneau",
+    "editTimeSlot": "Modifier le créneau",
+    "startTime": "Heure de début",
+    "endTime": "Heure de fin",
+    "update": "Mettre à jour",
+    "noTimeSlotsAvailable": "Aucun créneau horaire disponible",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "pleaseSelectAtLeastOneDay": "Veuillez sélectionner au moins un jour",
+    "daysSavedSuccessfully": "Jours enregistrés avec succès",
+    "failedToSaveDays": "Échec de l'enregistrement des jours",
+    "configureDays": "Configurer les jours",
+    "save": "Enregistrer",
+    "selectDays": "Sélectionner les jours",
+    "configureTimeSlots": "Configurer les créneaux horaires",
+    "loadingDays": "Chargement des jours",
+    "loadingTimeSlots": "Chargement des créneaux horaires"
+  },
+  "timeSlots": {
+    "title": "Créneaux Horaires",
+    "startTime": "Heure de Début",
+    "endTime": "Heure de Fin",
+    "addTimeSlot": "Ajouter un Créneau",
+    "editTimeSlot": "Modifier le Créneau",
+    "deleteTimeSlot": "Supprimer le Créneau",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce créneau horaire ?",
+    "validation": {
+      "startTimeRequired": "L'heure de début est requise",
+      "endTimeRequired": "L'heure de fin est requise",
+      "invalidTimeRange": "L'heure de fin doit être après l'heure de début",
+      "overlappingTimeSlot": "Ce créneau chevauche un créneau existant"
     }
   }
 }

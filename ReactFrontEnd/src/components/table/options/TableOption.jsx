@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 import ActionMenu from "../../menu/ActionMenu";
 import { useSelector } from "react-redux";
 import dayjs from 'dayjs';
-export const GetInfoTable = () => {
+export const GetInfoTable = ( userRole) => {
   const { t: Traduction, i18n } = useTranslation();
   const Language = i18n.language;
   const isDarkMode = useSelector((state) => state?.theme?.darkMode || false);
@@ -37,7 +37,7 @@ export const GetInfoTable = () => {
       de: MRT_Localization_DE,
       es: MRT_Localization_ES,
     }[Language],
-    ActionOption: (table, row, Handels, closeMenu, BoxOptionDeleteBy1, BoxOptionGrade, options = { consult: true, edit: true, remove: true }) => {
+    ActionOption: (table, row, Handels, closeMenu, BoxOptionDeleteBy1, BoxOptionGrade, refetch, options = { consult: true, edit: true, remove: true }) => {
       const { consult, edit, remove } = options;
       const { handleDelete, handleSetGrade } = Handels;
 
@@ -63,6 +63,7 @@ export const GetInfoTable = () => {
           break
         case 'professeurs': 
           row = {
+            daily_hours_limit: row.daily_hours_limit,
             MatriculePR:row.MatriculePR,
             EmailPR: row?.user?.EmailUT,
             PhonePR:row?.user?.PhoneUT,
@@ -77,12 +78,23 @@ export const GetInfoTable = () => {
             DateNaissancePL:dayjs(row?.user?.DateNaissancePL),
           }
           break
+        case "matieres":
+          row = {
+            ...row,
+            NbrEVMT: row?.total_evaluations,
+          };
+        
+          for (let i = 0; i < row?.total_evaluations; i++) {
+            row[`MatriculeEP_${i}`] = row?.evaluations?.[i]?.MatriculeEP;
+            row[`NbrEV_${i}`] = row?.evaluations?.[i]?.NbrEV;
+          }
+          break;
+
       }
-      console.log("ACTION OPTION: ",row)
       const itemId = row[{
         etudiants: "MatriculeET",
         professeurs: "MatriculePR",
-        matiere: "MatriculeMT",
+        matieres: "MatriculeMT",
         niveaux: "MatriculeNV",
         salles: "MatriculeSL",
         groups: "MatriculeGP",
@@ -90,17 +102,6 @@ export const GetInfoTable = () => {
         "regular-timetables": "MatriculeRT",
         "academic-years" : "MatriculeYR"
       }[TableName]];
-      console.log({
-        etudiants: "MatriculeET",
-        professeurs: "MatriculePR",
-        matiere: "MatriculeMT",
-        niveaux: "MatriculeNV",
-        salles: "MatriculeSL",
-        groups: "MatriculeGP",
-        "evaluation-types": "MatriculeEP",
-        "regular-timetables": "MatriculeRT",
-        "academic-years" : "MatriculeYR"
-      }[TableName],itemId)
       const actions = [
         consult && (
           <MRT_ActionMenuItem
@@ -115,6 +116,7 @@ export const GetInfoTable = () => {
           <FormWrapper
             matricule={itemId}
             row={row}
+            refetch={refetch}
             typeOpt="MOD" // Indicate this is for modification
             key="edit"
             maxWidth="lg"
@@ -148,7 +150,7 @@ export const GetInfoTable = () => {
               borderLeft: isDarkMode ? '3px solid rgba(220, 38, 38, 0.8)' : '3px solid rgba(220, 38, 38, 0.7)' 
             }}
           />
-        )
+        ),
       ];
       return actions.filter(Boolean); // Remove falsy values
     },
@@ -164,8 +166,8 @@ export const GetInfoTable = () => {
       enableColumnFilterModes: true,
       enableColumnPinning: true,
       enableColumnVirtualization: true,
-      enableRowActions: true,
-      enableSelectAll: true,
+      enableRowActions:  userRole === "admin",
+      enableSelectAll:  userRole === "admin",
       enableColumnActions: true,
       enableRowDragging: true,
       enableRowOrdering: true,
@@ -176,7 +178,7 @@ export const GetInfoTable = () => {
       enableRowVirtualization: true,
       enableClickToCopy: true,
       enableToolbarInternalActions: true,
-      enableRowSelection: true,
+      enableRowSelection:  userRole === "admin",
     },
     TableName,
   };

@@ -95,6 +95,27 @@ export const matiereColumns = (Traduction, FilterModeOptions) => [
     }  
   },
   {
+    header: Traduction("Matiere.max_sessions_per_week"),
+    accessorKey: "max_sessions_per_week",
+    filterFn: "between", // يسمح بتصفية من - إلى
+    filterVariant: "range-slider", // شريط تمرير للفلترة
+    columnFilterModeOptions: [...FilterModeOptions["range"]],
+    size: 180,
+    minSize: 120,
+    Cell: ({ renderedCellValue }) => {
+      if (renderedCellValue === null || renderedCellValue === undefined) {
+        return renderEmptyCell(); // دالة تعرض "-" أو شيء فارغ
+      }
+  
+      return (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'start', gap: '6px', width: '100%' }}>
+          <span style={{ fontWeight: 500 }}>{renderedCellValue}</span>
+          <span style={{ color: '#888', fontSize: '0.85em' }}>{Traduction("General.hours")}</span>
+        </div>
+      );
+    }
+  },
+  {
     header: Traduction("Data.niveau"),
     accessorKey: "niveau_name",
     filterFn: "fuzzy",

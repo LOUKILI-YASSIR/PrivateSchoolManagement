@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Container, Grid, Typography, Paper, Stack, Avatar, Tabs, Tab, Select, MenuItem, FormControl, InputLabel, IconButton, Tooltip } from '@mui/material';
+import { useState, useEffect, useMemo } from 'react';
+import { Radio, RadioGroup ,FormControlLabel, Box, Container, Grid, Typography, Paper, Stack, Avatar, Tabs, Tab, Select, MenuItem, FormControl, InputLabel, IconButton, Tooltip } from '@mui/material';
 import { ExpandMore as ExpandMoreIcon, ExpandLess as ExpandLessIcon } from '@mui/icons-material';
 import { useDashboard } from './hooks/useDashboard';
 import styles from './Dashboard.module.css';
@@ -24,20 +24,20 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import WelcomeSection from './sections/WelcomeSection';
 import StatsCards from './sections/StatsCards';
+import StatsCardsProf from './sections/StatsCardsProf';
 import TimeTableSection from "./sections/TimeTableSection";
 import ChartsSection from "./sections/ChartsSection";
 import { useSelector } from 'react-redux';
 import { useAuth } from '../../utils/contexts/AuthContext';
+import { EnhancedGroupSelect } from '../../pages/TimeTable';
+import { useTranslation } from 'react-i18next';
+import { useDays, useTimeSlots, useSaveDays, useSaveTimeSlots, useFetchData } from '../../api/queryHooks';
+import { message } from 'antd';
+import { generateFullTimetable, getGroupTimeTable, saveDays, saveTimeSlots } from '../../api/apiServices';
+import { useTheme } from '@mui/material/styles';
 
 // Mock data
 const mockData = {
-  stats: {
-    total_students: 3643,
-    total_teachers: 254,
-    total_staff: 161,
-    total_classes: 72,
-    total_subjects: 81
-  },
   timeTable: {
     "Lundi": [
       { time: "08:00 - 09:30", subject: "Mathématiques", teacher: "M. Martin", room: "101" },
@@ -175,6 +175,89 @@ const Dashboard = ({ type = "admin" }) => {
   const renderDashboard = () => {
     // Admin dashboard
     if (type === "admin") {
+      const { data: AdminDashboardData } = useFetchData("dashboard/admin");
+      const { 
+        stats = {},
+        gender_distribution = [{name:"male",value:0},{name:"female",value:0}]
+      } = AdminDashboardData || {};
+        const { t: Traduction } = useTranslation();
+          const theme = useTheme();
+          const isDarkMode = useSelector((state) => state?.theme?.darkMode || false);
+              const [niveaux, setNiveaux] = useState([]); // Changed from TimeTableClasses to niveaux
+      
+          const [TimeTableClasses, setTimeTableClasses] = useState([]);
+          const [selectedGroup, setSelectedGroup] = useState('');
+          const [timeTableData, setTimeTableData] = useState(null);
+          const [isLoadingTimeTable, setIsLoadingTimeTable] = useState(false);
+          const { userRole } = useAuth();
+          const nav = useNavigate();
+      
+          useEffect(() => {
+              if (!userRole || !["admin", "etudiant", "professeur"].includes(userRole)) {
+                  nav("/YLSchool/Login");
+              }
+          }, [userRole, nav]);
+      
+          const { data: groupsData, isLoading: isLoadingGroups } = useFetchData("getallniveauxwithgroups");
+          const { data: timeSlotsData, isLoading: isLoadingTimeSlots } = useTimeSlots();
+          const { data: daysData, isLoading: isLoadingDays } = useDays();
+          useEffect(() => {
+              if (!isLoadingGroups && groupsData?.length) { // Changed to check niveaux
+                  setNiveaux(groupsData); // Changed to set niveaux
+              }
+          }, [groupsData, isLoadingGroups]);
+      
+          useEffect(() => {
+              if (selectedGroup) {
+                  fetchTimeTableData();
+              }
+          }, [selectedGroup]);
+      
+          const fetchTimeTableData = async () => {
+              try {
+                  setIsLoadingTimeTable(true);
+                  const response = await getGroupTimeTable(selectedGroup);
+                  setTimeTableData(response);
+              } catch (error) {
+                  console.error('Error fetching time table data:', error);
+              } finally {
+                  setIsLoadingTimeTable(false);
+              }
+          };
+      
+          const handleGroupChange = (event) => {
+              setSelectedGroup(event.target.value);
+          };
+      
+          const handleGenerateTimeTable = async () => {
+              try {
+                  const timetable = await generateFullTimetable();
+                  console.log("generation: ", timetable)
+                  message.success(Traduction('TimeTable Generated successfully'));
+              } catch (error) {
+                  console.error('Error generating time table:', error);
+              }
+          };
+      
+          // Transform time slots data for TimeTableSection
+          const transformTimeSlotsForSection = () => {
+              if (!timeSlotsData) return [];
+              return timeSlotsData.map(slot => ({
+                  time: `${slot.StartTimeTS} - ${slot.EndTimeTS}`,
+                  displayTime: `${slot.StartTimeTS} - ${slot.EndTimeTS}`,
+                  MatriculeTS: slot.MatriculeTS
+              }));
+          };
+      
+          // Transform days data for TimeTableSection
+          const transformDaysForSection = () => {
+              if (!daysData?.data) return [];
+              return daysData.data.map(day => ({
+                  day: Traduction(day.DayNameDW),
+                  MatriculeDW: day.MatriculeDW
+              }));
+          };
+
       return (
         <Container maxWidth="xl">
           <Grid container spacing={3}>
@@ -183,7 +266,7 @@ const Dashboard = ({ type = "admin" }) => {
             </Grid>
             
             <Grid item xs={12}>
-              <StatsCards stats={mockData.stats} isDarkMode={isDarkMode} />
+              <StatsCards stats={stats} isDarkMode={isDarkMode} />
             </Grid>
 
             {/* Charts Section */}
@@ -216,7 +299,7 @@ const Dashboard = ({ type = "admin" }) => {
                   activeTab={activeTab}
                   setActiveTab={setActiveTab}
                   mockAttendanceData={mockData.attendanceData}
-                  mockGenderData={mockData.genderData}
+                  mockGenderData={gender_distribution}
                   mockPerformanceData={mockData.performanceData}
                   mockTopSubjectsData={mockData.topSubjectsData}
                   mockSuccessFailureData={mockData.performanceData}
@@ -232,50 +315,38 @@ const Dashboard = ({ type = "admin" }) => {
             
             {/* Timetable Section */}
             <Grid item xs={12}>
-              <ContentBlock
-                title={
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <FontAwesomeIcon icon={faCalendar} style={{ marginRight: '8px' }} />
-                    Emploi du Temps
-                  </Box>
-                }
-                rightElement={
-                  <FormControl size="small" sx={{ minWidth: 200 }}>
-                    <InputLabel 
-                      id="class-select-label"
-                      sx={{ color: isDarkMode ? 'rgba(224, 224, 224, 0.8)' : 'text.primary' }}
-                    >
-                      Classe
-                    </InputLabel>
-                    <Select
-                      labelId="class-select-label"
-                      value={selectedTimeTableClass}
-                      onChange={(e) => setSelectedTimeTableClass(e.target.value)}
-                      label="Classe"
-                      sx={{
-                        color: isDarkMode ? '#e0e0e0' : 'text.primary',
-                        '& .MuiOutlinedInput-notchedOutline': {
-                          borderColor: isDarkMode ? 'rgba(224, 224, 224, 0.3)' : 'inherit'
-                        },
-                        '&:hover .MuiOutlinedInput-notchedOutline': {
-                          borderColor: isDarkMode ? 'rgba(224, 224, 224, 0.5)' : 'inherit'
-                        }
-                      }}
-                    >
-                      <MenuItem value="Class I">Classe I</MenuItem>
-                      <MenuItem value="Class II">Classe II</MenuItem>
-                      <MenuItem value="Class III">Classe III</MenuItem>
-                      <MenuItem value="Class IV">Classe IV</MenuItem>
-                    </Select>
-                  </FormControl>
-                }
-              >
-                <TimeTableSection 
-                  isDarkMode={isDarkMode}
-                  selectedTimeTableClass={selectedTimeTableClass}
-                  setSelectedTimeTableClass={setSelectedTimeTableClass}
-                />
-              </ContentBlock>
+              <Box sx={{ mt: 2 }}>
+                <Paper  
+                    elevation={2} 
+                    sx={{ 
+                        p: 2,
+                        backgroundColor: isDarkMode ? 'rgba(30, 41, 59, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+                        color: isDarkMode ? '#e0e0e0' : 'inherit',
+                        border: isDarkMode ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.1)'
+                    }}
+                >
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                        <h3>{Traduction('Time Table')}</h3>
+                        {/* Enhanced Group Select */}
+                        <EnhancedGroupSelect
+                            niveaux={niveaux}
+                            selectedGroup={selectedGroup}
+                            handleGroupChange={handleGroupChange}
+                            Traduction={Traduction}
+                            isDarkMode={isDarkMode}
+                        />
+                    </Box>{console.log("selected : ",selectedGroup,timeTableData)}
+                    <TimeTableSection
+                        selectedTimeTableClass={selectedGroup}
+                        setSelectedTimeTableClass={setSelectedGroup}
+                        isDarkMode={isDarkMode}
+                        timeSlots={transformTimeSlotsForSection()}
+                        daysOfWeek={transformDaysForSection()}
+                        isLoading={isLoadingDays || isLoadingTimeSlots || isLoadingTimeTable}
+                        ExtratimeTableData={timeTableData}
+                    />
+                </Paper>
+              </Box>
             </Grid>
             
           </Grid>
@@ -284,6 +355,83 @@ const Dashboard = ({ type = "admin" }) => {
     } 
     // Professor dashboard
     else if (type === "professeur") {
+      
+      const MatriculeUT = sessionStorage.getItem("userID");
+      const { data:ProfesseurDashboadData, isLoading:ProfesseurDashboadLoading } = useFetchData("dashboard/professeur/"+MatriculeUT);
+        const { 
+        stats = {},
+        gender_distribution = [{name:"male",value:0},{name:"female",value:0}],
+        selectedGroup:ProfID
+      } = ProfesseurDashboadData || {};
+        const { t: Traduction } = useTranslation();
+          const theme = useTheme();
+          const isDarkMode = useSelector((state) => state?.theme?.darkMode || false);
+              const [niveaux, setNiveaux] = useState([]); // Changed from TimeTableClasses to niveaux
+      
+          const [TimeTableClasses, setTimeTableClasses] = useState([]);
+          const [selectedGroup, setSelectedGroup] = useState(ProfID);
+          const [timeTableData, setTimeTableData] = useState(null);
+          const [isLoadingTimeTable, setIsLoadingTimeTable] = useState(false);
+          const [showtype,setshowtype] =useState("my");
+          const { userRole } = useAuth();
+          const nav = useNavigate();
+          useEffect(()=>{
+            console.log("profid:",ProfID);
+            if(ProfID && showtype === "my") setSelectedGroup(ProfID)
+              else setSelectedGroup("");
+          },[ProfID,showtype])
+          useEffect(() => {
+              if (!userRole || !["admin", "etudiant", "professeur"].includes(userRole)) {
+                  nav("/YLSchool/Login");
+              }
+          }, [userRole, nav]);
+      
+          const { data: groupsData, isLoading: isLoadingGroups } = useFetchData("getallniveauxwithgroups/"+MatriculeUT);
+          const { data: timeSlotsData, isLoading: isLoadingTimeSlots } = useTimeSlots();
+          const { data: daysData, isLoading: isLoadingDays } = useDays();
+          useEffect(() => {
+              if (!isLoadingGroups && groupsData?.length) { // Changed to check niveaux
+                  setNiveaux(groupsData); // Changed to set niveaux
+              }
+          }, [groupsData, isLoadingGroups]);
+      
+          useEffect(() => {
+              if (selectedGroup) {
+                  fetchTimeTableData();
+              }
+          }, [selectedGroup,showtype]);
+      
+          const fetchTimeTableData = async () => {
+              try {
+                  setIsLoadingTimeTable(true);
+                  const response = await getGroupTimeTable(selectedGroup);
+                  setTimeTableData(response);
+              } catch (error) {
+                  console.error('Error fetching time table data:', error);
+              } finally {
+                  setIsLoadingTimeTable(false);
+              }
+          };
+      
+          // Transform time slots data for TimeTableSection
+          const transformTimeSlotsForSection = () => {
+              if (!timeSlotsData) return [];
+              return timeSlotsData.map(slot => ({
+                  time: `${slot.StartTimeTS} - ${slot.EndTimeTS}`,
+                  displayTime: `${slot.StartTimeTS} - ${slot.EndTimeTS}`,
+                  MatriculeTS: slot.MatriculeTS
+              }));
+          };
+      
+          // Transform days data for TimeTableSection
+          const transformDaysForSection = () => {
+              if (!daysData?.data) return [];
+              return daysData.data.map(day => ({
+                  day: Traduction(day.DayNameDW),
+                  MatriculeDW: day.MatriculeDW
+              }));
+          };
+
       return (
         <Container maxWidth="xl">
           <Grid container spacing={3}>
@@ -291,53 +439,87 @@ const Dashboard = ({ type = "admin" }) => {
               <WelcomeSection user={{ name: "Professeur" }} />
             </Grid>
             
-            {/* Classes Section */}
             <Grid item xs={12}>
-              <ContentBlock>
-                <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-                  <FontAwesomeIcon icon={faSchool} style={{ marginRight: '8px' }} />
-                  Mes Classes
-                </Typography>
-                <Grid container spacing={3}>
-                  {mockData.tableData.classes.map((classItem) => (
-                    <Grid item xs={12} md={4} key={classItem.id}>
-                      <Paper 
-                        elevation={1}
+              <StatsCardsProf stats={stats} isDarkMode={isDarkMode} />
+            </Grid>
+            
+            {/* Charts Section */}
+            <Grid item xs={12}>
+              <ContentBlock
+                title={
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <FontAwesomeIcon icon={faChartLine} style={{ marginRight: '8px' }} />
+                    Statistiques et Analyses
+                  </Box>
+                }
+                rightElement={
+                  <Box>
+                    <Tooltip title={chartsExpanded ? "Collapse" : "Expand"}>
+                      <IconButton 
+                        size="small"
+                        onClick={() => setChartsExpanded(!chartsExpanded)}
                         sx={{ 
-                          p: 3, 
-                          bgcolor: isDarkMode ? 'rgba(35, 47, 63, 0.8)' : 'white',
-                          color: isDarkMode ? '#e0e0e0' : 'inherit',
-                          borderRadius: 2,
-                          height: '100%',
-                          '&:hover': {
-                            boxShadow: 3,
-                            cursor: 'pointer'
-                          }
+                          color: isDarkMode ? 'rgba(224, 224, 224, 0.8)' : 'rgba(0, 0, 0, 0.54)'
                         }}
                       >
-                        <Typography variant="h6" sx={{ mb: 1 }}>Classe {classItem.name}</Typography>
-                        <Typography variant="body2" sx={{ mb: 2 }}>
-                          Niveau: {classItem.level}
-                        </Typography>
-                        <Typography variant="body2" sx={{ mb: 2 }}>
-                          {classItem.students} étudiants
-                        </Typography>
-                      </Paper>
-                    </Grid>
-                  ))}
-                </Grid>
+                        {chartsExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
+                }
+              >
+                <ChartsSection
+                  isDarkMode={isDarkMode}
+                  activeTab={activeTab}
+                  setActiveTab={setActiveTab}
+                  mockAttendanceData={mockData.attendanceData}
+                  mockGenderData={gender_distribution}
+                  mockPerformanceData={mockData.performanceData}
+                  mockTopSubjectsData={mockData.topSubjectsData}
+                  mockSuccessFailureData={mockData.performanceData}
+                  mockPerformanceTrendData={mockData.performanceData}
+                  mockClassSizeData={mockData.tableData.classes}
+                  selectedClass={selectedClass}
+                  setSelectedClass={setSelectedClass}
+                  isMobile={isMobile}
+                  expanded={chartsExpanded}
+                />
               </ContentBlock>
             </Grid>
             
             {/* Timetable Section */}
             <Grid item xs={12}>
-              <ContentBlock>
-                <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
-                  <FontAwesomeIcon icon={faCalendar} style={{ marginRight: '8px' }} />
-                  Mon Emploi du Temps
-                </Typography>
-                <TimeTableSection isDarkMode={isDarkMode} />
-              </ContentBlock>
+              <Box sx={{ mt: 2 }}>
+                <Paper  
+                    elevation={2} 
+                    sx={{ 
+                        p: 2,
+                        backgroundColor: isDarkMode ? 'rgba(30, 41, 59, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+                        color: isDarkMode ? '#e0e0e0' : 'inherit',
+                        border: isDarkMode ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.1)'
+                    }}
+                >
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                        <h3>{Traduction('Time Table')}</h3>
+                        {/* Enhanced Group Select */}
+                        <TimetableSelector
+                          groupOptions={niveaux}
+                          profID={selectedGroup}
+                          setSelectedGroup={setSelectedGroup}
+                          setshowtype={setshowtype}
+                        />
+                    </Box>{console.log("selected : ",selectedGroup,timeTableData)}
+                    <TimeTableSection
+                        selectedTimeTableClass={selectedGroup}
+                        setSelectedTimeTableClass={setSelectedGroup}
+                        isDarkMode={isDarkMode}
+                        timeSlots={transformTimeSlotsForSection()}
+                        daysOfWeek={transformDaysForSection()}
+                        isLoading={isLoadingDays || isLoadingTimeSlots || isLoadingTimeTable || ProfesseurDashboadLoading}
+                        ExtratimeTableData={timeTableData}
+                    />
+                </Paper>
+              </Box>
             </Grid>
           </Grid>
         </Container>
@@ -345,6 +527,28 @@ const Dashboard = ({ type = "admin" }) => {
     } 
     // Student dashboard
     else if (type === "etudiant") {
+      const MatriculeUT = sessionStorage.getItem("userID");
+      const { t:Traduction } = useTranslation();
+      const { data:EtudiantDashboadData, isLoading:EtudiantDashboadLoading } = useFetchData("dashboard/etudiant/"+MatriculeUT);
+      console.log(EtudiantDashboadData);
+        const transformTimeSlotsForSection = () => {
+              if (!EtudiantDashboadData?.timeSlotsData) return [];
+              return EtudiantDashboadData?.timeSlotsData.map(slot => ({
+                  time: `${slot.StartTimeTS} - ${slot.EndTimeTS}`,
+                  displayTime: `${slot.StartTimeTS} - ${slot.EndTimeTS}`,
+                  MatriculeTS: slot.MatriculeTS
+              }));
+          };
+      
+          // Transform days data for TimeTableSection
+          const transformDaysForSection = () => {
+              if (!EtudiantDashboadData?.daysData) return [];
+              return EtudiantDashboadData?.daysData.map(day => ({
+                  day: Traduction(day.DayNameDW),
+                  MatriculeDW: day.MatriculeDW
+              }));
+          };
+          
       return (
         <Container maxWidth="xl">
           <Grid container spacing={3}>
@@ -359,7 +563,15 @@ const Dashboard = ({ type = "admin" }) => {
                   <FontAwesomeIcon icon={faCalendar} style={{ marginRight: '8px' }} />
                   Mon Emploi du Temps
                 </Typography>
-                <TimeTableSection isDarkMode={isDarkMode} />
+                    <TimeTableSection
+                        selectedTimeTableClass={EtudiantDashboadData?.selectedGroup}
+                        setSelectedTimeTableClass={()=>{}}
+                        isDarkMode={isDarkMode}
+                        timeSlots={transformTimeSlotsForSection()}
+                        daysOfWeek={transformDaysForSection()}
+                        isLoading={EtudiantDashboadLoading}
+                        timeTableData={EtudiantDashboadData?.timeTableData}
+                    />
               </ContentBlock>
             </Grid>
           </Grid>
@@ -378,6 +590,47 @@ const Dashboard = ({ type = "admin" }) => {
       borderRadius: '10px'
     }}>
       {renderDashboard()}
+    </Box>
+  );
+};
+
+export const TimetableSelector = ({groupOptions,ProfID,setSelectedGroup,setshowtype}) => {
+  const [selection, setSelection] = useState('my');
+  const [selectGroup,SetSelectGroup] = useState("")
+  const handleRadioChange = (event) => {
+    setSelection(event.target.value);
+    setshowtype(event.target.value);
+    setSelectedGroup(event.target.value === "my" ? ProfID : ""); // Reset group when switching
+    SetSelectGroup("");
+  };
+
+  const handleGroupChange = (event) => {
+    setSelectedGroup(event.target.value);
+    SetSelectGroup(event.target.value);
+  };
+
+  return (
+    <Box p={2} sx={{display:"flex",flexDirection:"row",width:selection !== "my" ? "1000px" : "auto"}}>
+
+      <RadioGroup row sx={{width:selection !== "my" ? "650px" : "auto"}} value={selection} onChange={handleRadioChange}>
+        <FormControlLabel value="my" control={<Radio />} label="Show my timetable" />
+        <FormControlLabel value="group" control={<Radio />} label="Show by my groups" />
+      </RadioGroup>
+
+      {selection === 'group' && (
+        <>
+          <FormControl fullWidth sx={{ mt: 2 }}>
+            <InputLabel>Select Group</InputLabel>
+            <Select value={selectGroup} onChange={handleGroupChange} label="Select Group">
+              {groupOptions.map((group) => (
+                <MenuItem key={group.MatriculeGP} value={group.MatriculeGP}>
+                  {group.NameGP}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </>
+      )}
     </Box>
   );
 };

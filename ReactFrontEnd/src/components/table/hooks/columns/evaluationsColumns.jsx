@@ -50,7 +50,7 @@ export const evaluationsColumns = (Traduction, FilterModeOptions) => [
       ...FilterModeOptions["text"],
       ...FilterModeOptions["equality"],
     ],
-    size: 240,
+    size: 280,
     Cell: ({ cell }) => cell.getValue() || renderEmptyCell(),
   },
   {
@@ -61,7 +61,7 @@ export const evaluationsColumns = (Traduction, FilterModeOptions) => [
       ...FilterModeOptions["text"],
       ...FilterModeOptions["equality"],
     ],
-    size: 240,
+    size: 340,
     Cell: ({ cell }) => cell.getValue() || renderEmptyCell(),
   },
     {

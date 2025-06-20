@@ -11,6 +11,7 @@ import SelectResetPasswordType from "../components/Auth/SelectResetPasswordType"
 import EmailSmsResetPassword from "../components/Auth/EmailSmsResetPassword";
 import CheckUserResetPassword from "../components/Auth/CheckUserResetPassword";
 import GoogleAuthResetPassword from "../components/Auth/GoogleAuthResetPassword";
+import TimeTable from "../pages/TimeTable";
 
 // Custom wrapper components to handle route context
 const GoogleAuthWrapper = () => {
@@ -81,7 +82,7 @@ const routes = [
       },
       {
         path: "TimeTables",
-        element: <Main ApiName="regular-timetables" />
+        element: <TimeTable/>
       }
     ]
   },

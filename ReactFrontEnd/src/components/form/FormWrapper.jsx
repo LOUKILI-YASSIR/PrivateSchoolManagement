@@ -8,9 +8,9 @@ import { Box, Typography, IconButton, Button, Paper, Snackbar, Alert } from '@mu
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
-const FormWrapper = ({ matricule = null, row = null, typeOpt = 'ADD' }) => {
+const FormWrapper = ({ refetch, matricule = null, row = null, typeOpt = 'ADD', ExtraTableName = '' }) => {
   const { t: Traduction } = useTranslation();
-  const { TableName } = useContext(MainContext);
+  const { TableName = null } = useContext(MainContext) || {}; // make sure context is not null
   const [buttons, setButtons] = useState([]);
   const [userInfo, setUserInfo] = useState(null);
   const [copied, setCopied] = useState({});
@@ -95,18 +95,22 @@ const FormWrapper = ({ matricule = null, row = null, typeOpt = 'ADD' }) => {
       'salles': 'room',
       'groupes': 'group',
       'evaluations': 'evaluation',
-      'regular-timetables': 'timetable'
+      'regular-timetables': 'timetable',
+      "evaluation-types": "evaluations",
+      "config-timetable": "config-timetable"
     };
-    return mapping[tableName] || 'student';
+    return mapping[tableName] || tableName;
   };
 
   // Get the translated table name
-  const tableNameTranslated = Traduction(`TableDBName.${getTableTranslationKey(TableName)}`);
+  const tableNameTranslated = Traduction(`TableDBName.${getTableTranslationKey(TableName ? TableName : ExtraTableName)}`);
 
   // Determine contentOptions based on typeOpt
-  const actionMenuConfig = typeOpt === 'ADD'
-    ? getFromActionMenu("actions.add", TableName, Traduction, tableNameTranslated).ADD
-    : getFromActionMenu("actions.edit", TableName, Traduction, tableNameTranslated).UPDATE;
+  const actionMenuConfig = typeOpt === 'CONFIG'
+    ? getFromActionMenu("actions.config", ExtraTableName, Traduction, tableNameTranslated).CONFIG
+    : typeOpt === 'ADD' 
+      ? getFromActionMenu("actions.add", TableName ? TableName : ExtraTableName, Traduction, tableNameTranslated).ADD
+      : getFromActionMenu("actions.edit", TableName ? TableName : ExtraTableName, Traduction, tableNameTranslated).UPDATE;
 
   const contentOptions = {
     Title: actionMenuConfig.Title, 
@@ -120,8 +124,10 @@ const FormWrapper = ({ matricule = null, row = null, typeOpt = 'ADD' }) => {
         DialogContentComponent={
           <>
             <MultiStepForm 
+              ExtraTableName={ExtraTableName}
               matricule={matricule} 
-              row={row} 
+              row={row}
+              refetch={refetch} 
               setButtons={setButtons} 
               setUserInfo={setUserInfo}
             />

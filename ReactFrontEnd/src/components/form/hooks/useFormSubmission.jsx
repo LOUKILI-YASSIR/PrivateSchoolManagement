@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { useFetchData } from '../../../api/queryHooks';
 import { message } from 'antd';
 
-export const useFormSubmission = ({TypeOpt,matricule}) => {
-  const { TableName, setUserInfo, formMethods } = useFormContext();
+export const useFormSubmission = ({ExtraTableName,TypeOpt,matricule}) => {
+  const { TableName = '', setUserInfo, formMethods } = useFormContext() ;
   const { t: Traduction } = useTranslation();
   const { data: academicYears } = useFetchData("academic-years");
   
@@ -21,7 +21,7 @@ export const useFormSubmission = ({TypeOpt,matricule}) => {
     try {
 
       // Convert TableName to the correct API endpoint format
-      const endpoint = TableName.toLowerCase().replace(/\s+/g, '-');
+      const endpoint = ExtraTableName || TableName?.toLowerCase()?.replace(/\s+/g, '-') || '';
       const currentYear = getCurrentYear();
       if (!currentYear && TableName !== "academic-years" && TableName !== 'evaluation-types') {
         throw new Error(Traduction('No current academic year found'));
@@ -57,21 +57,51 @@ export const useFormSubmission = ({TypeOpt,matricule}) => {
         message.success(Traduction('Form submitted successfully'));
         return response;
       } else {
-        
+        const buildPayload = (data) => {
+  const result = { ...data }; // copy original data
+  const evaluations = [];
+
+  for (let i = 0; i <= Number(data["NbrEVMT"]); i++) {
+    const nbrKey = `NbrEV_${i}`;
+    const MatriculeKey = `MatriculeEP_${i}`;
+    const val = data[nbrKey];
+    const val2 = data[MatriculeKey];
+
+    if (val !== undefined && val !== "" && val2 !== undefined && val2 !== "") {
+      evaluations.push({
+        NbrEV: val,
+        MatriculeEP: data[MatriculeKey] || "" // or leave empty ""
+      });
+    }
+
+    delete result[nbrKey]; // remove from result
+    delete result[MatriculeKey]; // remove from result
+  }
+
+  result.Evaluations = evaluations;
+  return result;
+
+        };
+
         // Format the date to YYYY-MM-DD
         const formattedData = TableName === "academic-years" ? 
         {
           ...data,
           MatriculeUT: sessionStorage.getItem("userID")
+        } : TableName === "matieres" ? {
+          ...buildPayload(data),
+          professeurs: data?.professeurs ? data?.professeurs?.map(p=>({MatriculePR:p})) || [] : [],
+          MatriculeYR: currentYear.MatriculeYR, // Current academic year
         } : TableName !== 'evaluation-types' ? {
           ...data,
           MatriculeYR: currentYear.MatriculeYR, // Current academic year
         } : {...data};
+        console.log("Formatted Data: ", formattedData);
         // For other forms, submit as is
         const response = TypeOpt === "ADD" && !matricule  ?
                           await apiServices.postData(endpoint, formattedData) :
                           await apiServices.updateData(endpoint, matricule, formattedData);
-        
+        console.log("formattedData",formattedData)
         if (response?.error) {
           throw new Error(response.message || Traduction('Error submitting form'));
         }

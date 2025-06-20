@@ -53,60 +53,69 @@ export default function FormFields({ steps, row }) {
   }
 }, [row, setValue]);
 
-  const renderField = (field, index, DoMargin) => {
-    const Component = FieldComponents[field.type];
-    const fieldName = field.label;
-    const ImgPathUploads = `/uploads/${TableName}`;
-    const fieldError = errors[fieldName];
-    
-    if (!Component) return null;
+const renderField = (field, index, DoMargin) => {
+  const Component = FieldComponents[field.type];
+  const fieldName = field.label;
+  const ImgPathUploads = `/uploads/${TableName}`;
+  const fieldError = errors[fieldName];
 
-    return (
-      <Grid item xs={12} style={{marginBottom: DoMargin ? 0 : 40}} sm={field.type === 'TEXTAREA' ? 12 : 6} key={`${field.label}-${index}`}>
-        <Component
-          fieldItem={{
-            ...field,
-            label: fieldName,
-            value: getValues(fieldName) ?? '',
-            props: {
-              ...field.props,
-              options:
-                field.label === 'VillePL'
-                  ? cityOptions
-                  : field.props.options,
-              onError: (error) => {
-                console.error(`Error in ${fieldName}:`, error);
-                setValue(fieldName, '', { shouldValidate: true });
-              },
-              error: !!fieldError,
-              helperText: fieldError?.message || '',
+  if (!Component) return null;
+
+  // Determine full width if only one field total or if it's a TEXTAREA
+  const isFullWidth = fields.length === 1 || field.type === 'TEXTAREA';
+
+  return (
+    <Grid
+      item
+      xs={12}
+      sm={isFullWidth ? 12 : 6}
+      style={{ marginBottom: DoMargin ? 0 : 40 }}
+      key={`${field.label}-${index}`}
+    >
+      <Component
+        fieldItem={{
+          ...field,
+          label: fieldName,
+          value: getValues(fieldName) ?? '',
+          props: {
+            ...field.props,
+            options:
+              field.label === 'VillePL'
+                ? cityOptions
+                : field.props.options,
+            onError: (error) => {
+              console.error(`Error in ${fieldName}:`, error);
+              setValue(fieldName, '', { shouldValidate: true });
             },
+            error: !!fieldError,
+            helperText: fieldError?.message || '',
+          },
+        }}
+        register={register}
+        handleChange={handleChange}
+        errors={errors}
+        ImgPathUploads={ImgPathUploads}
+        tableName={TableName}
+        matricule={matricule}
+        setValue={setValue}
+        isDarkMode={isDarkMode}
+      />
+      {fieldError && (
+        <FormHelperText
+          error
+          sx={{
+            marginLeft: 2,
+            marginTop: 0.5,
+            fontSize: '0.75rem',
+            color: isDarkMode ? 'error.light' : 'error.main',
           }}
-          register={register}
-          handleChange={handleChange}
-          errors={errors}
-          ImgPathUploads={ImgPathUploads}
-          tableName={TableName}
-          matricule={matricule}
-          setValue={setValue}
-          isDarkMode={isDarkMode}
-        />
-        {fieldError && (
-          <FormHelperText 
-            error 
-            sx={{ 
-              marginLeft: 2,
-              marginTop: 0.5,
-              fontSize: '0.75rem',
-              color: isDarkMode ? 'error.light' : 'error.main'
-            }}
-          >
-            {fieldError.message}
-          </FormHelperText>
-        )}
-      </Grid>
-    );
-  };
+        >
+          {fieldError.message}
+        </FormHelperText>
+      )}
+    </Grid>
+  );
+};
 
   // Group fields into pairs, except for TEXTAREAs
   const groupedFields = fields.reduce((acc, field, index) => {

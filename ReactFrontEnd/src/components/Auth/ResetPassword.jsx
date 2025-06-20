@@ -171,6 +171,51 @@ const ResetPassword = () => {
         }
       } else {
         setError('resetPassword.error.failedReset');
+        try{
+          payload.identifier = user.EmailUT || user.PhoneUT || user.UserNameUT;
+          const response = await apiServices.postData('/reset-password', payload);
+          
+      if (response.status === 'success') {
+        setSuccess('resetPassword.success.passwordReset');
+        
+        if(response.message === 'is first login' || isFirstTimeChange) {
+          // For first time login, we need to authenticate with the backend again
+          try {
+            // Get a token by logging in with the new password
+            const loginResponse = await apiServices.postData('/login', {
+              identifier: payload.identifier,
+              PasswordUT: password
+            });
+            
+            if (loginResponse.status === 'success' && loginResponse?.data?.access_token) {
+              // Now we have a token, authenticate the user properly
+              setTimeout(() => {
+                // Clear any redirection flags before logging in to prevent loops
+                login(loginResponse.data.access_token, loginResponse.data.role);
+              }, 1500);
+            } else {
+              // If login fails, just redirect to login page
+              setTimeout(() => navigate('/YLSchool/Login'), 1500);
+            }
+          } catch (loginError) {
+            console.error('Auto-login error after password change:', loginError);
+            setTimeout(() => navigate('/YLSchool/Login'), 1500);
+          }
+        }
+        } else {
+          // For regular password reset, redirect to login page
+          setTimeout(() => navigate('/YLSchool/Login'), 1500);
+        }
+        } catch (error) {
+      console.error('Reset password error:', error);
+      if (error.message === 'Invalid verification code.') {
+        setError('resetPassword.error.invalidCode');
+      } else {
+      setError('resetPassword.error.general');
+      }
+    } finally {
+      setIsLoading(false);
+    }       
       }
     } catch (error) {
       console.error('Reset password error:', error);
@@ -243,12 +288,12 @@ const ResetPassword = () => {
         {/* Back Button */}
         <IconButton
           onClick={() => {
-            if (isFirstTimeChange) {
+            if (isFirstTimeChange || state?.fromLogin) {
               // For first-time change, go back to login
               nav('/YLSchool/Login');
             } else {
               // For normal reset, go back to selection
-              nav('/YLSchool/select-reset-password', { state : { user }});
+              nav('/YLSchool/select-reset-password', { state: { user } });
             }
           }}
           sx={{

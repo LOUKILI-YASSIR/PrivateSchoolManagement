@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import apiServices from "./apiServices";
+import apiServices, { getDays, getTimeSlots, saveDays, saveTimeSlots, updateTimeSlot, deleteTimeSlot } from "./apiServices";
 const { fetchData, postData, updateData, deleteData, postImage,getPaginatedData } = apiServices;
 
 // Data Hooks with optimized caching
@@ -85,4 +85,59 @@ export const useFetchCountData = (apiName) => {
     refetchOnWindowFocus: false, // Don't refetch when window regains focus
     retry: 1,
   });
+};
+
+// Time Table Query Hooks
+export const useDays = () => {
+    return useQuery({
+        queryKey: ['days'],
+        queryFn: getDays
+    });
+};
+
+export const useTimeSlots = () => {
+    return useQuery({
+        queryKey: ['timeSlots'],
+        queryFn: getTimeSlots
+    });
+};
+
+export const useSaveDays = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: saveDays,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['days'] });
+        }
+    });
+};
+
+export const useSaveTimeSlots = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: saveTimeSlots,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['timeSlots'] });
+        }
+    });
+};
+
+export const useUpdateTimeSlot = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({ id, data }) => updateTimeSlot(id, data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['timeSlots'] });
+        }
+    });
+};
+
+export const useDeleteTimeSlot = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (id) => deleteTimeSlot(id),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['timeSlots'] });
+        }
+    });
 };

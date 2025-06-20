@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Route;
 // Import Refactored Controllers
 use App\Http\Controllers\Api\AuthController; // Still needed for /user route
 use App\Http\Controllers\Api\NiveauController;
-use App\Http\Controllers\Api\MatiereController;
 use App\Http\Controllers\Api\EvaluationTypeController;
 use App\Http\Controllers\Api\ProfesseurController;
 use App\Http\Controllers\Api\GroupController;
@@ -14,6 +13,7 @@ use App\Http\Controllers\Api\EtudiantController;
 use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\TeacherVocationController;
 use App\Http\Controllers\Api\EvaluationController;
+use App\Http\Controllers\Api\DashBoardController;
 use App\Http\Controllers\Api\NoteController;
 use App\Http\Controllers\Api\NoteFinalController;
 use App\Http\Controllers\Api\EvaluationResultController;
@@ -28,7 +28,10 @@ use App\Http\Controllers\Api\SchoolEventController;
 use App\Http\Controllers\Api\SpecialDayScheduleController;
 use App\Http\Controllers\Api\TimeTableExceptionController;
 use App\Http\Controllers\Api\GradeAdjustmentController;
-use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\Api\MatiereController;
+use App\Models\Matiere;
+use App\Http\Controllers\TimeTableController;
 
 /*
 |--------------------------------------------------------------------------
@@ -105,6 +108,24 @@ Route::middleware('auth:sanctum')->group(function () {
 
 });
 
+// Time Table Routes
+Route::prefix('time-table')->middleware('auth:sanctum')->group(function () {
+    // Resource management
+    Route::get('/resources/{MatriculeTS?}/{MatriculeDW?}/{MatriculeGP?}', [RegularTimeTableController::class, 'getAllUnusedResources']);
+    Route::post('/update-position', [RegularTimeTableController::class, 'updatePosition']);
+    Route::get('/group/{MatriculeGP}', [RegularTimeTableController::class, 'getAllTimeTableClasses']);
+    Route::post('/generate', [RegularTimeTableController::class, 'generate']);
+    Route::post('/clear', [RegularTimeTableController::class, 'clear']);
+    // CRUD operations
+    Route::apiResource('regular-timetables', RegularTimeTableController::class);
+    
+    // Additional endpoints
+    Route::get('/conflicts/{MatriculeGP}', [RegularTimeTableController::class, 'getConflicts']);
+    Route::get('/schedule/{MatriculeGP}', [RegularTimeTableController::class, 'getSchedule']);
+    Route::post('/bulk-update', [RegularTimeTableController::class, 'bulkUpdate']);
+    Route::delete('/bulk-delete', [RegularTimeTableController::class, 'bulkDelete']);
+});
+
 // Add OPTIONS route handler for CORS preflight requests
 Route::options('/{any}', function () {
     return response()->json([], 200)
@@ -119,8 +140,24 @@ Route::get("getemailsphonesusernames/professeur",[ProfesseurController::class,"g
 Route::get("getallsallesnames",[SalleController::class,"getAllSallesNamesArray"]);
 Route::get("getallgroupsnames",[GroupController::class,"getAllGroupsNamesArray"]);
 Route::get("getallniveauxnames",[NiveauController::class,"getAllNiveauxNamesArray"]);
+Route::get("getallniveauxwithgroups",[NiveauController::class,"getAllNiveauxWithGroups"]);
+Route::get("getallniveauxwithgroups/{userid?}",[NiveauController::class,"getAllNiveauxWithGroupsByUsed"]);
+
+Route::get("getfrommatieres/{MatriculeMT?}",[MatiereController::class,"getAllMatieresNamesArray"]);
 Route::get("getetudiantsselect/{MatriculeGP?}",[EtudiantController::class,"getEtudiantsSelect"]);
+Route::get("getprofesseursselectmt/{MatriculeMT?}",[ProfesseurController::class,"getAllProfesseursSelectMT"]);
 Route::get("getprofesseursselect/{MatriculeGP?}",[ProfesseurController::class,"getAllProfesseursSelect"]);
 Route::get("getgroupsselect/{MatriculePR?}",[GroupController::class,"getAllGroupsSelect"]);
 Route::get('getAllNiveauxSelect/{TypeNV}/{MatriculeNV?}', [NiveauController::class, 'getAllNiveauxSelect']);
 Route::get("getgroups/{MatriculeNV?}",[GroupController::class,"getGroupsByNiveau"]);
+Route::get("getfrometudiants/{selectedCountry?}/{MatriculeNV?}",[EtudiantController::class,"getFormInformation"]);
+Route::get("getfromprofesseurs/{selectedCountry?}/{MatriculePR?}",[ProfesseurController::class,"getFormInformation"]);
+Route::get("getfromgroups/{MatriculeGP?}",[GroupController::class,"getFrontFormDataMerged"]);
+Route::get("getalltimetableclasses/{MatriculeGP?}",[RegularTimeTableController::class,"getAllTimeTableClasses"]);
+Route::get("gettimetableconfig",[RegularTimeTableController::class,"getTimeTableFormConfig"]);    
+Route::post('/config-timetable', [RegularTimeTableController::class, 'ConfigTimeTable']);
+
+Route::get("dashboard/admin",[DashboardController::class,"adminDashboard"]);
+Route::get("dashboard/etudiant/{studentId?}",[DashboardController::class,"studentDashboard"]);
+Route::get("dashboard/professeur/{studentId?}",[DashboardController::class,"professeurDashboard"]);
+Route::get("getgroupfromuser/{studentId?}",[UserController::class,"getGroupFromUserId"]);
