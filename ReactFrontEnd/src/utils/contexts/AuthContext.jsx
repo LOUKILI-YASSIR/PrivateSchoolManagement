@@ -36,8 +36,8 @@ export const AuthProvider = ({ children }) => {
       console.log("Not loading profile - user not authenticated or token invalid");
       return null;
     }
-
     setLoadingProfile(true);
+
     try {
       const response = await apiServices.getData('/users/profile');
       

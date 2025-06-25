@@ -8,14 +8,17 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { message } from 'antd';
 import { useMemo, useCallback, useEffect } from 'react';
+import { Avatar, Box, Typography } from '@mui/material';
+import { LightMode, DarkMode } from '@mui/icons-material';
+import bcrypt from 'bcryptjs';
 
-export const getFormStepsEt = (formContext, row) => {
+export const getFormStepsUt = (formContext, row) => {
     const {
       TYPE: { SELECT, TEXT, DATE, TEXTAREA, EMAIL, PHONE, IMAGE, NUMBER, AUTO_COMPLETE_SELECT, MULTI_SELECT }
     } = useFormOptions();
     const { setUserInfo, formMethods, isSubmitting } = formContext;
     const { handleSubmit, watch } = formMethods;
-    const niveauxselected = watch("MatriculeNV") || row?.MatriculeNV || "";
+const languages = ['fr', 'en', 'de', 'es'];
 
     // Watch for country changes to fetch cities
     const selectedCountry = watch("PaysPL");
@@ -23,18 +26,19 @@ export const getFormStepsEt = (formContext, row) => {
     const lastName = watch("NomPL");
 
     const { data: FormData, refetch } = useFetchData(
-        `getfrometudiants/${selectedCountry}${niveauxselected ? `/${niveauxselected}` : ""}`
+        `getfromuser`
     );
-    useEffect(()=>{if(isSubmitting) refetch();},[isSubmitting])
 
     // Memoize filtered data to prevent recalculation on every render
     const FilteredEmailsPhonesData = useMemo(() => {
         if (!row || !FormData?.EmailsPhonesData) return null;
         return {
-            emails: FormData?.EmailsPhonesData?.emails?.filter(email => email !== row.EmailET) || [],
-            phones: FormData?.EmailsPhonesData?.phones?.filter(phone => phone !== row.PhoneET) || [],
+            emails: FormData?.EmailsPhonesData?.emails?.filter(email => email !== row.EmailUT) || [],
+            phones: FormData?.EmailsPhonesData?.phones?.filter(phone => phone !== row.PhoneUT) || [],
             noms: FormData?.EmailsPhonesData?.noms?.filter(nom => nom !== row.NomPL) || [],
             prenoms: FormData?.EmailsPhonesData?.prenoms?.filter(prenom => prenom !== row.PrenomPL) || [],
+            usernames: FormData?.EmailsPhonesData?.usernames?.filter(username => username !== row.UserNameUT) || [],
+        
         };
     }, [row, FormData?.EmailsPhonesData]);
 
@@ -97,6 +101,51 @@ export const getFormStepsEt = (formContext, row) => {
         }
         return true;
     }, [FilteredEmailsPhonesData, FormData?.EmailsPhonesData]);
+    const validateUserName = useCallback((value) => {
+        // Check if email already exists
+        if (FilteredEmailsPhonesData) {
+            if (FilteredEmailsPhonesData?.usernames && FilteredEmailsPhonesData?.usernames?.includes(value)) {
+                return "Cette username est déjà utilisée par un autre utilisateur";
+            }
+        } else if (FormData?.EmailsPhonesData?.usernames && FormData?.EmailsPhonesData?.usernames?.includes(value)) {
+            return "Cette username est déjà utilisée par un autre utilisateur";
+        }
+        return true;
+    }, [FilteredEmailsPhonesData, FormData?.EmailsPhonesData]);
+    const validateOldPassword = useCallback(async (value, context) => {
+      const hashedPassword = row?.OldPassword;
+
+      if (!hashedPassword) {
+        return "Mot de passe actuel introuvable";
+      }
+
+      // Vérifie si le mot de passe entré est identique à celui du formulaire (par exemple le nouveau mot de passe)
+      if (value && value === context?.PasswordUT) {
+        return "L'ancien mot de passe et le nouveau ne doivent pas être identiques";
+      }
+
+      // Compare avec le mot de passe chiffré du compte utilisateur
+      const isMatch = await bcrypt.compare(value, hashedPassword);
+      if (value && !isMatch) {
+        return "L'ancien mot de passe est incorrect";
+      }
+
+      return true;
+    }, [row?.PasswordUT]);
+
+    const validatePassword = useCallback((value, context) => {
+      if (value && value === context?.OldPasswordUT) {
+        return "Le nouveau mot de passe doit être différent de l'ancien";
+      }
+      return true;
+    }, []);
+    const validatePasswordConfirmation = useCallback((value, context) => {
+      if (value !== context?.PasswordUT) {
+        return "Les mots de passe ne correspondent pas";
+      }
+      return true;
+    }, []);
+
 
     const validateNom = useCallback((value) => {
         const prenom = watch("PrenomPL");
@@ -138,12 +187,6 @@ export const getFormStepsEt = (formContext, row) => {
         return true;
     }, [FilteredEmailsPhonesData, FormData?.EmailsPhonesData, watch]);
 
-    // Memoize options to prevent recreating arrays on every render
-    const lienParenteOptions = useMemo(() => [
-        "Père", "Mère", "Tuteur", "Frère", "Sœur", "Oncle", 
-        "Tante", "Grand-père", "Grand-mère", "Autre"
-    ], []);
-
     const countryOptions = useMemo(() => generateCountryOptions(), []);
     
     const villeOptions = useMemo(() => {
@@ -155,29 +198,10 @@ export const getFormStepsEt = (formContext, row) => {
             : [];
     }, [FormData?.villes]);
 
-    const niveauxOptions = useMemo(() => {
-        return (!FormData?.niveaux || FormData?.niveaux?.length === 0)
-            ? []
-            : FormData?.niveaux?.map((niveau) => ({
-                value: niveau.MatriculeNV,
-                label: niveau.NomNV,
-            }));
-    }, [FormData?.niveaux]);
-
-    const groupOptions = useMemo(() => {
-        return (!FormData?.groups || FormData?.groups?.length === 0)
-            ? []
-            : FormData?.groups?.map((group) => ({
-                value: group.MatriculeGP,
-                label: group.NameGP,
-            }));
-    }, [FormData?.groups]);
-
     // Memoize the entire form steps to prevent recreation
     return useMemo(() => [
-        // Step 1: Etudiant (Student)
         {
-            title: "Etudiant",
+            title: "Personal Information",
             Fields: [
                 // Genre field
                 generateField({
@@ -231,6 +255,17 @@ export const getFormStepsEt = (formContext, row) => {
                             `Prenom doit commencer par une lettre majuscule, contenir uniquement des noms valides et avoir un seul espace entre les mots.`
                         ),
                         { validate: validatePrenom }
+                    )
+                }),
+                generateField({
+                    type: TEXT,
+                    label: "UserNameUT",
+                    propsType: "text",
+                    propsLabel: "UserName",
+                    enablePlaceholder: true,
+                    validation: commonValidations.combine(
+                        commonValidations.required("UserName"),
+                        { validate: validateUserName }
                     )
                 }),
                 generateField({
@@ -322,6 +357,7 @@ export const getFormStepsEt = (formContext, row) => {
                             validate: (value, context) => {
                                 const countryCode = context?.PaysPL || "";
                                 const validator = postalCodeValidators[countryCode.toUpperCase()];
+                                console.log("Validator for country:", countryCode, validator);
                                 if (!validator) {
                                     return "This country does not have any postal code validation";
                                 }
@@ -334,7 +370,7 @@ export const getFormStepsEt = (formContext, row) => {
                 generateField({
                     type: EMAIL,
                     propsLabel: 'Email',
-                    label: "EmailET",
+                    label: "EmailUT",
                     enablePlaceholder: true,
                     validation: commonValidations.combine(
                         commonValidations.required('Email'),
@@ -349,11 +385,11 @@ export const getFormStepsEt = (formContext, row) => {
                 generateField({
                     type: PHONE,
                     propsLabel: `Téléphone`,
-                    label: "PhoneET",
+                    label: "PhoneUT",
                     validation: commonValidations.combine(
                         {
                             validate: (value, context) =>
-                                validateTELEPHONE(value, context, 0, "ET")
+                                validateTELEPHONE(value, context, 0, "UT")
                         },
                         commonValidations.required(`Téléphone`)
                     )
@@ -384,135 +420,109 @@ export const getFormStepsEt = (formContext, row) => {
             ]
         },
 
-        // Step 2: Parent d'Etudiant (Student's Parent)
         {
-            title: "Responsable d'Etudiant",
+            title: "Preferences",
             Fields: [
                 generateField({
                     type: SELECT,
-                    propsLabel: "Lien de Parenté",
-                    label: "LienParenteTR",
-                    options: lienParenteOptions?.map(value => ({
-                        value,
-                        label: value,
+                    propsLabel: "Default Theme",
+                    label: "ThemePageUT",
+                    options: [
+                      {
+                        value: 'light',
+                        label: (
+                          <Box display="flex" alignItems="center" gap={1}>
+                            <LightMode fontSize="small" />
+                            <Typography variant="body2">Light</Typography>
+                          </Box>
+                        ),
+                      },
+                      {
+                        value: 'dark',
+                        label: (
+                          <Box display="flex" alignItems="center" gap={1}>
+                            <DarkMode fontSize="small" />
+                            <Typography variant="body2">Dark</Typography>
+                          </Box>
+                        ),
+                      },
+                    ],
+                }),
+                generateField({
+                    type: SELECT,
+                    propsLabel: "Default Language",
+                    label: "LanguagePageUT",
+                    options: languages.map((langCode) => ({
+                      value: langCode,
+                      label: (
+                        <Box display="flex" alignItems="center" gap={1}>
+                          <Avatar
+                            src={`/Locales/${langCode}.png`}
+                            alt={langCode}
+                            sx={{ width: 24, height: 24 }}
+                            variant="square"
+                          />
+                          <Typography variant="body2" textTransform="capitalize">
+                            {{
+                                fr: 'Français',
+                                en: 'English',
+                                de: 'Deutsch',
+                                es: 'Español',
+                            }[langCode] || langCode}
+                          </Typography>
+                        </Box>
+                      ),
                     })),
-                    validation: {
-                        required: 'Parent relationship is required',
-                        validate: (value) => lienParenteOptions?.includes(value) || "Veuillez sélectionner une option valide",
-                    }
-                }),
-                generateField({
-                    type: TEXT,
-                    propsType: "text",
-                    label: "NomTR",
-                    propsLabel: "Nom",
-                    enablePlaceholder: true,
-                    validation: commonValidations.combine(
-                        commonValidations.required("Nom"),
-                        commonValidations.pattern(
-                            "Nom",
-                            /^([A-Z][a-z]+(?:-[A-Z][a-z]+)?)(\s[A-Z][a-z]+(?:-[A-Z][a-z]+)?)*$/,
-                            `Nom doit commencer par une lettre majuscule, contenir uniquement des noms valides et avoir un seul espace entre les mots.`
-                        )
-                    )
-                }),
-                generateField({
-                    type: TEXT,
-                    propsType: "text",
-                    label: "PrenomTR",
-                    propsLabel: "Prenom",
-                    enablePlaceholder: true,
-                    validation: commonValidations.combine(
-                        commonValidations.required("Prenom"),
-                        commonValidations.pattern(
-                            "Prenom",
-                            /^([A-Z][a-z]+(?:-[A-Z][a-z]+)?)(\s[A-Z][a-z]+(?:-[A-Z][a-z]+)?)*$/,
-                            `Prenom doit commencer par une lettre majuscule, contenir uniquement des noms valides et avoir un seul espace entre les mots.`
-                        )
-                    )
-                }),
-                generateField({
-                    type: TEXT,
-                    propsType: "text",
-                    propsLabel: "Profession",
-                    label: "ProfessionTR",
-                    value: "",
-                    enablePlaceholder: true,
-                    validation: {
-                        required: 'Profession is required',
-                        validate: (value) =>
-                            /\b[A-Za-z]+[- ]?[A-Za-z]*'?[- ]?[A-Za-z]+\b/.test(value)
-                            || `Profession doit commencer par une lettre majuscule, 
-                                contenir uniquement des noms valides et avoir un seul espace entre les mots.`
-                    }
-                }),
-                generateField({
-                    type: PHONE,
-                    propsLabel: `Téléphone N°1`,
-                    label: "Phone1TR",
-                    validation: commonValidations.combine(
-                        {
-                            validate: (value, context) =>
-                                validateTELEPHONE(value, context, 0)
-                        },
-                        commonValidations.required(`Téléphone N°1`)
-                    )
-                }),
-                generateField({
-                    type: PHONE,
-                    propsLabel: `Téléphone N°2`,
-                    label: "Phone2TR",
-                    validation: commonValidations.combine(
-                        {
-                            validate: (value, context) =>
-                                validateTELEPHONE(value, context, 1)
-                        }
-                    )
-                }),
-                generateField({
-                    type: EMAIL,
-                    propsLabel: 'Email',
-                    label: "EmailTR",
-                    enablePlaceholder: true,
-                    validation: commonValidations.combine(
-                        commonValidations.required('Email'),
-                        commonValidations.pattern(
-                            'Email',
-                            /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                            'Adresse email invalide'
-                        )
-                    )
-                }),
-                generateField({
-                    type: TEXTAREA,
-                    propsLabel: 'Observation',
-                    label: "ObservationTR",
-                    enablePlaceholder: true,
-                    extraProps: { maxLength: 321, rows: 3 },
-                    validation: commonValidations.combine(
-                        commonValidations.maxLength('Observation', 321),
-                        commonValidations.minLength('Observation', 0)
-                    )
                 }),
             ]
         },
         {
-            title: "Scolaire",
+            title: "Security",
             Fields: [
                 generateField({
-                    type: SELECT,
-                    label: 'MatriculeNV',
-                    propsLabel: "Niveaux",
-                    options: niveauxOptions,
+                    type: TEXT,
+                    label: "OldPasswordUT",
+                    propsType: "password",
+                    propsLabel: "Ancien Mot de Passe",
+                    enablePlaceholder: true,
                     validation: commonValidations.combine(
-                        commonValidations.required("Niveaux")
+                        commonValidations.pattern(
+                            "Ancien Mot de Passe",
+                            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._-])[A-Za-z\d@$!%*?&._-]{8,}$/,
+                            "L'Ancien Mot de Passe doit contenir au moins 8 caractères, une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial (@ $ ! % * ? & . _ -)."                        
+                        ),
+                        { validate: validateOldPassword }
                     )
                 }),
                 generateField({
-                    type: SELECT,
-                    label: 'MatriculeGP',
-                    propsLabel: "Groups",
-                    options: groupOptions,
+                    type: TEXT,
+                    label: "PasswordUT",
+                    propsType: "password",
+                    propsLabel: "Mot de Passe",
+                    enablePlaceholder: true,
+                    validation: commonValidations.combine(
+                        commonValidations.pattern(
+                            "Mot de Passe",
+                            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._-])[A-Za-z\d@$!%*?&._-]{8,}$/,
+                            "Le Mot de Passe doit contenir au moins 8 caractères, une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial (@ $ ! % * ? & . _ -)."                        
+                        ),
+                        { validate: validatePassword }
+                    )
+                }),
+                generateField({
+                    type: TEXT,
+                    label: "PasswordUT_confirmation",
+                    propsType: "password",
+                    propsLabel: "Confirmation de Mot de Passe",
+                    enablePlaceholder: true,
+                    validation: commonValidations.combine(
+                        commonValidations.pattern(
+                            "Confirmation de Mot de Passe",
+                            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._-])[A-Za-z\d@$!%*?&._-]{8,}$/,
+                            "La Confirmation de Mot de Passe doit contenir au moins 8 caractères, une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial (@ $ ! % * ? & . _ -)."                        
+                        ),
+                        { validate: validatePasswordConfirmation }
+                    )
                 }),
             ]
         }

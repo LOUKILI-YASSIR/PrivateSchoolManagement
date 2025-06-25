@@ -4,7 +4,7 @@ import { IconButton, Tooltip } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 
 // This function should receive the translation function and translated table name as parameters
-export const getFromActionMenu = (actionType, tableName, t, tableNameTranslated) => {
+export const getFromActionMenu = (actionType, tableName, t, tableNameTranslated,className) => {
     // Get action text with the table name inserted
     const actionText = t ? t(actionType, { NomTable: tableNameTranslated }) : `${actionType} ${tableNameTranslated}`;
     
@@ -35,7 +35,7 @@ export const getFromActionMenu = (actionType, tableName, t, tableNameTranslated)
         UPDATE: {
             Title: t ? t('form.edit_title', { entity: tableNameTranslated }) : `Edit ${tableNameTranslated}`,
             MainBtn: ({ClickToOpen}) => (
-                <span className="hover:text-green-600 flex p-2 pl-3 cursor-pointer" onClick={ClickToOpen}>
+                <span className={className || "hover:text-green-600 flex p-2 pl-3 cursor-pointer "} onClick={ClickToOpen}>
                     <EditIcon />
                     <div className="pl-2">{t ? t('actions.edit') : 'Edit'}</div>
                 </span>

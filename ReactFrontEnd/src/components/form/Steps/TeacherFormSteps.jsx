@@ -366,7 +366,7 @@ export const getFormStepsPr = (formContext, row) => {
                   return "Ce pays n'a pas de validation de code postal";
                 }
                 const { regex, message } = validator;
-                return regex.test(value) || message("Code Postal");
+                return regex.test(value) || message;
               },
             }
           ),

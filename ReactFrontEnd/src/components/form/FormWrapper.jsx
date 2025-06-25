@@ -8,7 +8,7 @@ import { Box, Typography, IconButton, Button, Paper, Snackbar, Alert } from '@mu
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
-const FormWrapper = ({ refetch, matricule = null, row = null, typeOpt = 'ADD', ExtraTableName = '' }) => {
+const FormWrapper = ({ refetch, cancel, matricule = null, row = null, typeOpt = 'ADD', ExtraTableName = '',className }) => {
   const { t: Traduction } = useTranslation();
   const { TableName = null } = useContext(MainContext) || {}; // make sure context is not null
   const [buttons, setButtons] = useState([]);
@@ -40,7 +40,6 @@ const FormWrapper = ({ refetch, matricule = null, row = null, typeOpt = 'ADD', E
 
   const UserInfoDisplay = () => {
     if (!userInfo) return null;
-
     const infoFields = [
       { key: 'username', label: 'Username' },
       { key: 'password', label: 'Password' },
@@ -107,10 +106,10 @@ const FormWrapper = ({ refetch, matricule = null, row = null, typeOpt = 'ADD', E
 
   // Determine contentOptions based on typeOpt
   const actionMenuConfig = typeOpt === 'CONFIG'
-    ? getFromActionMenu("actions.config", ExtraTableName, Traduction, tableNameTranslated).CONFIG
+    ? getFromActionMenu("actions.config", ExtraTableName, Traduction, tableNameTranslated,className).CONFIG
     : typeOpt === 'ADD' 
-      ? getFromActionMenu("actions.add", TableName ? TableName : ExtraTableName, Traduction, tableNameTranslated).ADD
-      : getFromActionMenu("actions.edit", TableName ? TableName : ExtraTableName, Traduction, tableNameTranslated).UPDATE;
+      ? getFromActionMenu("actions.add", TableName ? TableName : ExtraTableName, Traduction, tableNameTranslated,className).ADD
+      : getFromActionMenu("actions.edit", TableName ? TableName : ExtraTableName, Traduction, tableNameTranslated,className).UPDATE;
 
   const contentOptions = {
     Title: actionMenuConfig.Title, 
@@ -124,6 +123,7 @@ const FormWrapper = ({ refetch, matricule = null, row = null, typeOpt = 'ADD', E
         DialogContentComponent={
           <>
             <MultiStepForm 
+              cancel={cancel}
               ExtraTableName={ExtraTableName}
               matricule={matricule} 
               row={row}

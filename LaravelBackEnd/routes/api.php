@@ -161,3 +161,5 @@ Route::get("dashboard/admin",[DashboardController::class,"adminDashboard"]);
 Route::get("dashboard/etudiant/{studentId?}",[DashboardController::class,"studentDashboard"]);
 Route::get("dashboard/professeur/{studentId?}",[DashboardController::class,"professeurDashboard"]);
 Route::get("getgroupfromuser/{studentId?}",[UserController::class,"getGroupFromUserId"]);
+Route::get("getfromuser",[UserController::class,"getFromUser"]);
+Route::put("profile/{MatriculeUT?}",[UserController::class,"updateUserInfo"]);

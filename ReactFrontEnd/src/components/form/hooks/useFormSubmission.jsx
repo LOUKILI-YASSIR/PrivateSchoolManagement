@@ -38,7 +38,7 @@ export const useFormSubmission = ({ExtraTableName,TypeOpt,matricule}) => {
         };
 
         // Submit the form data to the 
-        
+        console.log("1Formatted Data: ", formattedData);
         const response = TypeOpt === "ADD" && !matricule ?
                           await apiServices.postData(endpoint, formattedData) :
                           await apiServices.updateData(endpoint, matricule, formattedData);

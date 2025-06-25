@@ -7,6 +7,7 @@ import { getFormStepsEp } from "./EvaluationFormSteps";
 import { getFormStepsNv } from "./NiveauFormSteps";
 import { getFormStepsYr } from "./AnneeScolaireFormSteps";
 import { getFromStepsTp } from "./ConfigTimeTableFormSteps";
+import { getFormStepsUt } from "./ProfileFormSteps";
 
 export const GetSteps = (TableName, formContext,row) => (
     {
@@ -19,5 +20,6 @@ export const GetSteps = (TableName, formContext,row) => (
         niveaux : () => getFormStepsNv(formContext,row),
         "academic-years" : () => getFormStepsYr(formContext,row),
         "config-timetable" : () => getFromStepsTp(formContext,row), 
+        "profile" : () => getFormStepsUt(formContext,row), 
     }[TableName]() || [] // Default to an empty array if TableName is not found
 ) 

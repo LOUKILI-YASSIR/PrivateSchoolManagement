@@ -18,7 +18,6 @@ export default function PHONE({
   placeholder,
   variant = 'outlined' // New prop to match TextField variant
 }) {
-  console.log(value," - ",fieldItem)
   const [isfocus, setisfocus] = useState(false);
 
   const getIndex = () => {

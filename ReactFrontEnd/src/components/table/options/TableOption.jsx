@@ -123,6 +123,7 @@ export const GetInfoTable = ( userRole) => {
             fullWidth={true}
             style={{ minHeight: '60vh' }}
             showOptions={true}
+            ExtraTableName={"user"}
           />
         ),
         remove && (
