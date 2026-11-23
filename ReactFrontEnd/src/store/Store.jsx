@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
-import MenuReducer from "./Slices/MenuSlice";
-import ExportReducer from "./Slices/ExportSlice";
-import ThemeReducer from "./Slices/ThemeSlice";
+import MenuReducer from "./slices/MenuSlice";
+import ExportReducer from "./slices/ExportSlice";
+import ThemeReducer from "../Store/Slices/ThemeSlice";
 
 const Store = configureStore({
     reducer:{

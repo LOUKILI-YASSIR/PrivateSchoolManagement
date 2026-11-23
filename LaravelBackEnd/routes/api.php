@@ -13,7 +13,7 @@ use App\Http\Controllers\Api\EtudiantController;
 use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\TeacherVocationController;
 use App\Http\Controllers\Api\EvaluationController;
-use App\Http\Controllers\Api\DashBoardController;
+use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\NoteController;
 use App\Http\Controllers\Api\NoteFinalController;
 use App\Http\Controllers\Api\EvaluationResultController;

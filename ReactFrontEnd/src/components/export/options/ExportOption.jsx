@@ -4,7 +4,7 @@ import { Button, Tooltip } from "@mui/material"
 import { Fragment } from "react"
 import { useTranslation } from "react-i18next"
 import { useSelector } from "react-redux"
-import { getActionButtonStyle, getIconButtonStyle } from '../../../components/Menu/styles/actionMenuStyles';
+import { getActionButtonStyle, getIconButtonStyle } from '../../../components/menu/styles/actionMenuStyles';
 
 export const ExportOptions = () => {
   const {t:Traduction} = useTranslation()

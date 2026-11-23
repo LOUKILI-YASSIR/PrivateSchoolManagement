@@ -1,7 +1,7 @@
 import Profile from "../components/profile/Profile";
 import Menu from "../layouts/Menu";
 import Main from "../pages/Main";
-import DashBoard from "../pages/DashBoard";
+import DashBoard from "../pages/Dashboard";
 import ErrorPage from "../components/errors/Errors";
 import Login from "../components/Auth/Login";
 import { Navigate, useLocation } from "react-router-dom";

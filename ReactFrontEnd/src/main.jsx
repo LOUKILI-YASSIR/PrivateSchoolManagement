@@ -7,9 +7,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './utils/contexts/AuthContext';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-import Store from "./Store/Store"
+import Store from "./store/Store"
 //import styles
-import "./styles/Menu.css";
+import "./styles/menu.css";
 import "./styles/index.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
