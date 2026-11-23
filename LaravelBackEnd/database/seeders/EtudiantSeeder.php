@@ -2,46 +2,42 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
+use App\Models\AcademicYear;
 use App\Models\Etudiant;
-use App\Models\Group; // Import Group model
-use App\Models\Niveau; // Import Niveau model
+use App\Models\Group;
+use App\Models\Niveau;
+use App\Models\User;
+use Illuminate\Database\Seeder;
 
 class EtudiantSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // Get all existing groups and niveaux
-        $groups = Group::all();
+        $year = AcademicYear::where('IsCurrentYR', true)->first();
         $niveaux = Niveau::all();
+        $users = User::where('RoleUT', 'etudiant')->get();
 
-        if ($niveaux->isEmpty()) {
-            $this->command->warn('No niveaux found. Skipping EtudiantSeeder. Please run NiveauSeeder first.');
+        if (!$year || $niveaux->isEmpty() || $users->isEmpty()) {
+            $this->command?->warn('Academic year, niveaux, or student users missing. Run UserSeeder, AcademicYearSeeder, and NiveauSeeder first.');
             return;
         }
 
-        // Create 20 Etudiants and assign them randomly to existing niveaux
-        // Groups are optional, so we'll randomly assign them to some students
-        Etudiant::factory(20)->make()->each(function ($etudiant) use ($groups, $niveaux) {
-            $etudiant->MatriculeNV = $niveaux->random()->MatriculeNV;
-
-            // Randomly assign a group to some students (about 70% of them)
-            if ($groups->isNotEmpty() && rand(1, 100) <= 70) {
-            $etudiant->MatriculeGP = $groups->random()->MatriculeGP;
+        foreach ($users as $user) {
+            if (Etudiant::where('MatriculeUT', $user->MatriculeUT)->exists()) {
+                continue;
             }
 
-            $etudiant->save();
-        });
+            $niveau = $niveaux->random();
+            $group = Group::where('MatriculeNV', $niveau->MatriculeNV)->inRandomOrder()->first();
 
-        // Alternative: Create a specific number of students per group
-        /*
-        foreach ($groups as $group) {
-            Etudiant::factory(10)->forGroup($group->MatriculeGP)->create();
+            // Override factory relations so no extra users, years, or niveaux
+            // are silently generated.
+            Etudiant::factory()->create([
+                'MatriculeYR' => $year->MatriculeYR,
+                'MatriculeUT' => $user->MatriculeUT,
+                'MatriculeNV' => $niveau->MatriculeNV,
+                'MatriculeGP' => $group?->MatriculeGP,
+            ]);
         }
-        */
     }
 }

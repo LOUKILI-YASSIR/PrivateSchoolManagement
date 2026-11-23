@@ -2,32 +2,41 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
+use App\Models\AcademicYear;
 use App\Models\SchoolEvent;
 use App\Models\TimeSlot;
+use Illuminate\Database\Seeder;
 
 class SchoolEventSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
+        if (SchoolEvent::query()->exists()) {
+            $this->command?->warn('School events already exist. Skipping to avoid duplicates.');
+            return;
+        }
+
+        $year = AcademicYear::where('IsCurrentYR', true)->first();
+
+        if (!$year) {
+            $this->command?->warn('Current academic year not found. Run AcademicYearSeeder first.');
+            return;
+        }
+
+        SchoolEvent::factory()->count(5)->fullDay()->create([
+            'MatriculeYR' => $year->MatriculeYR,
+        ]);
+
         $timeSlots = TimeSlot::all();
+        if ($timeSlots->isEmpty()) {
+            $this->command?->warn('No time slots found. Only full-day events were created.');
+            return;
+        }
 
-        // Create 5 full-day school events
-        SchoolEvent::factory(5)->fullDay()->create();
-
-        // Create 10 events tied to specific timeslots
-        if (!$timeSlots->isEmpty()) {
-            for ($i = 0; $i < 10; $i++) {
-                SchoolEvent::factory()
-                    ->forTimeSlot($timeSlots->random()->MatriculeTS)
-                    ->create();
-            }
-        } else {
-            $this->command->warn('No TimeSlots found. Skipping timeslot-specific SchoolEvent creation.');
+        for ($i = 0; $i < 10; $i++) {
+            SchoolEvent::factory()
+                ->forTimeSlot($timeSlots->random()->MatriculeTS)
+                ->create(['MatriculeYR' => $year->MatriculeYR]);
         }
     }
 }

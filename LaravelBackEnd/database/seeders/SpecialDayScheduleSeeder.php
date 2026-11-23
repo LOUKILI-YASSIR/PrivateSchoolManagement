@@ -2,32 +2,41 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
+use App\Models\AcademicYear;
 use App\Models\SpecialDaySchedule;
 use App\Models\TimeSlot;
+use Illuminate\Database\Seeder;
 
 class SpecialDayScheduleSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
+        if (SpecialDaySchedule::query()->exists()) {
+            $this->command?->warn('Special-day schedules already exist. Skipping to avoid duplicates.');
+            return;
+        }
+
+        $year = AcademicYear::where('IsCurrentYR', true)->first();
+
+        if (!$year) {
+            $this->command?->warn('Current academic year not found. Run AcademicYearSeeder first.');
+            return;
+        }
+
+        SpecialDaySchedule::factory()->count(3)->fullDay()->create([
+            'MatriculeYR' => $year->MatriculeYR,
+        ]);
+
         $timeSlots = TimeSlot::all();
+        if ($timeSlots->isEmpty()) {
+            $this->command?->warn('No time slots found. Only full-day schedules were created.');
+            return;
+        }
 
-        // Create 3 full-day events
-        SpecialDaySchedule::factory(3)->fullDay()->create();
-
-        // Create 5 events tied to specific timeslots
-        if (!$timeSlots->isEmpty()) {
-            for ($i = 0; $i < 5; $i++) {
-                SpecialDaySchedule::factory()
-                    ->forTimeSlot($timeSlots->random()->MatriculeTS)
-                    ->create();
-            }
-        } else {
-            $this->command->warn('No TimeSlots found. Skipping timeslot-specific SpecialDaySchedule creation.');
+        for ($i = 0; $i < 5; $i++) {
+            SpecialDaySchedule::factory()
+                ->forTimeSlot($timeSlots->random()->MatriculeTS)
+                ->create(['MatriculeYR' => $year->MatriculeYR]);
         }
     }
 }

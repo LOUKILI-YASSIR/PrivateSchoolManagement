@@ -2,31 +2,33 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
+use App\Models\AcademicYear;
 use App\Models\Matiere;
 use App\Models\Niveau;
+use Illuminate\Database\Seeder;
 
 class MatiereSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
+        $year = AcademicYear::where('IsCurrentYR', true)->first();
         $niveaux = Niveau::all();
 
-        if ($niveaux->isEmpty()) {
-            $this->command->warn('Niveaux not found. Skipping MatiereSeeder. Please run NiveauSeeder and ProfesseurSeeder first.');
+        if (!$year || $niveaux->isEmpty()) {
+            $this->command?->warn('Current academic year or niveaux missing. Run AcademicYearSeeder and NiveauSeeder first.');
             return;
         }
 
-        // Create 3 Matieres for each Niveau, assigning a random Professeur
         foreach ($niveaux as $niveau) {
-            for ($i = 0; $i < 3; $i++) {
-                Matiere::factory()
-                    ->forNiveau($niveau->MatriculeNV)
-                    ->create();
+            $existing = Matiere::where('MatriculeYR', $year->MatriculeYR)
+                ->where('MatriculeNV', $niveau->MatriculeNV)
+                ->count();
+
+            for ($i = $existing; $i < 3; $i++) {
+                Matiere::factory()->create([
+                    'MatriculeYR' => $year->MatriculeYR,
+                    'MatriculeNV' => $niveau->MatriculeNV,
+                ]);
             }
         }
     }

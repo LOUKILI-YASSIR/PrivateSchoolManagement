@@ -2,28 +2,32 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
+use App\Models\AcademicYear;
 use App\Models\Group;
 use App\Models\Niveau;
+use Illuminate\Database\Seeder;
 
 class GroupSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $niveaux = Niveau::all();
-
-        if ($niveaux->isEmpty()) {
-            $this->command->warn('No niveaux found. Skipping GroupSeeder. Please run NiveauSeeder first.');
+        if (Group::query()->exists()) {
+            $this->command?->warn('Groups already exist. Skipping GroupSeeder to avoid duplicates.');
             return;
         }
 
-        // Create 2 Groups for each Niveau
+        $year = AcademicYear::where('IsCurrentYR', true)->first();
+        $niveaux = Niveau::all();
+
+        if (!$year || $niveaux->isEmpty()) {
+            $this->command?->warn('Current academic year or niveaux missing. Run AcademicYearSeeder and NiveauSeeder first.');
+            return;
+        }
+
         foreach ($niveaux as $niveau) {
-            Group::factory(2)->forNiveau($niveau->MatriculeNV)->create();
+            Group::factory()->count(2)
+                ->forNiveau($niveau->MatriculeNV)
+                ->create(['MatriculeYR' => $year->MatriculeYR]);
         }
     }
 }

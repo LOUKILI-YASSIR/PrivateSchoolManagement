@@ -2,32 +2,31 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-use App\Models\GradeAdjustment;
 use App\Models\EvaluationResult;
+use App\Models\GradeAdjustment;
+use Illuminate\Database\Seeder;
 
 class GradeAdjustmentSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $evaluationResults = EvaluationResult::all();
+        $results = EvaluationResult::all();
 
-        if ($evaluationResults->isEmpty()) {
-            $this->command->warn('No EvaluationResults found. Skipping GradeAdjustmentSeeder.');
+        if ($results->isEmpty()) {
+            $this->command?->warn('No evaluation results found. Run EvaluationResultSeeder first.');
             return;
         }
 
-        // Create adjustments for a small subset (e.g., 10%) of evaluation results
-        $resultsToAdjust = $evaluationResults->random(ceil($evaluationResults->count() * 0.1));
+        $sampleSize = max(1, (int) ceil($results->count() * 0.1));
 
-        foreach ($resultsToAdjust as $result) {
+        foreach ($results->shuffle()->take($sampleSize) as $result) {
+            if (GradeAdjustment::where('MatriculeER', $result->MatriculeER)->exists()) {
+                continue;
+            }
+
             GradeAdjustment::factory()
                 ->forEvaluationResult($result->MatriculeER)
-                ->create();
+                ->create(['MatriculeYR' => $result->MatriculeYR]);
         }
     }
 }

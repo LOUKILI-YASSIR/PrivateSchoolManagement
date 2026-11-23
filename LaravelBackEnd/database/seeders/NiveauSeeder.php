@@ -2,27 +2,35 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\AcademicYear;
+use App\Models\Niveau;
 use Illuminate\Database\Seeder;
-use App\Models\Niveau; // Import Niveau model
 
 class NiveauSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // Create 5 top-level Niveaux
-        $parents = Niveau::factory(5)->create();
-
-        // For each parent, create 2 child Niveaux
-        foreach ($parents as $parent) {
-            Niveau::factory(2)->childOf($parent->MatriculeNV)->create([
-                'TypeNV' => $parent->TypeNV, // Assign same type as parent for consistency
-            ]);
+        if (Niveau::query()->exists()) {
+            $this->command?->warn('Niveaux already exist. Skipping NiveauSeeder to avoid duplicates.');
+            return;
         }
 
-        // You could add more levels of nesting if needed
+        $year = AcademicYear::where('IsCurrentYR', true)->first();
+
+        if (!$year) {
+            $this->command?->warn('Current academic year not found. Run AcademicYearSeeder first.');
+            return;
+        }
+
+        // The current niveaux migration requires MatriculeYR and does not
+        // contain the legacy SubMatriculeNV or TypeNV columns.
+        for ($i = 1; $i <= 15; $i++) {
+            Niveau::create([
+                'CodeNV' => 'NIV-' . $year->StartDateYR->year . '-' . str_pad((string) $i, 3, '0', STR_PAD_LEFT),
+                'NomNV' => 'Niveau ' . $i,
+                'DescriptionNV' => 'Données de démonstration',
+                'MatriculeYR' => $year->MatriculeYR,
+            ]);
+        }
     }
 }

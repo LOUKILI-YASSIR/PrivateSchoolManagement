@@ -2,31 +2,30 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-use App\Models\TeacherVocation;
 use App\Models\Professeur;
+use App\Models\TeacherVocation;
+use Illuminate\Database\Seeder;
 
 class TeacherVocationSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $professeurs = Professeur::all();
 
         if ($professeurs->isEmpty()) {
-            $this->command->warn('No Professeurs found. Skipping TeacherVocationSeeder.');
+            $this->command?->warn('No professors found. Run ProfesseurSeeder first.');
             return;
         }
 
-        // Create 1 or 2 vocation records for each professeur
         foreach ($professeurs as $professeur) {
-            $numberOfVocations = rand(1, 2);
-            TeacherVocation::factory($numberOfVocations)
+            if (TeacherVocation::where('MatriculePR', $professeur->MatriculePR)->exists()) {
+                continue;
+            }
+
+            $count = random_int(1, 2);
+            TeacherVocation::factory()->count($count)
                 ->forProfesseur($professeur->MatriculePR)
-                ->create();
+                ->create(['MatriculeYR' => $professeur->MatriculeYR]);
         }
     }
 }

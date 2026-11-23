@@ -2,17 +2,18 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use App\Models\EvaluationType;
+use Illuminate\Database\Seeder;
 
 class EvaluationTypeSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        EvaluationType::factory(6)->create();
+        if (EvaluationType::query()->exists()) {
+            $this->command?->warn('Evaluation types already exist. Skipping to avoid duplicates.');
+            return;
+        }
+
+        EvaluationType::factory()->count(6)->create();
     }
 }

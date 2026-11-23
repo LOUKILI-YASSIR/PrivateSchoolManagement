@@ -2,79 +2,78 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-use App\Models\RegularTimeTable;
+use App\Models\AcademicYear;
 use App\Models\DayWeek;
-use App\Models\TimeSlot;
 use App\Models\Group;
 use App\Models\Matiere;
 use App\Models\Professeur;
+use App\Models\RegularTimeTable;
 use App\Models\Salle;
-use Illuminate\Support\Facades\DB; // For potential cleanup
+use App\Models\TimeSlot;
+use Illuminate\Database\Seeder;
 
 class RegularTimeTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // Optional: Clean up existing entries first
-        // RegularTimeTable::truncate();
-
-        $days = DayWeek::all();
-        $timeSlots = TimeSlot::all();
-        $groups = Group::all();
-        $matieres = Matiere::all();
-        $professeurs = Professeur::all();
-        $salles = Salle::all();
-
-        if ($days->isEmpty() || $timeSlots->isEmpty() || $groups->isEmpty() || $matieres->isEmpty() || $professeurs->isEmpty() || $salles->isEmpty()) {
-            $this->command->warn('Missing prerequisite data (Days, Slots, Groups, Matieres, Professeurs, Salles). Skipping RegularTimeTableSeeder.');
+        if (RegularTimeTable::query()->exists()) {
+            $this->command?->warn('Regular timetable entries already exist. Skipping to avoid duplicates.');
             return;
         }
 
-        // Keep track of assigned slots to avoid basic clashes
-        $assignedSlots = [];
+        $year = AcademicYear::where('IsCurrentYR', true)->first();
+        $days = DayWeek::whereNotIn('DayNameDW', ['Saturday', 'Sunday'])->get();
+        $timeSlots = TimeSlot::all();
+        $groups = Group::all();
+        $professeurs = Professeur::all();
+        $salles = Salle::all();
 
-        // Attempt to create some timetable entries for each group
+        if (!$year || $days->isEmpty() || $timeSlots->isEmpty() || $groups->isEmpty()
+            || $professeurs->isEmpty() || $salles->isEmpty()) {
+            $this->command?->warn('Missing timetable prerequisites. Run the base seeders first.');
+            return;
+        }
+
+        $assigned = ['group' => [], 'professeur' => [], 'salle' => []];
+
         foreach ($groups as $group) {
-            // Get matieres relevant to the group's niveau
-            $groupMatieres = $matieres->where('MatriculeNV', $group->MatriculeNV);
-            if($groupMatieres->isEmpty()) continue;
+            $matieres = Matiere::where('MatriculeNV', $group->MatriculeNV)
+                ->where('MatriculeYR', $year->MatriculeYR)
+                ->get();
 
-            foreach ($days->whereNotIn('DayNameDW', ['Saturday', 'Sunday']) as $day) { // Weekdays only
-                foreach ($timeSlots as $timeSlot) {
-                    // Simple check: Assign only ~30% of slots randomly to avoid too dense schedule
-                    if (rand(1, 10) > 3) continue;
+            if ($matieres->isEmpty()) {
+                continue;
+            }
 
-                    $key = $day->MatriculeDW . '-' . $timeSlot->MatriculeTS;
-
-                    // Basic clash detection (simplified)
-                    if (isset($assignedSlots[$key . '-gp-' . $group->MatriculeGP]) ||
-                        isset($assignedSlots[$key . '-sl-' . $salles->random()->MatriculeSL]) || // Random salle for simplicity
-                        isset($assignedSlots[$key . '-pr-' . $professeurs->random()->MatriculePR])) { // Random prof for simplicity
-                        continue; // Skip if group, salle or prof seems busy (very basic check)
+            foreach ($days as $day) {
+                foreach ($timeSlots as $slot) {
+                    if (random_int(1, 10) > 3) {
+                        continue;
                     }
 
-                    $matiere = $groupMatieres->random();
-                    $professeur = $professeurs->random(); // Ideally, link matiere to specific prof
+                    $professeur = $professeurs->random();
                     $salle = $salles->random();
+                    $slotKey = $day->MatriculeDW . '|' . $slot->MatriculeTS;
+
+                    if (isset($assigned['group'][$slotKey . '|' . $group->MatriculeGP])
+                        || isset($assigned['professeur'][$slotKey . '|' . $professeur->MatriculePR])
+                        || isset($assigned['salle'][$slotKey . '|' . $salle->MatriculeSL])) {
+                        continue;
+                    }
 
                     RegularTimeTable::factory()->create([
+                        'MatriculeYR' => $year->MatriculeYR,
                         'MatriculeDW' => $day->MatriculeDW,
-                        'MatriculeTS' => $timeSlot->MatriculeTS,
+                        'MatriculeTS' => $slot->MatriculeTS,
                         'MatriculeGP' => $group->MatriculeGP,
-                        'MatriculeMT' => $matiere->MatriculeMT,
-                        'MatriculePR' => $professeur->MatriculePR, // Use the matiere's prof if defined?
+                        'MatriculeMT' => $matieres->random()->MatriculeMT,
+                        'MatriculePR' => $professeur->MatriculePR,
                         'MatriculeSL' => $salle->MatriculeSL,
                     ]);
 
-                    // Mark slots as busy (basic)
-                    $assignedSlots[$key . '-gp-' . $group->MatriculeGP] = true;
-                    $assignedSlots[$key . '-sl-' . $salle->MatriculeSL] = true;
-                    $assignedSlots[$key . '-pr-' . $professeur->MatriculePR] = true;
+                    $assigned['group'][$slotKey . '|' . $group->MatriculeGP] = true;
+                    $assigned['professeur'][$slotKey . '|' . $professeur->MatriculePR] = true;
+                    $assigned['salle'][$slotKey . '|' . $salle->MatriculeSL] = true;
                 }
             }
         }

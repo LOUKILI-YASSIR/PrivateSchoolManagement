@@ -2,44 +2,61 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use App\Models\AcademicYear;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Database\Seeder;
 
 class AcademicYearSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $admin = User::where('StatutUT', 'admin')->first();
+        // RoleUT identifies the user's role; StatutUT is the account status.
+        $admin = User::query()->where('RoleUT', 'admin')->first();
+
         if (!$admin) {
-            $this->command->warn('Admin user not found. Skipping AcademicYearSeeder. Please run UserSeeder first.');
+            $this->command?->warn('Admin user not found. Run UserSeeder before AcademicYearSeeder.');
             return;
         }
 
-        // Ensure only one year is current
-        AcademicYear::query()->update(['IsCurrentYR' => false]);
+        $now = Carbon::now();
+        $startYear = $now->month >= 9 ? $now->year : $now->year - 1;
+        $endYear = $startYear + 1;
 
-        // Create the current academic year
-        AcademicYear::factory()
-            ->current()
-            ->createdBy($admin->MatriculeUT)
-            ->create([
-                'StartDateYR' => Carbon::now()->year . '-09-01',
-                'EndDateYR' => (Carbon::now()->year + 1) . '-08-31',
-            ]);
+        $current = AcademicYear::firstOrCreate(
+            ['NameYR' => "{$startYear}-{$endYear}"],
+            [
+                'StatusYR' => 'Active',
+                'StartDateYR' => Carbon::create($startYear, 9, 1)->toDateString(),
+                'EndDateYR' => Carbon::create($endYear, 8, 31)->toDateString(),
+                'IsCurrentYR' => true,
+                'MatriculeUT' => $admin->MatriculeUT,
+            ]
+        );
 
-        // Create a couple of past academic years
-        AcademicYear::factory(2)
-            ->createdBy($admin->MatriculeUT)
-            ->create([
-                'StatusYR' => 'Archived',
-                'IsCurrentYR' => false,
-                // Factory definition handles date generation for past years
-            ]);
+        AcademicYear::query()
+            ->where('IsCurrentYR', true)
+            ->where('MatriculeYR', '!=', $current->MatriculeYR)
+            ->update(['IsCurrentYR' => false]);
+
+        if (!$current->IsCurrentYR || $current->StatusYR !== 'Active') {
+            $current->update(['IsCurrentYR' => true, 'StatusYR' => 'Active']);
+        }
+
+        // Keep two historical years without creating extra User records.
+        foreach ([2, 1] as $offset) {
+            $pastStart = $startYear - $offset;
+            $pastEnd = $pastStart + 1;
+            AcademicYear::firstOrCreate(
+                ['NameYR' => "{$pastStart}-{$pastEnd}"],
+                [
+                    'StatusYR' => 'Archived',
+                    'StartDateYR' => Carbon::create($pastStart, 9, 1)->toDateString(),
+                    'EndDateYR' => Carbon::create($pastEnd, 8, 31)->toDateString(),
+                    'IsCurrentYR' => false,
+                    'MatriculeUT' => $admin->MatriculeUT,
+                ]
+            );
+        }
     }
 }

@@ -2,17 +2,28 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\AcademicYear;
+use App\Models\Salle;
 use Illuminate\Database\Seeder;
-use App\Models\Salle; // Import Salle model
 
 class SalleSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        Salle::factory(15)->create(); // Create 15 salles using the factory
+        if (Salle::query()->exists()) {
+            $this->command?->warn('Salles already exist. Skipping SalleSeeder to avoid duplicates.');
+            return;
+        }
+
+        $year = AcademicYear::where('IsCurrentYR', true)->first();
+
+        if (!$year) {
+            $this->command?->warn('Current academic year not found. Run AcademicYearSeeder first.');
+            return;
+        }
+
+        Salle::factory()->count(15)->create([
+            'MatriculeYR' => $year->MatriculeYR,
+        ]);
     }
 }

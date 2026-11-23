@@ -2,18 +2,35 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
+use App\Models\AcademicYear;
 use App\Models\Professeur;
+use App\Models\User;
+use Illuminate\Database\Seeder;
 
 class ProfesseurSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // Create 10 Professeurs (this will also create their associated User records)
-        Professeur::factory(10)->create();
+        $year = AcademicYear::where('IsCurrentYR', true)->first();
+        $users = User::where('RoleUT', 'professeur')->get();
+
+        if (!$year || $users->isEmpty()) {
+            $this->command?->warn('Current academic year or professeur users missing. Run UserSeeder and AcademicYearSeeder first.');
+            return;
+        }
+
+        foreach ($users as $user) {
+            if (Professeur::where('MatriculeUT', $user->MatriculeUT)->exists()) {
+                continue;
+            }
+
+            // Explicitly override factory relations to prevent creating
+            // unrelated User, AcademicYear, or Matiere records.
+            Professeur::factory()->create([
+                'MatriculeYR' => $year->MatriculeYR,
+                'MatriculeUT' => $user->MatriculeUT,
+                'MatriculeMT' => null,
+            ]);
+        }
     }
 }
